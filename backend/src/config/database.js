@@ -10,16 +10,17 @@ const pool = mysql.createPool({
   connectionLimit: 10,
   queueLimit: 0,
   enableKeepAlive: true,
-  keepAliveInitialDelay: 0
+  keepAliveInitialDelay: 0,
 });
 
 // Test connection
-pool.getConnection()
-  .then(connection => {
+pool
+  .getConnection()
+  .then((connection) => {
     console.log('✅ MySQL Database connected successfully');
     connection.release();
   })
-  .catch(err => {
+  .catch((err) => {
     console.error('❌ Database connection failed:', err.message);
   });
 

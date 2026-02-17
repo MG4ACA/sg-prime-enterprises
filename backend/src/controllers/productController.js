@@ -29,15 +29,15 @@ exports.getAllProducts = async (req, res, next) => {
     const [products] = await db.query(query, params);
 
     // Parse JSON specs
-    const processedProducts = products.map(product => ({
+    const processedProducts = products.map((product) => ({
       ...product,
-      specs: typeof product.specs === 'string' ? JSON.parse(product.specs) : product.specs
+      specs: typeof product.specs === 'string' ? JSON.parse(product.specs) : product.specs,
     }));
 
     res.json({
       success: true,
       count: processedProducts.length,
-      data: processedProducts
+      data: processedProducts,
     });
   } catch (error) {
     next(error);
@@ -54,26 +54,25 @@ exports.getProductById = async (req, res, next) => {
        FROM products p 
        JOIN categories c ON p.category_id = c.id 
        WHERE p.id = ?`,
-      [id]
+      [id],
     );
 
     if (products.length === 0) {
       return res.status(404).json({
         success: false,
-        message: 'Product not found'
+        message: 'Product not found',
       });
     }
 
     const product = {
       ...products[0],
-      specs: typeof products[0].specs === 'string' 
-        ? JSON.parse(products[0].specs) 
-        : products[0].specs
+      specs:
+        typeof products[0].specs === 'string' ? JSON.parse(products[0].specs) : products[0].specs,
     };
 
     res.json({
       success: true,
-      data: product
+      data: product,
     });
   } catch (error) {
     next(error);
@@ -83,14 +82,14 @@ exports.getProductById = async (req, res, next) => {
 // Create new product (Admin only)
 exports.createProduct = async (req, res, next) => {
   try {
-    const { 
-      category_id, 
-      name, 
-      description, 
-      specs, 
-      is_featured = false, 
+    const {
+      category_id,
+      name,
+      description,
+      specs,
+      is_featured = false,
       display_order = 0,
-      status = 'active'
+      status = 'active',
     } = req.body;
 
     // Handle image upload
@@ -106,7 +105,16 @@ exports.createProduct = async (req, res, next) => {
       `INSERT INTO products 
        (category_id, name, description, specs, image_url, is_featured, display_order, status) 
        VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
-      [category_id, name, description, JSON.stringify(specsJson), image_url, is_featured, display_order, status]
+      [
+        category_id,
+        name,
+        description,
+        JSON.stringify(specsJson),
+        image_url,
+        is_featured,
+        display_order,
+        status,
+      ],
     );
 
     res.status(201).json({
@@ -121,8 +129,8 @@ exports.createProduct = async (req, res, next) => {
         image_url,
         is_featured,
         display_order,
-        status
-      }
+        status,
+      },
     });
   } catch (error) {
     next(error);
@@ -133,23 +141,15 @@ exports.createProduct = async (req, res, next) => {
 exports.updateProduct = async (req, res, next) => {
   try {
     const { id } = req.params;
-    const { 
-      category_id, 
-      name, 
-      description, 
-      specs, 
-      is_featured, 
-      display_order,
-      status
-    } = req.body;
+    const { category_id, name, description, specs, is_featured, display_order, status } = req.body;
 
     // Get existing product
     const [existing] = await db.query('SELECT * FROM products WHERE id = ?', [id]);
-    
+
     if (existing.length === 0) {
       return res.status(404).json({
         success: false,
-        message: 'Product not found'
+        message: 'Product not found',
       });
     }
 
@@ -176,12 +176,22 @@ exports.updateProduct = async (req, res, next) => {
        SET category_id = ?, name = ?, description = ?, specs = ?, 
            image_url = ?, is_featured = ?, display_order = ?, status = ?
        WHERE id = ?`,
-      [category_id, name, description, JSON.stringify(specsJson), image_url, is_featured, display_order, status, id]
+      [
+        category_id,
+        name,
+        description,
+        JSON.stringify(specsJson),
+        image_url,
+        is_featured,
+        display_order,
+        status,
+        id,
+      ],
     );
 
     res.json({
       success: true,
-      message: 'Product updated successfully'
+      message: 'Product updated successfully',
     });
   } catch (error) {
     next(error);
@@ -195,11 +205,11 @@ exports.deleteProduct = async (req, res, next) => {
 
     // Get product to delete image
     const [products] = await db.query('SELECT image_url FROM products WHERE id = ?', [id]);
-    
+
     if (products.length === 0) {
       return res.status(404).json({
         success: false,
-        message: 'Product not found'
+        message: 'Product not found',
       });
     }
 
@@ -217,7 +227,7 @@ exports.deleteProduct = async (req, res, next) => {
 
     res.json({
       success: true,
-      message: 'Product deleted successfully'
+      message: 'Product deleted successfully',
     });
   } catch (error) {
     next(error);

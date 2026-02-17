@@ -17,29 +17,25 @@ router.get('/verify', authMiddleware, authController.verifyToken);
 // ============================================
 // CATEGORY MANAGEMENT (Protected)
 // ============================================
-router.post('/categories', 
-  authMiddleware, 
+router.post(
+  '/categories',
+  authMiddleware,
   [
     body('name').trim().notEmpty().withMessage('Category name is required'),
     body('slug').trim().notEmpty().withMessage('Slug is required'),
   ],
-  categoryController.createCategory
+  categoryController.createCategory,
 );
 
-router.put('/categories/:id', 
-  authMiddleware, 
-  categoryController.updateCategory
-);
+router.put('/categories/:id', authMiddleware, categoryController.updateCategory);
 
-router.delete('/categories/:id', 
-  authMiddleware, 
-  categoryController.deleteCategory
-);
+router.delete('/categories/:id', authMiddleware, categoryController.deleteCategory);
 
 // ============================================
 // PRODUCT MANAGEMENT (Protected)
 // ============================================
-router.post('/products', 
+router.post(
+  '/products',
   authMiddleware,
   upload.single('image'),
   [
@@ -47,19 +43,17 @@ router.post('/products',
     body('name').trim().notEmpty().withMessage('Product name is required'),
     body('description').trim().notEmpty().withMessage('Description is required'),
   ],
-  productController.createProduct
+  productController.createProduct,
 );
 
-router.put('/products/:id', 
+router.put(
+  '/products/:id',
   authMiddleware,
   upload.single('image'),
-  productController.updateProduct
+  productController.updateProduct,
 );
 
-router.delete('/products/:id', 
-  authMiddleware, 
-  productController.deleteProduct
-);
+router.delete('/products/:id', authMiddleware, productController.deleteProduct);
 
 // ============================================
 // ENQUIRY MANAGEMENT (Protected)

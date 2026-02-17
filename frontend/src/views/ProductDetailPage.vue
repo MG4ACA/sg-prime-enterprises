@@ -24,15 +24,18 @@
           <div class="product-layout">
             <!-- Image Section with Zoom -->
             <div class="product-image-section">
-              <div 
-                class="product-image-container" 
+              <div
+                class="product-image-container"
                 ref="imageContainer"
                 @mousemove="handleMouseMove"
                 @mouseleave="handleMouseLeave"
               >
-                <img 
+                <img
                   ref="productImage"
-                  :src="product.image_url || 'https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=800'" 
+                  :src="
+                    product.image_url ||
+                    'https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=800'
+                  "
                   :alt="product.name"
                   class="product-image"
                 />
@@ -50,17 +53,17 @@
               <div class="product-description">
                 <p>{{ product.description }}</p>
               </div>
-              
+
               <!-- Action Buttons -->
               <div class="product-actions">
-                <Button 
-                  label="Request Quote" 
+                <Button
+                  label="Request Quote"
                   icon="pi pi-send"
                   class="btn-primary btn-large"
                   @click="openEnquiryForm"
                 />
-                <Button 
-                  label="Download Specs" 
+                <Button
+                  label="Download Specs"
                   icon="pi pi-download"
                   class="btn-secondary btn-large"
                   @click="downloadSpecs"
@@ -77,13 +80,9 @@
           <div class="section-header">
             <h2>Technical Specifications</h2>
           </div>
-          
+
           <div class="specs-table" ref="specsTable">
-            <div 
-              v-for="(value, key) in product.specs" 
-              :key="key"
-              class="spec-row"
-            >
+            <div v-for="(value, key) in product.specs" :key="key" class="spec-row">
               <div class="spec-label">{{ key }}</div>
               <div class="spec-value">{{ value }}</div>
             </div>
@@ -97,24 +96,28 @@
           <div class="section-header">
             <h2>Related Products</h2>
           </div>
-          
+
           <div class="related-grid">
-            <div 
-              v-for="relatedProduct in relatedProducts" 
+            <div
+              v-for="relatedProduct in relatedProducts"
               :key="relatedProduct.id"
               class="product-card"
               @click="viewProduct(relatedProduct.id)"
             >
               <div class="product-image">
-                <img 
-:src="relatedProduct.image_url || 'https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=600'" 
+                <img
+                  :src="
+                    relatedProduct.image_url ||
+                    'https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=600'
+                  "
                   :alt="relatedProduct.name"
                 />
               </div>
               <div class="product-info">
                 <h3>{{ relatedProduct.name }}</h3>
                 <span class="view-link">
-                  View Details <i class="pi pi-arrow-right"></i>
+                  View Details
+                  <i class="pi pi-arrow-right"></i>
                 </span>
               </div>
             </div>
@@ -126,8 +129,8 @@
     <Footer />
 
     <!-- Enquiry Dialog -->
-    <Dialog 
-      v-model:visible="showEnquiryDialog" 
+    <Dialog
+      v-model:visible="showEnquiryDialog"
       header="Request Quote"
       :style="{ width: '500px' }"
       :modal="true"
@@ -155,8 +158,8 @@
         </div>
         <div class="form-field">
           <label>Message *</label>
-          <Textarea 
-            v-model="enquiryForm.message" 
+          <Textarea
+            v-model="enquiryForm.message"
             rows="4"
             placeholder="Tell us about your requirements..."
           />
@@ -164,115 +167,122 @@
       </div>
       <template #footer>
         <Button label="Cancel" class="btn-secondary" @click="showEnquiryDialog = false" />
-        <Button label="Send Enquiry" class="btn-primary" @click="submitEnquiry" :loading="submitting" />
+        <Button
+          label="Send Enquiry"
+          class="btn-primary"
+          @click="submitEnquiry"
+          :loading="submitting"
+        />
       </template>
     </Dialog>
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
-import { useToast } from 'primevue/usetoast'
-import NavBar from '@/components/NavBar.vue'
-import Footer from '@/components/Footer.vue'
-import { useGSAP } from '@/composables/useGSAP'
-import api from '@/services/api'
+import Footer from '@/components/Footer.vue';
+import NavBar from '@/components/NavBar.vue';
+import { useGSAP } from '@/composables/useGSAP';
+import api from '@/services/api';
+import { useToast } from 'primevue/usetoast';
+import { onMounted, ref } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
 
-const route = useRoute()
-const router = useRouter()
-const toast = useToast()
+const route = useRoute();
+const router = useRouter();
+const toast = useToast();
 
-const product = ref(null)
-const relatedProducts = ref([])
-const loading = ref(true)
-const showEnquiryDialog = ref(false)
-const submitting = ref(false)
+const product = ref(null);
+const relatedProducts = ref([]);
+const loading = ref(true);
+const showEnquiryDialog = ref(false);
+const submitting = ref(false);
 
-const imageContainer = ref(null)
-const productImage = ref(null)
-const infoSection = ref(null)
-const specsSection = ref(null)
-const specsTable = ref(null)
+const imageContainer = ref(null);
+const productImage = ref(null);
+const infoSection = ref(null);
+const specsSection = ref(null);
+const specsTable = ref(null);
 
 const enquiryForm = ref({
   name: '',
   email: '',
   company: '',
   phone: '',
-  message: ''
-})
+  message: '',
+});
 
-const { fadeIn, gsap } = useGSAP()
+const { fadeIn, gsap } = useGSAP();
 
 // Image zoom effect
 const handleMouseMove = (e) => {
-  if (!productImage.value) return
-  
-  const rect = imageContainer.value.getBoundingClientRect()
-  const x = ((e.clientX - rect.left) / rect.width) * 100
-  const y = ((e.clientY - rect.top) / rect.height) * 100
-  
+  if (!productImage.value) return;
+
+  const rect = imageContainer.value.getBoundingClientRect();
+  const x = ((e.clientX - rect.left) / rect.width) * 100;
+  const y = ((e.clientY - rect.top) / rect.height) * 100;
+
   gsap.to(productImage.value, {
     scale: 1.5,
     transformOrigin: `${x}% ${y}%`,
     duration: 0.3,
-    ease: 'power2.out'
-  })
-}
+    ease: 'power2.out',
+  });
+};
 
 const handleMouseLeave = () => {
   gsap.to(productImage.value, {
     scale: 1,
     duration: 0.3,
-    ease: 'power2.out'
-  })
-}
+    ease: 'power2.out',
+  });
+};
 
 // Fetch product data
 const fetchProduct = async () => {
   try {
-    const response = await api.get(`/products/${route.params.id}`)
+    const response = await api.get(`/products/${route.params.id}`);
     if (response.data.success) {
-      product.value = response.data.data
-      fetchRelatedProducts()
+      product.value = response.data.data;
+      fetchRelatedProducts();
     }
   } catch (error) {
-    console.error('Failed to fetch product:', error)
+    console.error('Failed to fetch product:', error);
     toast.add({
       severity: 'error',
       summary: 'Error',
       detail: 'Failed to load product details',
-      life: 3000
-    })
+      life: 3000,
+    });
   } finally {
-    loading.value = false
+    loading.value = false;
   }
-}
+};
 
 const fetchRelatedProducts = async () => {
   try {
-    const response = await api.get(`/products?category=${product.value.category_slug}&status=active`)
+    const response = await api.get(
+      `/products?category=${product.value.category_slug}&status=active`,
+    );
     if (response.data.success) {
       relatedProducts.value = response.data.data
-        .filter(p => p.id !== product.value.id)
-        .slice(0, 3)
+        .filter((p) => p.id !== product.value.id)
+        .slice(0, 3);
     }
   } catch (error) {
-    console.error('Failed to fetch related products:', error)
+    console.error('Failed to fetch related products:', error);
   }
-}
+};
 
 const viewProduct = (id) => {
-  router.push(`/products/${id}`)
-  window.scrollTo(0, 0)
-  fetchProduct()
-}
+  router.push(`/products/${id}`);
+  window.scrollTo(0, 0);
+  fetchProduct();
+};
 
 const openEnquiryForm = () => {
-  showEnquiryDialog.value = true
-  enquiryForm.value.message = `I'm interested in ${product.value.name}. Please provide more information.`
-}
+  showEnquiryDialog.value = true;
+  enquiryForm.value.message = `I'm interested in ${product.value.name}. Please provide more information.`;
+};
 
 const submitEnquiry = async () => {
   // Validation
@@ -281,55 +291,55 @@ const submitEnquiry = async () => {
       severity: 'warn',
       summary: 'Validation Error',
       detail: 'Please fill in all required fields',
-      life: 3000
-    })
-    return
+      life: 3000,
+    });
+    return;
   }
 
-  submitting.value = true
+  submitting.value = true;
   try {
     const response = await api.post('/enquiry', {
       ...enquiryForm.value,
-      product_id: product.value.id
-    })
+      product_id: product.value.id,
+    });
 
     if (response.data.success) {
       toast.add({
         severity: 'success',
         summary: 'Success',
         detail: 'Your enquiry has been sent successfully!',
-        life: 5000
-      })
-      showEnquiryDialog.value = false
-      enquiryForm.value = { name: '', email: '', company: '', phone: '', message: '' }
+        life: 5000,
+      });
+      showEnquiryDialog.value = false;
+      enquiryForm.value = { name: '', email: '', company: '', phone: '', message: '' };
     }
   } catch (error) {
     toast.add({
       severity: 'error',
       summary: 'Error',
       detail: error.response?.data?.message || 'Failed to submit enquiry',
-      life: 3000
-    })
+      life: 3000,
+    });
   } finally {
-    submitting.value = false
+    submitting.value = false;
   }
-}
+};
 
 const downloadSpecs = () => {
-  const specsText = JSON.stringify(product.value.specs, null, 2)
-  const blob = new Blob([specsText], { type: 'application/json' })
-  const url = window.URL.createObjectURL(blob)
-  const link = document.createElement('a')
-  link.href = url
-  link.download = `${product.value.name.replace(/\s+/g, '-')}-specs.json`
-  link.click()
-  window.URL.revokeObjectURL(url)
-}
+  const specsText = JSON.stringify(product.value.specs, null, 2);
+  const blob = new Blob([specsText], { type: 'application/json' });
+  const url = window.URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = `${product.value.name.replace(/\s+/g, '-')}-specs.json`;
+  link.click();
+  window.URL.revokeObjectURL(url);
+};
 
 // Initialize animations
 const initAnimations = () => {
-  fadeIn(infoSection.value, { y: 30, duration: 0.8 })
-  
+  fadeIn(infoSection.value, { y: 30, duration: 0.8 });
+
   // Specs table slide in from bottom
   gsap.from(specsTable.value, {
     y: 60,
@@ -337,9 +347,9 @@ const initAnimations = () => {
     duration: 0.8,
     scrollTrigger: {
       trigger: specsSection.value,
-      start: 'top 70%'
-    }
-  })
+      start: 'top 70%',
+    },
+  });
 
   // Stagger spec rows
   gsap.from('.spec-row', {
@@ -349,19 +359,19 @@ const initAnimations = () => {
     duration: 0.5,
     scrollTrigger: {
       trigger: specsTable.value,
-      start: 'top 80%'
-    }
-  })
-}
+      start: 'top 80%',
+    },
+  });
+};
 
 onMounted(async () => {
-  await fetchProduct()
+  await fetchProduct();
   setTimeout(() => {
     if (product.value) {
-      initAnimations()
+      initAnimations();
     }
-  }, 100)
-})
+  }, 100);
+});
 </script>
 
 <style scoped>

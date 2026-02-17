@@ -24,19 +24,26 @@
           <div v-if="products.length === 0" class="empty-state">
             <i class="pi pi-inbox"></i>
             <h3>No products in this category yet</h3>
-            <Button label="View All Products" class="btn-primary" @click="$router.push('/products')" />
+            <Button
+              label="View All Products"
+              class="btn-primary"
+              @click="$router.push('/products')"
+            />
           </div>
 
           <div v-else class="products-grid">
-            <div 
-              v-for="product in products" 
+            <div
+              v-for="product in products"
               :key="product.id"
               class="product-card"
               @click="$router.push(`/products/${product.id}`)"
             >
               <div class="product-image">
-                <img 
-                  :src="product.image_url || 'https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=600'" 
+                <img
+                  :src="
+                    product.image_url ||
+                    'https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=600'
+                  "
                   :alt="product.name"
                 />
                 <div v-if="product.is_featured" class="product-badge">Featured</div>
@@ -45,7 +52,8 @@
                 <h3>{{ product.name }}</h3>
                 <p>{{ truncateText(product.description, 120) }}</p>
                 <span class="view-details">
-                  View Details <i class="pi pi-arrow-right"></i>
+                  View Details
+                  <i class="pi pi-arrow-right"></i>
                 </span>
               </div>
             </div>
@@ -59,47 +67,47 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
-import { useRoute } from 'vue-router'
-import NavBar from '@/components/NavBar.vue'
-import Footer from '@/components/Footer.vue'
-import api from '@/services/api'
+import Footer from '@/components/Footer.vue';
+import NavBar from '@/components/NavBar.vue';
+import api from '@/services/api';
+import { onMounted, ref } from 'vue';
+import { useRoute } from 'vue-router';
 
-const route = useRoute()
+const route = useRoute();
 
-const category = ref(null)
-const products = ref([])
-const loading = ref(true)
+const category = ref(null);
+const products = ref([]);
+const loading = ref(true);
 
 const fetchCategoryData = async () => {
   try {
     const [categoryRes, productsRes] = await Promise.all([
       api.get(`/categories/${route.params.slug}`),
-      api.get(`/products?category=${route.params.slug}&status=active`)
-    ])
+      api.get(`/products?category=${route.params.slug}&status=active`),
+    ]);
 
     if (categoryRes.data.success) {
-      category.value = categoryRes.data.data
+      category.value = categoryRes.data.data;
     }
 
     if (productsRes.data.success) {
-      products.value = productsRes.data.data
+      products.value = productsRes.data.data;
     }
   } catch (error) {
-    console.error('Failed to fetch category data:', error)
+    console.error('Failed to fetch category data:', error);
   } finally {
-    loading.value = false
+    loading.value = false;
   }
-}
+};
 
 const truncateText = (text, length) => {
-  if (!text) return ''
-  return text.length > length ? text.substring(0, length) + '...' : text
-}
+  if (!text) return '';
+  return text.length > length ? text.substring(0, length) + '...' : text;
+};
 
 onMounted(() => {
-  fetchCategoryData()
-})
+  fetchCategoryData();
+});
 </script>
 
 <style scoped>
@@ -213,7 +221,7 @@ onMounted(() => {
 
 .product-info h3 {
   margin-bottom: 0.75rem;
-  font-size:1.25rem;
+  font-size: 1.25rem;
 }
 
 .product-info p {

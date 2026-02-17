@@ -13,6 +13,7 @@ Before you begin, ensure you have the following installed:
 ## Step 1: Database Setup
 
 1. **Start MySQL server**:
+
    ```bash
    # Windows
    net start MySQL80
@@ -22,32 +23,37 @@ Before you begin, ensure you have the following installed:
    ```
 
 2. **Login to MySQL**:
+
    ```bash
    mysql -u root -p
    ```
 
 3. **Create database**:
+
    ```sql
    CREATE DATABASE sg_prime_db CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
    ```
 
 4. **Import the schema** (creates tables only):
+
    ```bash
    # Exit MySQL first (type 'exit')
    mysql -u root -p sg_prime_db < database/schema.sql
    ```
 
 5. **Install database seeder dependencies**:
+
    ```bash
    cd database
    npm install
    ```
 
 6. **Configure backend environment** (required for seeders):
-   
+
    Make sure `backend/.env` is configured with your database credentials (see Step 2 for details). The seeders read from this file.
 
 7. **Seed the database** with sample data:
+
    ```bash
    # From the database/ directory
    npm run seed
@@ -89,16 +95,19 @@ npm run seed:fresh
 ## Step 2: Backend Configuration
 
 1. **Navigate to backend folder**:
+
    ```bash
    cd backend
    ```
 
 2. **Install dependencies**:
+
    ```bash
    npm install
    ```
 
 3. **Create environment file**:
+
    ```bash
    # Windows PowerShell
    Copy-Item .env.example .env
@@ -108,6 +117,7 @@ npm run seed:fresh
    ```
 
 4. **Edit `.env` file** with your configuration:
+
    ```env
    # Server
    PORT=5000
@@ -146,23 +156,27 @@ npm run seed:fresh
    - The `ADMIN_USERNAME` and `ADMIN_PASSWORD` are used for admin login
 
 5. **Create uploads directory**:
+
    ```bash
    # The directory should already exist, but verify:
    mkdir -p uploads/products
    ```
 
 6. **Start the backend server**:
+
    ```bash
    npm start
    ```
 
    You should see:
+
    ```
    Server running on port 5000
    Database connected successfully
    ```
 
 7. **Test the API** (in a new terminal):
+
    ```bash
    # Health check
    curl http://localhost:5000/api/health
@@ -177,17 +191,20 @@ npm run seed:fresh
 ## Step 3: Frontend Configuration
 
 1. **Open a new terminal** and navigate to frontend folder:
+
    ```bash
    cd frontend
    ```
 
 2. **Install dependencies**:
+
    ```bash
    npm install
    ```
 
 3. **Verify Vite configuration** (`vite.config.js`):
    The proxy should already be configured to point to `http://localhost:5000`:
+
    ```javascript
    server: {
      proxy: {
@@ -198,11 +215,13 @@ npm run seed:fresh
    ```
 
 4. **Start the development server**:
+
    ```bash
    npm run dev
    ```
 
    You should see:
+
    ```
    VITE v5.0.11  ready in 500 ms
 
@@ -218,16 +237,19 @@ npm run seed:fresh
 Instead of running frontend and backend in separate terminals, you can use the root-level script:
 
 1. **Navigate to project root**:
+
    ```bash
    cd ..  # If you're in frontend folder
    ```
 
 2. **Install root dependencies**:
+
    ```bash
    npm install
    ```
 
 3. **Run both servers**:
+
    ```bash
    npm run dev
    ```
@@ -304,9 +326,11 @@ Instead of running frontend and backend in separate terminals, you can use the r
 ### Database Connection Issues
 
 **Error**: `ER_ACCESS_DENIED_ERROR`
+
 - **Solution**: Check your MySQL username and password in `.env`
 
 **Error**: `ER_BAD_DB_ERROR`
+
 - **Solution**: Ensure database `sg_prime_db` exists:
   ```sql
   SHOW DATABASES;
@@ -315,7 +339,9 @@ Instead of running frontend and backend in separate terminals, you can use the r
 ### Backend Server Issues
 
 **Error**: `Port 5000 already in use`
+
 - **Solution**: Kill the process using port 5000 or change `PORT` in `.env`:
+
   ```bash
   # Windows
   netstat -ano | findstr :5000
@@ -326,6 +352,7 @@ Instead of running frontend and backend in separate terminals, you can use the r
   ```
 
 **Error**: `Cannot find module`
+
 - **Solution**: Reinstall dependencies:
   ```bash
   cd backend
@@ -336,6 +363,7 @@ Instead of running frontend and backend in separate terminals, you can use the r
 ### Frontend Server Issues
 
 **Error**: `Failed to resolve import`
+
 - **Solution**: Clear cache and reinstall:
   ```bash
   cd frontend
@@ -344,16 +372,19 @@ Instead of running frontend and backend in separate terminals, you can use the r
   ```
 
 **Error**: `CORS error`
+
 - **Solution**: Ensure backend `FRONTEND_URL` in `.env` matches frontend URL
 
 ### Email Issues
 
 **Error**: `Invalid login` (Gmail)
+
 - **Solution**: Use Gmail App Password instead of regular password
 - Enable 2-factor authentication
 - Generate App Password: [https://myaccount.google.com/apppasswords](https://myaccount.google.com/apppasswords)
 
 **Error**: Email not sending
+
 - **Solution**: Check SMTP settings in `.env`
 - Test with a tool like [Mailtrap](https://mailtrap.io/) for development
 
@@ -362,14 +393,16 @@ Instead of running frontend and backend in separate terminals, you can use the r
 ### Build for Production
 
 1. **Build frontend**:
+
    ```bash
    cd frontend
    npm run build
    ```
-   
+
    This creates a `dist` folder with optimized static files.
 
 2. **Configure Nginx** (see main README.md for full configuration):
+
    ```nginx
    server {
      listen 80;
@@ -405,6 +438,7 @@ Instead of running frontend and backend in separate terminals, you can use the r
 ### Environment Variables for Production
 
 Update `.env` with production values:
+
 ```env
 NODE_ENV=production
 FRONTEND_URL=https://yourdomain.com
@@ -425,6 +459,7 @@ JWT_SECRET=use-a-strong-random-secret-here
 ## Support
 
 For issues or questions:
+
 - Check the main [README.md](../README.md)
 - Review API documentation in README.md
 - Check server logs for errors
@@ -432,20 +467,24 @@ For issues or questions:
 ## Quick Reference
 
 ### Default Credentials
+
 - **Admin Username**: `admin`
 - **Admin Password**: `Admin@123` (change in production!)
 
 ### Default Ports
+
 - **Backend**: 5000
 - **Frontend**: 5173
 - **MySQL**: 3306
 
 ### Important Directories
+
 - **Uploads**: `backend/uploads/products/`
 - **Database**: `database/schema.sql`
 - **Logs**: Check terminal/console output
 
 ### Sample Data
+
 - 3 categories (Erosion Control, Greenhouse Products, Gardening Products)
 - 6 products (2 per category)
 - 3 sample enquiries

@@ -7,15 +7,15 @@
 </template>
 
 <script setup>
-import { onMounted } from 'vue'
-import { useLenis } from '@/composables/useLenis'
+import { useLenis } from '@/composables/useLenis';
+import { onMounted } from 'vue';
 
 // Initialize smooth scrolling
-const { initLenis } = useLenis()
+const { initLenis } = useLenis();
 
 onMounted(() => {
-  initLenis()
-})
+  initLenis();
+});
 </script>
 
 <style>

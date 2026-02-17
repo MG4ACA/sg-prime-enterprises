@@ -10,7 +10,7 @@ exports.createEnquiry = async (req, res, next) => {
     const [result] = await db.query(
       `INSERT INTO enquiries (name, email, company, phone, message, product_id, status) 
        VALUES (?, ?, ?, ?, ?, ?, 'new')`,
-      [name, email, company, phone, message, product_id || null]
+      [name, email, company, phone, message, product_id || null],
     );
 
     // Get product name if product_id is provided
@@ -55,24 +55,36 @@ exports.createEnquiry = async (req, res, next) => {
                   <div class="label">Email:</div>
                   <div class="value">${email}</div>
                 </div>
-                ${company ? `
+                ${
+                  company
+                    ? `
                 <div class="field">
                   <div class="label">Company:</div>
                   <div class="value">${company}</div>
                 </div>
-                ` : ''}
-                ${phone ? `
+                `
+                    : ''
+                }
+                ${
+                  phone
+                    ? `
                 <div class="field">
                   <div class="label">Phone:</div>
                   <div class="value">${phone}</div>
                 </div>
-                ` : ''}
-                ${productName ? `
+                `
+                    : ''
+                }
+                ${
+                  productName
+                    ? `
                 <div class="field">
                   <div class="label">Product of Interest:</div>
                   <div class="value">${productName}</div>
                 </div>
-                ` : ''}
+                `
+                    : ''
+                }
                 <div class="field">
                   <div class="label">Message:</div>
                   <div class="value">${message}</div>
@@ -85,7 +97,7 @@ exports.createEnquiry = async (req, res, next) => {
             </div>
           </body>
           </html>
-        `
+        `,
       };
 
       await emailTransporter.sendMail(mailOptions);
@@ -98,8 +110,8 @@ exports.createEnquiry = async (req, res, next) => {
       success: true,
       message: 'Thank you for your enquiry. We will get back to you soon!',
       data: {
-        id: result.insertId
-      }
+        id: result.insertId,
+      },
     });
   } catch (error) {
     next(error);
@@ -130,7 +142,7 @@ exports.getAllEnquiries = async (req, res, next) => {
     res.json({
       success: true,
       count: enquiries.length,
-      data: enquiries
+      data: enquiries,
     });
   } catch (error) {
     next(error);
@@ -147,19 +159,19 @@ exports.getEnquiryById = async (req, res, next) => {
        FROM enquiries e
        LEFT JOIN products p ON e.product_id = p.id
        WHERE e.id = ?`,
-      [id]
+      [id],
     );
 
     if (enquiries.length === 0) {
       return res.status(404).json({
         success: false,
-        message: 'Enquiry not found'
+        message: 'Enquiry not found',
       });
     }
 
     res.json({
       success: true,
-      data: enquiries[0]
+      data: enquiries[0],
     });
   } catch (error) {
     next(error);
@@ -176,25 +188,26 @@ exports.updateEnquiryStatus = async (req, res, next) => {
     if (!validStatuses.includes(status)) {
       return res.status(400).json({
         success: false,
-        message: `Invalid status. Must be one of: ${validStatuses.join(', ')}`
+        message: `Invalid status. Must be one of: ${validStatuses.join(', ')}`,
       });
     }
 
-    const [result] = await db.query(
-      'UPDATE enquiries SET status = ?, notes = ? WHERE id = ?',
-      [status, notes || null, id]
-    );
+    const [result] = await db.query('UPDATE enquiries SET status = ?, notes = ? WHERE id = ?', [
+      status,
+      notes || null,
+      id,
+    ]);
 
     if (result.affectedRows === 0) {
       return res.status(404).json({
         success: false,
-        message: 'Enquiry not found'
+        message: 'Enquiry not found',
       });
     }
 
     res.json({
       success: true,
-      message: 'Enquiry status updated successfully'
+      message: 'Enquiry status updated successfully',
     });
   } catch (error) {
     next(error);
@@ -211,13 +224,13 @@ exports.deleteEnquiry = async (req, res, next) => {
     if (result.affectedRows === 0) {
       return res.status(404).json({
         success: false,
-        message: 'Enquiry not found'
+        message: 'Enquiry not found',
       });
     }
 
     res.json({
       success: true,
-      message: 'Enquiry deleted successfully'
+      message: 'Enquiry deleted successfully',
     });
   } catch (error) {
     next(error);

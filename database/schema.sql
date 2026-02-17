@@ -3,12 +3,8 @@
 -- Coir Products Industrial Catalog
 -- ============================================
 
--- Create database
-CREATE DATABASE IF NOT EXISTS sg_prime_enterprises 
-CHARACTER SET utf8mb4 
-COLLATE utf8mb4_unicode_ci;
-
-USE sg_prime_enterprises;
+-- Note: Database is created by seeders/setup.js
+-- Run: npm run setup (for first-time setup)
 
 -- ============================================
 -- CATEGORIES TABLE

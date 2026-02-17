@@ -9,6 +9,7 @@ Your complete industrial e-commerce web application for SG Prime Enterprises is 
 #### 1. **Customer-Facing Website** (5 Pages)
 
 **Home Page** (`/`)
+
 - Split-screen hero with parallax effects
 - Animated categories section
 - Featured products showcase
@@ -17,6 +18,7 @@ Your complete industrial e-commerce web application for SG Prime Enterprises is 
 - Full GSAP ScrollTrigger animations
 
 **Products Page** (`/products`)
+
 - Complete product catalog
 - Filter by category
 - Toggle featured products
@@ -24,6 +26,7 @@ Your complete industrial e-commerce web application for SG Prime Enterprises is 
 - Responsive grid layout
 
 **Product Detail Page** (`/products/:id`)
+
 - **Zoom-on-hover** product image (1.5x scale with dynamic origin)
 - Sticky product information
 - **Animated specifications table** (slide-in with row stagger)
@@ -33,12 +36,14 @@ Your complete industrial e-commerce web application for SG Prime Enterprises is 
 - Breadcrumb navigation
 
 **Category Page** (`/category/:slug`)
+
 - Category-specific product listings
 - Category description
 - Breadcrumb navigation
 - Same grid animations as products page
 
 **Contact Page** (`/contact`)
+
 - Full contact form with validation
 - Company information blocks
 - Business hours
@@ -48,17 +53,20 @@ Your complete industrial e-commerce web application for SG Prime Enterprises is 
 #### 2. **Admin Dashboard** (5 Pages + Login)
 
 **Admin Login** (`/admin/login`)
+
 - Secure JWT-based authentication
 - Credentials from environment variables
 - Redirect to intended page after login
 
 **Dashboard** (`/admin/dashboard`)
+
 - Statistics cards (products, categories, enquiries)
 - Recent enquiries table
 - Color-coded status badges
 - Quick overview of business metrics
 
 **Product Management** (`/admin/products`)
+
 - DataTable with pagination
 - **Add/Edit products** with image upload (JPEG/PNG/WebP)
 - **JSON specifications editor**
@@ -68,11 +76,13 @@ Your complete industrial e-commerce web application for SG Prime Enterprises is 
 - Delete with confirmation dialog
 
 **Category Management** (`/admin/categories`)
+
 - Simple CRUD interface
 - Slug management for SEO-friendly URLs
 - Category descriptions
 
 **Enquiry Management** (`/admin/enquiries`)
+
 - View all customer enquiries
 - Filter by status (pending/contacted/resolved)
 - **Update status** with dropdown
@@ -82,6 +92,7 @@ Your complete industrial e-commerce web application for SG Prime Enterprises is 
 #### 3. **Backend API** (Complete RESTful API)
 
 **Public Endpoints:**
+
 - `GET /api/categories` - List all categories
 - `GET /api/categories/:slug` - Get category by slug
 - `GET /api/products` - List products (with filters)
@@ -91,11 +102,13 @@ Your complete industrial e-commerce web application for SG Prime Enterprises is 
 - `GET /api/health` - Health check
 
 **Protected Admin Endpoints** (require JWT):
+
 - `GET/POST/PUT/DELETE /api/admin/products` - Full CRUD
 - `GET/POST/PUT/DELETE /api/admin/categories` - Full CRUD
 - `GET/PATCH /api/admin/enquiries` - View and update status
 
 **Features:**
+
 - JWT authentication with 24h expiry
 - Multer file uploads (5MB limit)
 - Bcrypt password hashing
@@ -108,16 +121,19 @@ Your complete industrial e-commerce web application for SG Prime Enterprises is 
 #### 4. **Database Schema** (MySQL)
 
 **Tables:**
+
 - `categories` - Product categories with slugs
 - `products` - Products with JSON specs column
 - `enquiries` - Customer enquiries with status tracking
 
 **Sample Data:**
+
 - 3 categories (Erosion Control, Greenhouse, Gardening)
 - 6 products (2 per category)
 - 3 sample enquiries
 
 **Features:**
+
 - Foreign key constraints
 - Indexes on slugs and status
 - UTF-8MB4 charset for full Unicode support
@@ -127,6 +143,7 @@ Your complete industrial e-commerce web application for SG Prime Enterprises is 
 #### 5. **Advanced Features Implemented**
 
 **Animations (GSAP + ScrollTrigger):**
+
 - ✅ Split-screen hero parallax
 - ✅ Fade-in animations with offset
 - ✅ Stagger effects (categories, products, features)
@@ -136,6 +153,7 @@ Your complete industrial e-commerce web application for SG Prime Enterprises is 
 - ✅ Smooth scrolling (Lenis)
 
 **Design System:**
+
 - ✅ CSS custom properties (variables)
 - ✅ Consistent color palette
 - ✅ Typography scale (Inter + Playfair Display)
@@ -144,6 +162,7 @@ Your complete industrial e-commerce web application for SG Prime Enterprises is 
 - ✅ Responsive breakpoints
 
 **Best Practices:**
+
 - ✅ Vue 3 Composition API
 - ✅ Reusable composables
 - ✅ Component-based architecture
@@ -158,13 +177,14 @@ Your complete industrial e-commerce web application for SG Prime Enterprises is 
 ### Prerequisites Check
 
 Run the setup verification script:
+
 ```bash
 # Windows
 setup-check.bat
 
 # This checks for:
 # - Node.js installation
-# - npm installation  
+# - npm installation
 # - MySQL installation
 # - Backend dependencies
 # - Frontend dependencies
@@ -210,11 +230,13 @@ npm run dev
 ```
 
 Access:
+
 - **Frontend**: http://localhost:5173
 - **Backend API**: http://localhost:5000/api
 - **Admin Login**: http://localhost:5173/admin/login
 
 Default admin credentials:
+
 - Username: `admin`
 - Password: `Admin@123` (configurable in backend/.env)
 
@@ -295,31 +317,29 @@ sg-prime-enterprises/
 ## 🎨 Design Tokens
 
 ### Colors
+
 ```css
---color-canvas: #FFF1E8   /* Background */
---color-secondary: #D39A6A /* Accent */
---color-primary: #9A5A2E   /* Brand */
---color-text: #3E1F0F      /* Text */
+--color-canvas: #fff1e8 /* Background */ --color-secondary: #d39a6a /* Accent */
+  --color-primary: #9a5a2e /* Brand */ --color-text: #3e1f0f /* Text */;
 ```
 
 ### Typography
+
 - **Primary Font**: Inter (body text)
 - **Display Font**: Playfair Display (headings)
 
 ### Spacing Scale
+
 ```css
---spacing-xs: 0.25rem   /* 4px */
---spacing-sm: 0.5rem    /* 8px */
---spacing-md: 1rem      /* 16px */
---spacing-lg: 1.5rem    /* 24px */
---spacing-xl: 2rem      /* 32px */
---spacing-2xl: 3rem     /* 48px */
---spacing-3xl: 4rem     /* 64px */
+--spacing-xs: 0.25rem /* 4px */ --spacing-sm: 0.5rem /* 8px */ --spacing-md: 1rem /* 16px */
+  --spacing-lg: 1.5rem /* 24px */ --spacing-xl: 2rem /* 32px */ --spacing-2xl: 3rem /* 48px */
+  --spacing-3xl: 4rem /* 64px */;
 ```
 
 ## 🧪 Testing Checklist
 
 ### Customer Features
+
 - [ ] Navigate to home page - verify hero animations
 - [ ] Browse products - test category filter
 - [ ] View product details - test zoom-on-hover
@@ -328,6 +348,7 @@ sg-prime-enterprises/
 - [ ] Submit contact form - verify form validation
 
 ### Admin Features
+
 - [ ] Login to admin panel
 - [ ] View dashboard statistics
 - [ ] Add new product with image
@@ -338,6 +359,7 @@ sg-prime-enterprises/
 - [ ] Test logout functionality
 
 ### Technical Tests
+
 - [ ] API health check: `curl http://localhost:5000/api/health`
 - [ ] Get categories: `curl http://localhost:5000/api/categories`
 - [ ] Get products: `curl http://localhost:5000/api/products`
@@ -349,6 +371,7 @@ sg-prime-enterprises/
 ## 📝 Configuration Files
 
 ### Backend Environment (`.env`)
+
 ```env
 # Must configure:
 DB_PASSWORD=your_mysql_password        # Your MySQL password
@@ -366,7 +389,9 @@ ADMIN_PASSWORD=Admin@123
 ```
 
 ### Frontend Vite Config
+
 Already configured with:
+
 - Proxy to backend API
 - Proxy to uploads directory
 - Port 5173
@@ -394,6 +419,7 @@ For VPS deployment (detailed in [SETUP.md](./SETUP.md)):
 ## 🎯 Key Features Highlights
 
 ### Advanced Animations
+
 1. **Zoom-on-hover** with dynamic transform origin based on mouse position
 2. **Specifications table** slides in from bottom with staggered rows
 3. **Hero parallax** with split-screen effect
@@ -401,6 +427,7 @@ For VPS deployment (detailed in [SETUP.md](./SETUP.md)):
 5. **Stagger effects** on product cards, categories, features
 
 ### Professional Admin Panel
+
 1. **DataTable** with pagination and sorting
 2. **Image upload** with preview and validation
 3. **JSON editor** for product specifications
@@ -408,7 +435,8 @@ For VPS deployment (detailed in [SETUP.md](./SETUP.md)):
 5. **Confirmation dialogs** for delete operations
 6. **Statistics dashboard** with color-coded cards
 
-### Email Integration  
+### Email Integration
+
 1. **Automatic notifications** when enquiries submitted
 2. **HTML email templates** with company branding
 3. **Enquiry details** include product information
@@ -429,11 +457,13 @@ For VPS deployment (detailed in [SETUP.md](./SETUP.md)):
 ## 📱 Responsive Design
 
 All pages are fully responsive with breakpoints:
+
 - Mobile: < 768px
 - Tablet: 768px - 968px
 - Desktop: > 968px
 
 Features:
+
 - Mobile-friendly navigation (hamburger menu)
 - Responsive grid layouts
 - Touch-friendly interactions
@@ -442,6 +472,7 @@ Features:
 ## 🎓 Learning Resources
 
 ### Technologies Used
+
 - **Vue 3**: https://vuejs.org/
 - **GSAP**: https://greensock.com/gsap/
 - **PrimeVue**: https://primevue.org/
@@ -449,6 +480,7 @@ Features:
 - **MySQL**: https://dev.mysql.com/doc/
 
 ### Project Documentation
+
 - [README.md](./README.md) - Project overview and API docs
 - [SETUP.md](./SETUP.md) - Step-by-step setup instructions
 - Code comments throughout the codebase
@@ -456,6 +488,7 @@ Features:
 ## 🐛 Known Issues / Future Enhancements
 
 ### Potential Improvements
+
 1. **SEO**: Apply useSEO composable to all pages with structured data
 2. **Image Optimization**: Implement lazy loading and WebP conversion
 3. **Search**: Add product search functionality
@@ -496,4 +529,3 @@ This project is built for SG Prime Enterprises.
 ---
 
 **Built with ❤️ using Vue 3, Express.js, and GSAP**
-

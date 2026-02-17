@@ -3,13 +3,11 @@ const db = require('../config/database');
 // Get all categories
 exports.getAllCategories = async (req, res, next) => {
   try {
-    const [categories] = await db.query(
-      'SELECT * FROM categories ORDER BY name ASC'
-    );
+    const [categories] = await db.query('SELECT * FROM categories ORDER BY name ASC');
 
     res.json({
       success: true,
-      data: categories
+      data: categories,
     });
   } catch (error) {
     next(error);
@@ -21,21 +19,18 @@ exports.getCategoryBySlug = async (req, res, next) => {
   try {
     const { slug } = req.params;
 
-    const [categories] = await db.query(
-      'SELECT * FROM categories WHERE slug = ?',
-      [slug]
-    );
+    const [categories] = await db.query('SELECT * FROM categories WHERE slug = ?', [slug]);
 
     if (categories.length === 0) {
       return res.status(404).json({
         success: false,
-        message: 'Category not found'
+        message: 'Category not found',
       });
     }
 
     res.json({
       success: true,
-      data: categories[0]
+      data: categories[0],
     });
   } catch (error) {
     next(error);
@@ -49,7 +44,7 @@ exports.createCategory = async (req, res, next) => {
 
     const [result] = await db.query(
       'INSERT INTO categories (name, slug, description) VALUES (?, ?, ?)',
-      [name, slug, description]
+      [name, slug, description],
     );
 
     res.status(201).json({
@@ -59,8 +54,8 @@ exports.createCategory = async (req, res, next) => {
         id: result.insertId,
         name,
         slug,
-        description
-      }
+        description,
+      },
     });
   } catch (error) {
     next(error);
@@ -75,19 +70,19 @@ exports.updateCategory = async (req, res, next) => {
 
     const [result] = await db.query(
       'UPDATE categories SET name = ?, slug = ?, description = ? WHERE id = ?',
-      [name, slug, description, id]
+      [name, slug, description, id],
     );
 
     if (result.affectedRows === 0) {
       return res.status(404).json({
         success: false,
-        message: 'Category not found'
+        message: 'Category not found',
       });
     }
 
     res.json({
       success: true,
-      message: 'Category updated successfully'
+      message: 'Category updated successfully',
     });
   } catch (error) {
     next(error);
@@ -102,13 +97,13 @@ exports.deleteCategory = async (req, res, next) => {
     // Check if category has products
     const [products] = await db.query(
       'SELECT COUNT(*) as count FROM products WHERE category_id = ?',
-      [id]
+      [id],
     );
 
     if (products[0].count > 0) {
       return res.status(400).json({
         success: false,
-        message: `Cannot delete category. It has ${products[0].count} product(s) associated with it.`
+        message: `Cannot delete category. It has ${products[0].count} product(s) associated with it.`,
       });
     }
 
@@ -117,13 +112,13 @@ exports.deleteCategory = async (req, res, next) => {
     if (result.affectedRows === 0) {
       return res.status(404).json({
         success: false,
-        message: 'Category not found'
+        message: 'Category not found',
       });
     }
 
     res.json({
       success: true,
-      message: 'Category deleted successfully'
+      message: 'Category deleted successfully',
     });
   } catch (error) {
     next(error);

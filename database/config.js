@@ -8,7 +8,7 @@ const pool = mysql.createPool({
   database: process.env.DB_NAME || 'sg_prime_db',
   waitForConnections: true,
   connectionLimit: 10,
-  queueLimit: 0
+  queueLimit: 0,
 });
 
 module.exports = pool;

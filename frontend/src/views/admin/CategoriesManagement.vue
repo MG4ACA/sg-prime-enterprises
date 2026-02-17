@@ -1,32 +1,28 @@
 <template>
   <div class="categories-management">
     <div class="page-actions">
-      <Button 
-        label="Add New Category" 
-        icon="pi pi-plus" 
+      <Button
+        label="Add New Category"
+        icon="pi pi-plus"
         class="btn-primary"
         @click="openDialog()"
       />
     </div>
 
-    <DataTable 
-      :value="categories" 
-      :loading="loading"
-      class="admin-table"
-    >
+    <DataTable :value="categories" :loading="loading" class="admin-table">
       <Column field="name" header="Category Name" sortable />
       <Column field="slug" header="Slug" sortable />
       <Column field="description" header="Description" />
       <Column header="Actions" style="width: 160px">
         <template #body="{ data }">
           <div class="action-buttons">
-            <Button 
-              icon="pi pi-pencil" 
+            <Button
+              icon="pi pi-pencil"
               class="p-button-sm p-button-text"
               @click="openDialog(data)"
             />
-            <Button 
-              icon="pi pi-trash" 
+            <Button
+              icon="pi pi-trash"
               class="p-button-sm p-button-text p-button-danger"
               @click="confirmDelete(data)"
             />
@@ -36,8 +32,8 @@
     </DataTable>
 
     <!-- Category Dialog -->
-    <Dialog 
-      v-model:visible="dialogVisible" 
+    <Dialog
+      v-model:visible="dialogVisible"
       :header="editingCategory ? 'Edit Category' : 'Add Category'"
       :style="{ width: '500px' }"
       modal
@@ -60,7 +56,12 @@
         </div>
 
         <div class="dialog-actions">
-          <Button label="Cancel" class="p-button-text" @click="dialogVisible = false" type="button" />
+          <Button
+            label="Cancel"
+            class="p-button-text"
+            @click="dialogVisible = false"
+            type="button"
+          />
           <Button label="Save" class="btn-primary" type="submit" :loading="saving" />
         </div>
       </form>
@@ -69,108 +70,133 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
-import { useToast } from 'primevue/usetoast'
-import { useConfirm } from 'primevue/useconfirm'
-import api from '@/services/api'
+import api from '@/services/api';
+import { useConfirm } from 'primevue/useconfirm';
+import { useToast } from 'primevue/usetoast';
+import { onMounted, ref } from 'vue';
 
-const toast = useToast()
-const confirm = useConfirm()
+const toast = useToast();
+const confirm = useConfirm();
 
-const categories = ref([])
-const loading = ref(false)
-const dialogVisible = ref(false)
-const editingCategory = ref(null)
-const saving = ref(false)
+const categories = ref([]);
+const loading = ref(false);
+const dialogVisible = ref(false);
+const editingCategory = ref(null);
+const saving = ref(false);
 
 const formData = ref({
   name: '',
   slug: '',
-  description: ''
-})
+  description: '',
+});
 
 const fetchCategories = async () => {
-  loading.value = true
+  loading.value = true;
   try {
-    const response = await api.get('/admin/categories')
-    
+    const response = await api.get('/admin/categories');
+
     if (response.data.success) {
-      categories.value = response.data.data
+      categories.value = response.data.data;
     }
   } catch (error) {
-    toast.add({ severity: 'error', summary: 'Error', detail: 'Failed to fetch categories', life: 3000 })
+    toast.add({
+      severity: 'error',
+      summary: 'Error',
+      detail: 'Failed to fetch categories',
+      life: 3000,
+    });
   } finally {
-    loading.value = false
+    loading.value = false;
   }
-}
+};
 
 const openDialog = (category = null) => {
   if (category) {
-    editingCategory.value = category
+    editingCategory.value = category;
     formData.value = {
       name: category.name,
       slug: category.slug,
-      description: category.description || ''
-    }
+      description: category.description || '',
+    };
   } else {
-    editingCategory.value = null
+    editingCategory.value = null;
     formData.value = {
       name: '',
       slug: '',
-      description: ''
-    }
+      description: '',
+    };
   }
-  dialogVisible.value = true
-}
+  dialogVisible.value = true;
+};
 
 const saveCategory = async () => {
-  saving.value = true
-  
+  saving.value = true;
+
   try {
-    let response
+    let response;
     if (editingCategory.value) {
-      response = await api.put(`/admin/categories/${editingCategory.value.id}`, formData.value)
+      response = await api.put(`/admin/categories/${editingCategory.value.id}`, formData.value);
     } else {
-      response = await api.post('/admin/categories', formData.value)
+      response = await api.post('/admin/categories', formData.value);
     }
 
     if (response.data.success) {
-      toast.add({ severity: 'success', summary: 'Success', detail: 'Category saved successfully', life: 3000 })
-      dialogVisible.value = false
-      fetchCategories()
+      toast.add({
+        severity: 'success',
+        summary: 'Success',
+        detail: 'Category saved successfully',
+        life: 3000,
+      });
+      dialogVisible.value = false;
+      fetchCategories();
     }
   } catch (error) {
-    toast.add({ severity: 'error', summary: 'Error', detail: 'Failed to save category', life: 3000 })
+    toast.add({
+      severity: 'error',
+      summary: 'Error',
+      detail: 'Failed to save category',
+      life: 3000,
+    });
   } finally {
-    saving.value = false
+    saving.value = false;
   }
-}
+};
 
 const confirmDelete = (category) => {
   confirm.require({
     message: `Are you sure you want to delete "${category.name}"?`,
     header: 'Confirm Delete',
     icon: 'pi pi-exclamation-triangle',
-    accept: () => deleteCategory(category.id)
-  })
-}
+    accept: () => deleteCategory(category.id),
+  });
+};
 
 const deleteCategory = async (id) => {
   try {
-    const response = await api.delete(`/admin/categories/${id}`)
-    
+    const response = await api.delete(`/admin/categories/${id}`);
+
     if (response.data.success) {
-      toast.add({ severity: 'success', summary: 'Success', detail: 'Category deleted', life: 3000 })
-      fetchCategories()
+      toast.add({
+        severity: 'success',
+        summary: 'Success',
+        detail: 'Category deleted',
+        life: 3000,
+      });
+      fetchCategories();
     }
   } catch (error) {
-    toast.add({ severity: 'error', summary: 'Error', detail: 'Failed to delete category', life: 3000 })
+    toast.add({
+      severity: 'error',
+      summary: 'Error',
+      detail: 'Failed to delete category',
+      life: 3000,
+    });
   }
-}
+};
 
 onMounted(() => {
-  fetchCategories()
-})
+  fetchCategories();
+});
 </script>
 
 <style scoped>

@@ -1,8 +1,8 @@
 <template>
   <div class="enquiries-management">
     <div class="filters">
-      <Dropdown 
-        v-model="selectedStatus" 
+      <Dropdown
+        v-model="selectedStatus"
         :options="statusOptions"
         optionLabel="label"
         optionValue="value"
@@ -11,13 +11,7 @@
       />
     </div>
 
-    <DataTable 
-      :value="enquiries" 
-      :loading="loading"
-      paginator 
-      :rows="15"
-      class="admin-table"
-    >
+    <DataTable :value="enquiries" :loading="loading" paginator :rows="15" class="admin-table">
       <Column field="name" header="Name" sortable />
       <Column field="email" header="Email" sortable />
       <Column field="company" header="Company" />
@@ -25,8 +19,8 @@
       <Column field="product_name" header="Product Interest" />
       <Column field="status" header="Status" style="width: 140px">
         <template #body="{ data }">
-          <Dropdown 
-            v-model="data.status" 
+          <Dropdown
+            v-model="data.status"
             :options="['pending', 'contacted', 'resolved']"
             @change="updateStatus(data)"
             class="status-dropdown"
@@ -40,18 +34,14 @@
       </Column>
       <Column header="Actions" style="width: 100px">
         <template #body="{ data }">
-          <Button 
-            icon="pi pi-eye" 
-            class="p-button-sm p-button-text"
-            @click="viewEnquiry(data)"
-          />
+          <Button icon="pi pi-eye" class="p-button-sm p-button-text" @click="viewEnquiry(data)" />
         </template>
       </Column>
     </DataTable>
 
     <!-- Enquiry Details Dialog -->
-    <Dialog 
-      v-model:visible="detailsDialogVisible" 
+    <Dialog
+      v-model:visible="detailsDialogVisible"
       header="Enquiry Details"
       :style="{ width: '600px' }"
       modal
@@ -101,63 +91,74 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
-import { useToast } from 'primevue/usetoast'
-import api from '@/services/api'
+import api from '@/services/api';
+import { useToast } from 'primevue/usetoast';
+import { onMounted, ref } from 'vue';
 
-const toast = useToast()
+const toast = useToast();
 
-const enquiries = ref([])
-const loading = ref(false)
-const selectedStatus = ref('all')
-const detailsDialogVisible = ref(false)
-const selectedEnquiry = ref(null)
+const enquiries = ref([]);
+const loading = ref(false);
+const selectedStatus = ref('all');
+const detailsDialogVisible = ref(false);
+const selectedEnquiry = ref(null);
 
 const statusOptions = [
   { label: 'All Enquiries', value: 'all' },
   { label: 'Pending', value: 'pending' },
   { label: 'Contacted', value: 'contacted' },
-  { label: 'Resolved', value: 'resolved' }
-]
+  { label: 'Resolved', value: 'resolved' },
+];
 
 const fetchEnquiries = async () => {
-  loading.value = true
+  loading.value = true;
   try {
-    const url = selectedStatus.value === 'all' 
-      ? '/admin/enquiries'
-      : `/admin/enquiries?status=${selectedStatus.value}`
-    
-    const response = await api.get(url)
-    
+    const url =
+      selectedStatus.value === 'all'
+        ? '/admin/enquiries'
+        : `/admin/enquiries?status=${selectedStatus.value}`;
+
+    const response = await api.get(url);
+
     if (response.data.success) {
-      enquiries.value = response.data.data
+      enquiries.value = response.data.data;
     }
   } catch (error) {
-    toast.add({ severity: 'error', summary: 'Error', detail: 'Failed to fetch enquiries', life: 3000 })
+    toast.add({
+      severity: 'error',
+      summary: 'Error',
+      detail: 'Failed to fetch enquiries',
+      life: 3000,
+    });
   } finally {
-    loading.value = false
+    loading.value = false;
   }
-}
+};
 
 const updateStatus = async (enquiry) => {
   try {
     const response = await api.patch(`/admin/enquiries/${enquiry.id}`, {
-      status: enquiry.status
-    })
-    
+      status: enquiry.status,
+    });
+
     if (response.data.success) {
-      toast.add({ severity: 'success', summary: 'Success', detail: 'Status updated', life: 2000 })
+      toast.add({ severity: 'success', summary: 'Success', detail: 'Status updated', life: 2000 });
     }
   } catch (error) {
-    toast.add({ severity: 'error', summary: 'Error', detail: 'Failed to update status', life: 3000 })
-    fetchEnquiries() // Revert on error
+    toast.add({
+      severity: 'error',
+      summary: 'Error',
+      detail: 'Failed to update status',
+      life: 3000,
+    });
+    fetchEnquiries(); // Revert on error
   }
-}
+};
 
 const viewEnquiry = (enquiry) => {
-  selectedEnquiry.value = enquiry
-  detailsDialogVisible.value = true
-}
+  selectedEnquiry.value = enquiry;
+  detailsDialogVisible.value = true;
+};
 
 const formatDate = (dateString) => {
   return new Date(dateString).toLocaleDateString('en-US', {
@@ -165,13 +166,13 @@ const formatDate = (dateString) => {
     month: 'long',
     day: 'numeric',
     hour: '2-digit',
-    minute: '2-digit'
-  })
-}
+    minute: '2-digit',
+  });
+};
 
 onMounted(() => {
-  fetchEnquiries()
-})
+  fetchEnquiries();
+});
 </script>
 
 <style scoped>

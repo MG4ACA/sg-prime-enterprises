@@ -9,8 +9,8 @@
             <span class="logo-sub">Enterprises</span>
           </div>
           <p class="footer-desc">
-            Premium industrial coir products manufacturer. Providing sustainable solutions 
-            for erosion control, greenhouse, and gardening applications.
+            Premium industrial coir products manufacturer. Providing sustainable solutions for
+            erosion control, greenhouse, and gardening applications.
           </p>
         </div>
 
@@ -39,9 +39,18 @@
         <div class="footer-section">
           <h4>Contact</h4>
           <div class="contact-info">
-            <p><i class="pi pi-envelope"></i> contact@sgprimeenterprises.com</p>
-            <p><i class="pi pi-phone"></i> +1 (555) 123-4567</p>
-            <p><i class="pi pi-map-marker"></i> Industrial Zone, City, Country</p>
+            <p>
+              <i class="pi pi-envelope"></i>
+              contact@sgprimeenterprises.com
+            </p>
+            <p>
+              <i class="pi pi-phone"></i>
+              +1 (555) 123-4567
+            </p>
+            <p>
+              <i class="pi pi-map-marker"></i>
+              Industrial Zone, City, Country
+            </p>
           </div>
           <div class="social-links">
             <a href="#" aria-label="Facebook"><i class="pi pi-facebook"></i></a>
@@ -61,17 +70,17 @@
 </template>
 
 <script setup>
-import { computed } from 'vue'
+import { computed } from 'vue';
 
-const currentYear = computed(() => new Date().getFullYear())
+const currentYear = computed(() => new Date().getFullYear());
 </script>
 
 <style scoped>
 .footer {
-  background-color: var(--color-text);
-  color: var(--color-canvas);
+  background-color: #1a2e1a;
+  color: #e8e0d8;
   padding: 4rem 0 2rem;
-  margin-top: 6rem;
+  margin-top: 0;
 }
 
 .footer-content {
@@ -109,7 +118,7 @@ const currentYear = computed(() => new Date().getFullYear())
 }
 
 .footer-desc {
-  color: rgba(255, 241, 232, 0.8);
+  color: rgba(232, 224, 216, 0.8);
   line-height: 1.7;
   font-size: 0.95rem;
 }
@@ -124,7 +133,7 @@ const currentYear = computed(() => new Date().getFullYear())
 }
 
 .footer-links a {
-  color: rgba(255, 241, 232, 0.8);
+  color: rgba(232, 224, 216, 0.8);
   text-decoration: none;
   transition: color var(--transition-fast);
   font-size: 0.95rem;
@@ -143,7 +152,7 @@ const currentYear = computed(() => new Date().getFullYear())
   align-items: center;
   gap: 0.75rem;
   margin-bottom: 0.75rem;
-  color: rgba(255, 241, 232, 0.8);
+  color: rgba(232, 224, 216, 0.8);
   font-size: 0.95rem;
 }
 
@@ -163,9 +172,9 @@ const currentYear = computed(() => new Date().getFullYear())
   justify-content: center;
   width: 40px;
   height: 40px;
-  background-color: rgba(255, 241, 232, 0.1);
+  background-color: rgba(232, 224, 216, 0.1);
   border-radius: 50%;
-  color: var(--color-secondary);
+  color: var(--color-green-light, #4caf50);
   transition: all var(--transition-medium);
 }
 
@@ -177,12 +186,12 @@ const currentYear = computed(() => new Date().getFullYear())
 
 .footer-bottom {
   padding-top: 2rem;
-  border-top: 1px solid rgba(255, 241, 232, 0.1);
+  border-top: 1px solid rgba(232, 224, 216, 0.1);
   text-align: center;
 }
 
 .footer-bottom p {
-  color: rgba(255, 241, 232, 0.6);
+  color: rgba(232, 224, 216, 0.6);
   font-size: 0.875rem;
   margin-bottom: 0.5rem;
 }

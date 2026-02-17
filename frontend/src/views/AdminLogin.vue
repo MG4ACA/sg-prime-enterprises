@@ -10,8 +10,8 @@
         <form @submit.prevent="handleLogin" class="login-form">
           <div class="form-field">
             <label>Username</label>
-            <InputText 
-              v-model="credentials.username" 
+            <InputText
+              v-model="credentials.username"
               placeholder="Enter username"
               autocomplete="username"
               required
@@ -20,8 +20,8 @@
 
           <div class="form-field">
             <label>Password</label>
-            <InputText 
-              v-model="credentials.password" 
+            <InputText
+              v-model="credentials.password"
               type="password"
               placeholder="Enter password"
               autocomplete="current-password"
@@ -29,9 +29,9 @@
             />
           </div>
 
-          <Button 
+          <Button
             type="submit"
-            label="Sign In" 
+            label="Sign In"
             icon="pi pi-sign-in"
             class="btn-primary btn-block"
             :loading="loading"
@@ -45,44 +45,44 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
-import { useRouter } from 'vue-router'
-import { useAuthStore } from '@/stores/auth'
-import { useToast } from 'primevue/usetoast'
+import { useAuthStore } from '@/stores/auth';
+import { useToast } from 'primevue/usetoast';
+import { ref } from 'vue';
+import { useRouter } from 'vue-router';
 
-const router = useRouter()
-const authStore = useAuthStore()
-const toast = useToast()
+const router = useRouter();
+const authStore = useAuthStore();
+const toast = useToast();
 
 const credentials = ref({
   username: '',
-  password: ''
-})
+  password: '',
+});
 
-const loading = ref(false)
-const errorMessage = ref('')
+const loading = ref(false);
+const errorMessage = ref('');
 
 const handleLogin = async () => {
-  loading.value = true
-  errorMessage.value = ''
+  loading.value = true;
+  errorMessage.value = '';
 
   try {
-    await authStore.login(credentials.value)
-    
+    await authStore.login(credentials.value);
+
     toast.add({
       severity: 'success',
       summary: 'Welcome!',
       detail: 'Login successful',
-      life: 2000
-    })
-    
-    router.push('/admin/dashboard')
+      life: 2000,
+    });
+
+    router.push('/admin/dashboard');
   } catch (error) {
-    errorMessage.value = error.response?.data?.message || 'Invalid credentials'
+    errorMessage.value = error.response?.data?.message || 'Invalid credentials';
   } finally {
-    loading.value = false
+    loading.value = false;
   }
-}
+};
 </script>
 
 <style scoped>

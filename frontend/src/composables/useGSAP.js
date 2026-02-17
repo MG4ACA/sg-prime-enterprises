@@ -1,35 +1,35 @@
-import { onMounted, onUnmounted } from 'vue'
-import gsap from 'gsap'
-import { ScrollTrigger } from 'gsap/ScrollTrigger'
+import gsap from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { onUnmounted } from 'vue';
 
-gsap.registerPlugin(ScrollTrigger)
+gsap.registerPlugin(ScrollTrigger);
 
 export function useGSAP() {
   // Fade in animation
   const fadeIn = (element, options = {}) => {
     return gsap.fromTo(
       element,
-      { 
-        opacity: 0, 
-        y: options.y || 30 
+      {
+        opacity: 0,
+        y: options.y || 30,
       },
       {
         opacity: 1,
         y: 0,
         duration: options.duration || 0.8,
         ease: options.ease || 'power3.out',
-        delay: options.delay || 0
-      }
-    )
-  }
+        delay: options.delay || 0,
+      },
+    );
+  };
 
   // Stagger animation for multiple elements
   const staggerIn = (elements, options = {}) => {
     return gsap.fromTo(
       elements,
-      { 
-        opacity: 0, 
-        y: options.y || 50 
+      {
+        opacity: 0,
+        y: options.y || 50,
       },
       {
         opacity: 1,
@@ -37,10 +37,10 @@ export function useGSAP() {
         duration: options.duration || 0.6,
         stagger: options.stagger || 0.1,
         ease: options.ease || 'power2.out',
-        scrollTrigger: options.scrollTrigger || null
-      }
-    )
-  }
+        scrollTrigger: options.scrollTrigger || null,
+      },
+    );
+  };
 
   // Parallax effect
   const parallax = (element, options = {}) => {
@@ -52,10 +52,10 @@ export function useGSAP() {
         start: options.start || 'top bottom',
         end: options.end || 'bottom top',
         scrub: options.scrub !== undefined ? options.scrub : true,
-        ...options.scrollTrigger
-      }
-    })
-  }
+        ...options.scrollTrigger,
+      },
+    });
+  };
 
   // Scale on scroll
   const scaleOnScroll = (element, options = {}) => {
@@ -70,11 +70,11 @@ export function useGSAP() {
           start: options.start || 'top 80%',
           end: options.end || 'top 30%',
           scrub: options.scrub !== undefined ? options.scrub : 1,
-          ...options.scrollTrigger
-        }
-      }
-    )
-  }
+          ...options.scrollTrigger,
+        },
+      },
+    );
+  };
 
   // Background color transition
   const colorTransition = (element, colors = [], options = {}) => {
@@ -84,33 +84,37 @@ export function useGSAP() {
         start: options.start || 'top center',
         end: options.end || 'bottom center',
         scrub: options.scrub !== undefined ? options.scrub : 1,
-        ...options.scrollTrigger
-      }
-    })
+        ...options.scrollTrigger,
+      },
+    });
 
     colors.forEach((color, index) => {
-      tl.to(element, {
-        backgroundColor: color,
-        duration: 1,
-      }, index)
-    })
+      tl.to(
+        element,
+        {
+          backgroundColor: color,
+          duration: 1,
+        },
+        index,
+      );
+    });
 
-    return tl
-  }
+    return tl;
+  };
 
   // Refresh ScrollTrigger (useful after DOM changes)
   const refreshScrollTrigger = () => {
-    ScrollTrigger.refresh()
-  }
+    ScrollTrigger.refresh();
+  };
 
   // Kill all ScrollTriggers
   const killScrollTriggers = () => {
-    ScrollTrigger.getAll().forEach(trigger => trigger.kill())
-  }
+    ScrollTrigger.getAll().forEach((trigger) => trigger.kill());
+  };
 
   onUnmounted(() => {
-    killScrollTriggers()
-  })
+    killScrollTriggers();
+  });
 
   return {
     gsap,
@@ -121,6 +125,6 @@ export function useGSAP() {
     scaleOnScroll,
     colorTransition,
     refreshScrollTrigger,
-    killScrollTriggers
-  }
+    killScrollTriggers,
+  };
 }

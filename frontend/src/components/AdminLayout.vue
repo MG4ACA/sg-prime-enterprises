@@ -44,36 +44,36 @@
 </template>
 
 <script setup>
-import { computed } from 'vue'
-import { useRouter, useRoute } from 'vue-router'
-import { useAuthStore } from '@/stores/auth'
-import { useToast } from 'primevue/usetoast'
+import { useAuthStore } from '@/stores/auth';
+import { useToast } from 'primevue/usetoast';
+import { computed } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
 
-const router = useRouter()
-const route = useRoute()
-const authStore = useAuthStore()
-const toast = useToast()
+const router = useRouter();
+const route = useRoute();
+const authStore = useAuthStore();
+const toast = useToast();
 
 const pageTitle = computed(() => {
   const titles = {
     '/admin/dashboard': 'Dashboard',
     '/admin/products': 'Manage Products',
     '/admin/categories': 'Manage Categories',
-    '/admin/enquiries': 'Manage Enquiries'
-  }
-  return titles[route.path] || 'Admin'
-})
+    '/admin/enquiries': 'Manage Enquiries',
+  };
+  return titles[route.path] || 'Admin';
+});
 
 const handleLogout = () => {
-  authStore.logout()
+  authStore.logout();
   toast.add({
     severity: 'info',
     summary: 'Logged Out',
     detail: 'You have been logged out successfully',
-    life: 2000
-  })
-  router.push('/admin/login')
-}
+    life: 2000,
+  });
+  router.push('/admin/login');
+};
 </script>
 
 <style scoped>

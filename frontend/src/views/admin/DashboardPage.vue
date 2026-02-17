@@ -44,10 +44,10 @@
 
     <div class="recent-section">
       <h2>Recent Enquiries</h2>
-      <DataTable 
-        :value="recentEnquiries" 
+      <DataTable
+        :value="recentEnquiries"
         :loading="loading"
-        paginator 
+        paginator
         :rows="5"
         class="admin-table"
       >
@@ -73,59 +73,59 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
-import api from '@/services/api'
+import api from '@/services/api';
+import { onMounted, ref } from 'vue';
 
 const stats = ref({
   totalProducts: 0,
   totalCategories: 0,
   totalEnquiries: 0,
-  pendingEnquiries: 0
-})
+  pendingEnquiries: 0,
+});
 
-const recentEnquiries = ref([])
-const loading = ref(true)
+const recentEnquiries = ref([]);
+const loading = ref(true);
 
 const fetchDashboardData = async () => {
   try {
     const [productsRes, categoriesRes, enquiriesRes] = await Promise.all([
       api.get('/admin/products'),
       api.get('/admin/categories'),
-      api.get('/admin/enquiries')
-    ])
+      api.get('/admin/enquiries'),
+    ]);
 
     if (productsRes.data.success) {
-      stats.value.totalProducts = productsRes.data.data.length
+      stats.value.totalProducts = productsRes.data.data.length;
     }
 
     if (categoriesRes.data.success) {
-      stats.value.totalCategories = categoriesRes.data.data.length
+      stats.value.totalCategories = categoriesRes.data.data.length;
     }
 
     if (enquiriesRes.data.success) {
-      const enquiries = enquiriesRes.data.data
-      stats.value.totalEnquiries = enquiries.length
-      stats.value.pendingEnquiries = enquiries.filter(e => e.status === 'pending').length
-      recentEnquiries.value = enquiries.slice(0, 10)
+      const enquiries = enquiriesRes.data.data;
+      stats.value.totalEnquiries = enquiries.length;
+      stats.value.pendingEnquiries = enquiries.filter((e) => e.status === 'pending').length;
+      recentEnquiries.value = enquiries.slice(0, 10);
     }
   } catch (error) {
-    console.error('Failed to fetch dashboard data:', error)
+    console.error('Failed to fetch dashboard data:', error);
   } finally {
-    loading.value = false
+    loading.value = false;
   }
-}
+};
 
 const formatDate = (dateString) => {
   return new Date(dateString).toLocaleDateString('en-US', {
     year: 'numeric',
     month: 'short',
-    day: 'numeric'
-  })
-}
+    day: 'numeric',
+  });
+};
 
 onMounted(() => {
-  fetchDashboardData()
-})
+  fetchDashboardData();
+});
 </script>
 
 <style scoped>

@@ -7,6 +7,7 @@ A high-end e-commerce web application for showcasing coir manufacturing products
 > **New to this project?** Follow the detailed step-by-step setup guide in [SETUP.md](./SETUP.md)
 
 For experienced developers:
+
 ```bash
 # 1. Import database
 mysql -u root -p sg_prime_db < database/schema.sql
@@ -43,6 +44,7 @@ Access the application at [http://localhost:5173](http://localhost:5173)
 ## 🚀 Tech Stack
 
 ### Frontend
+
 - **Vue 3** (Composition API)
 - **Vite** (Build tool)
 - **PrimeVue** (UI Components)
@@ -51,6 +53,7 @@ Access the application at [http://localhost:5173](http://localhost:5173)
 - **VueUse** (Composition utilities)
 
 ### Backend
+
 - **Express.js** (Node.js framework)
 - **MySQL** (Database)
 - **JWT** (Authentication)
@@ -84,6 +87,7 @@ sg-prime-enterprises/
 ## 🛠️ Installation & Setup
 
 ### Prerequisites
+
 - Node.js (v18 or higher)
 - MySQL (v8 or higher)
 - npm or yarn
@@ -158,6 +162,7 @@ npm run dev:backend   # Backend at http://localhost:5000
 ## 🎯 Features
 
 ### Customer-Facing Features
+
 - **Hero Section**: Split-screen design with parallax animations
 - **Scrollytelling**: Background color transitions and staggered product cards
 - **Product Catalog**: Category-based browsing with smooth animations
@@ -166,6 +171,7 @@ npm run dev:backend   # Backend at http://localhost:5000
 - **SEO Optimized**: Meta tags, semantic HTML, structured data
 
 ### Admin Features
+
 - **JWT Authentication**: Secure login system
 - **Product Management**: Quick-add drawer with JSON spec editor
 - **Image Upload**: Local VPS storage with multer
@@ -175,12 +181,14 @@ npm run dev:backend   # Backend at http://localhost:5000
 ## 🌐 API Endpoints
 
 ### Public Routes
+
 - `GET /api/categories` - List all categories
 - `GET /api/products` - List all products (with filtering)
 - `GET /api/products/:id` - Get single product details
 - `POST /api/enquiry` - Submit customer enquiry
 
 ### Admin Routes (Protected)
+
 - `POST /api/admin/login` - Admin authentication
 - `POST /api/admin/products` - Create new product
 - `PUT /api/admin/products/:id` - Update product
@@ -202,11 +210,13 @@ npm run build
 ### VPS Setup
 
 1. **Install PM2** (Process Manager)
+
 ```bash
 npm install -g pm2
 ```
 
 2. **Start Backend**
+
 ```bash
 cd backend
 pm2 start src/server.js --name sg-backend
@@ -215,6 +225,7 @@ pm2 startup
 ```
 
 3. **Serve Frontend** (with Nginx)
+
 ```nginx
 server {
     listen 80;
@@ -246,6 +257,7 @@ server {
 ## 📊 Database Schema
 
 ### Categories
+
 - `id` (Primary Key)
 - `name` (VARCHAR)
 - `slug` (VARCHAR, unique)
@@ -253,6 +265,7 @@ server {
 - `created_at` (TIMESTAMP)
 
 ### Products
+
 - `id` (Primary Key)
 - `category_id` (Foreign Key)
 - `name` (VARCHAR)
@@ -262,6 +275,7 @@ server {
 - `created_at` (TIMESTAMP)
 
 ### Enquiries
+
 - `id` (Primary Key)
 - `name` (VARCHAR)
 - `email` (VARCHAR)

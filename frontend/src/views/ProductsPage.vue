@@ -17,9 +17,9 @@
         <div class="filters-bar">
           <div class="filter-group">
             <label>Category:</label>
-            <Dropdown 
-              v-model="selectedCategory" 
-              :options="filterCategories" 
+            <Dropdown
+              v-model="selectedCategory"
+              :options="filterCategories"
               optionLabel="name"
               optionValue="slug"
               placeholder="All Categories"
@@ -27,8 +27,8 @@
             />
           </div>
           <div class="filter-group">
-            <Button 
-              :label="`${showFeaturedOnly ? 'Show All' : 'Featured Only'}`" 
+            <Button
+              :label="`${showFeaturedOnly ? 'Show All' : 'Featured Only'}`"
               :class="showFeaturedOnly ? 'btn-primary' : 'btn-secondary'"
               @click="toggleFeatured"
             />
@@ -48,15 +48,18 @@
         </div>
 
         <div v-else class="products-grid" ref="productsGrid">
-          <div 
-            v-for="product in products" 
+          <div
+            v-for="product in products"
             :key="product.id"
             class="product-card"
             @click="viewProduct(product.id)"
           >
             <div class="product-image">
-              <img 
-                :src="product.image_url || 'https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=600'" 
+              <img
+                :src="
+                  product.image_url ||
+                  'https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=600'
+                "
                 :alt="product.name"
               />
               <div v-if="product.is_featured" class="product-badge">Featured</div>
@@ -67,7 +70,8 @@
               <p>{{ truncateText(product.description, 120) }}</p>
               <div class="product-footer">
                 <span class="view-details">
-                  View Details <i class="pi pi-arrow-right"></i>
+                  View Details
+                  <i class="pi pi-arrow-right"></i>
                 </span>
               </div>
             </div>
@@ -81,95 +85,90 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
-import { useRouter } from 'vue-router'
-import NavBar from '@/components/NavBar.vue'
-import Footer from '@/components/Footer.vue'
-import { useGSAP } from '@/composables/useGSAP'
-import api from '@/services/api'
+import Footer from '@/components/Footer.vue';
+import NavBar from '@/components/NavBar.vue';
+import { useGSAP } from '@/composables/useGSAP';
+import api from '@/services/api';
+import { onMounted, ref } from 'vue';
+import { useRouter } from 'vue-router';
 
-const router = useRouter()
-const productsGrid = ref(null)
+const router = useRouter();
+const productsGrid = ref(null);
 
-const products = ref([])
-const categories = ref([])
-const selectedCategory = ref(null)
-const showFeaturedOnly = ref(false)
-const loading = ref(true)
+const products = ref([]);
+const categories = ref([]);
+const selectedCategory = ref(null);
+const showFeaturedOnly = ref(false);
+const loading = ref(true);
 
-const { staggerIn } = useGSAP()
+const { staggerIn } = useGSAP();
 
-const filterCategories = ref([
-  { name: 'All Categories', slug: null }
-])
+const filterCategories = ref([{ name: 'All Categories', slug: null }]);
 
 const fetchCategories = async () => {
   try {
-    const response = await api.get('/categories')
+    const response = await api.get('/categories');
     if (response.data.success) {
-      categories.value = response.data.data
-      filterCategories.value = [
-        { name: 'All Categories', slug: null },
-        ...response.data.data
-      ]
+      categories.value = response.data.data;
+      filterCategories.value = [{ name: 'All Categories', slug: null }, ...response.data.data];
     }
   } catch (error) {
-    console.error('Failed to fetch categories:', error)
+    console.error('Failed to fetch categories:', error);
   }
-}
+};
 
 const fetchProducts = async () => {
-  loading.value = true
+  loading.value = true;
   try {
-    let url = '/products?status=active'
-    
+    let url = '/products?status=active';
+
     if (selectedCategory.value) {
-      url += `&category=${selectedCategory.value}`
-    }
-    
-    if (showFeaturedOnly.value) {
-      url += '&featured=true'
+      url += `&category=${selectedCategory.value}`;
     }
 
-    const response = await api.get(url)
+    if (showFeaturedOnly.value) {
+      url += '&featured=true';
+    }
+
+    const response = await api.get(url);
     if (response.data.success) {
-      products.value = response.data.data
-      
+      products.value = response.data.data;
+
       // Animate on load
       setTimeout(() => {
         if (productsGrid.value) {
           staggerIn('.product-card', {
             y: 40,
-            stagger: 0.08
-          })
+            stagger: 0.08,
+          });
         }
-      }, 100)
+      }, 100);
     }
   } catch (error) {
-    console.error('Failed to fetch products:', error)
+    console.error('Failed to fetch products:', error);
   } finally {
-    loading.value = false
+    loading.value = false;
   }
-}
+};
 
 const toggleFeatured = () => {
-  showFeaturedOnly.value = !showFeaturedOnly.value
-  fetchProducts()
-}
+  showFeaturedOnly.value = !showFeaturedOnly.value;
+  fetchProducts();
+};
 
 const viewProduct = (id) => {
-  router.push(`/products/${id}`)
-}
+  router.push(`/products/${id}`);
+};
 
 const truncateText = (text, length) => {
-  if (!text) return ''
-  return text.length > length ? text.substring(0, length) + '...' : text
-}
+  if (!text) return '';
+  return text.length > length ? text.substring(0, length) + '...' : text;
+};
 
 onMounted(async () => {
-  await fetchCategories()
-  await fetchProducts()
-})
+  await fetchCategories();
+  await fetchProducts();
+});
 </script>
 
 <style scoped>

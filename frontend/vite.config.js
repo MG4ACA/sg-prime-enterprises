@@ -1,6 +1,6 @@
-import { defineConfig } from 'vite'
-import vue from '@vitejs/plugin-vue'
-import path from 'path'
+import vue from '@vitejs/plugin-vue';
+import path from 'path';
+import { defineConfig } from 'vite';
 
 export default defineConfig({
   plugins: [vue()],
@@ -14,13 +14,13 @@ export default defineConfig({
     proxy: {
       '/api': {
         target: 'http://localhost:5000',
-        changeOrigin: true
+        changeOrigin: true,
       },
       '/uploads': {
         target: 'http://localhost:5000',
-        changeOrigin: true
-      }
-    }
+        changeOrigin: true,
+      },
+    },
   },
   build: {
     outDir: 'dist',
@@ -28,11 +28,11 @@ export default defineConfig({
     rollupOptions: {
       output: {
         manualChunks: {
-          'vendor': ['vue', 'vue-router', 'pinia'],
-          'primevue': ['primevue'],
-          'animations': ['gsap', '@studio-freight/lenis']
-        }
-      }
-    }
-  }
-})
+          vendor: ['vue', 'vue-router', 'pinia'],
+          primevue: ['primevue'],
+          animations: ['gsap', '@studio-freight/lenis'],
+        },
+      },
+    },
+  },
+});

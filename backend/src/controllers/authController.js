@@ -11,7 +11,7 @@ exports.login = async (req, res, next) => {
     if (!username || !password) {
       return res.status(400).json({
         success: false,
-        message: 'Username and password are required'
+        message: 'Username and password are required',
       });
     }
 
@@ -22,7 +22,7 @@ exports.login = async (req, res, next) => {
     if (username !== adminUsername) {
       return res.status(401).json({
         success: false,
-        message: 'Invalid credentials'
+        message: 'Invalid credentials',
       });
     }
 
@@ -31,18 +31,18 @@ exports.login = async (req, res, next) => {
     if (password !== adminPassword) {
       return res.status(401).json({
         success: false,
-        message: 'Invalid credentials'
+        message: 'Invalid credentials',
       });
     }
 
     // Generate JWT token
     const token = jwt.sign(
-      { 
+      {
         username: adminUsername,
-        role: 'admin'
+        role: 'admin',
       },
       process.env.JWT_SECRET,
-      { expiresIn: process.env.JWT_EXPIRES_IN || '24h' }
+      { expiresIn: process.env.JWT_EXPIRES_IN || '24h' },
     );
 
     res.json({
@@ -51,8 +51,8 @@ exports.login = async (req, res, next) => {
       data: {
         token,
         username: adminUsername,
-        role: 'admin'
-      }
+        role: 'admin',
+      },
     });
   } catch (error) {
     next(error);
@@ -66,7 +66,7 @@ exports.verifyToken = async (req, res) => {
     success: true,
     data: {
       username: req.admin.username,
-      role: req.admin.role
-    }
+      role: req.admin.role,
+    },
   });
 };

@@ -1,7 +1,6 @@
-import { onMounted, onUnmounted } from 'vue'
-import Lenis from '@studio-freight/lenis'
+import Lenis from '@studio-freight/lenis';
 
-let lenis = null
+let lenis = null;
 
 export function useLenis() {
   const initLenis = () => {
@@ -12,34 +11,34 @@ export function useLenis() {
       gestureDirection: 'vertical',
       smooth: true,
       smoothTouch: false,
-      touchMultiplier: 2
-    })
+      touchMultiplier: 2,
+    });
 
     function raf(time) {
-      lenis.raf(time)
-      requestAnimationFrame(raf)
+      lenis.raf(time);
+      requestAnimationFrame(raf);
     }
 
-    requestAnimationFrame(raf)
-  }
+    requestAnimationFrame(raf);
+  };
 
   const scrollTo = (target, options = {}) => {
     if (lenis) {
-      lenis.scrollTo(target, options)
+      lenis.scrollTo(target, options);
     }
-  }
+  };
 
   const destroy = () => {
     if (lenis) {
-      lenis.destroy()
-      lenis = null
+      lenis.destroy();
+      lenis = null;
     }
-  }
+  };
 
   return {
     lenis,
     initLenis,
     scrollTo,
-    destroy
-  }
+    destroy,
+  };
 }

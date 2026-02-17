@@ -1,7 +1,7 @@
 <template>
   <div class="not-found-page">
     <NavBar />
-    
+
     <div class="not-found-content">
       <div class="container">
         <div class="error-box">
@@ -9,8 +9,17 @@
           <h2>Page Not Found</h2>
           <p>The page you're looking for doesn't exist or has been moved.</p>
           <div class="actions">
-            <Button label="Go Home" icon="pi pi-home" class="btn-primary" @click="$router.push('/')" />
-            <Button label="View Products" class="btn-secondary" @click="$router.push('/products')" />
+            <Button
+              label="Go Home"
+              icon="pi pi-home"
+              class="btn-primary"
+              @click="$router.push('/')"
+            />
+            <Button
+              label="View Products"
+              class="btn-secondary"
+              @click="$router.push('/products')"
+            />
           </div>
         </div>
       </div>
@@ -21,8 +30,8 @@
 </template>
 
 <script setup>
-import NavBar from '@/components/NavBar.vue'
-import Footer from '@/components/Footer.vue'
+import Footer from '@/components/Footer.vue';
+import NavBar from '@/components/NavBar.vue';
 </script>
 
 <style scoped>

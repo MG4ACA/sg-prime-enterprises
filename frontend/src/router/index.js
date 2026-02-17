@@ -1,5 +1,5 @@
-import { createRouter, createWebHistory } from 'vue-router'
-import { useAuthStore } from '@/stores/auth'
+import { useAuthStore } from '@/stores/auth';
+import { createRouter, createWebHistory } from 'vue-router';
 
 const routes = [
   {
@@ -8,8 +8,8 @@ const routes = [
     component: () => import('@/views/HomePage.vue'),
     meta: {
       title: 'SG Prime Enterprises - Industrial Coir Products',
-      description: 'Premium industrial coir products manufacturer'
-    }
+      description: 'Premium industrial coir products manufacturer',
+    },
   },
   {
     path: '/products',
@@ -17,24 +17,24 @@ const routes = [
     component: () => import('@/views/ProductsPage.vue'),
     meta: {
       title: 'Our Products - SG Prime Enterprises',
-      description: 'Browse our complete range of coir products'
-    }
+      description: 'Browse our complete range of coir products',
+    },
   },
   {
     path: '/products/:id',
     name: 'ProductDetail',
     component: () => import('@/views/ProductDetailPage.vue'),
     meta: {
-      title: 'Product Details - SG Prime Enterprises'
-    }
+      title: 'Product Details - SG Prime Enterprises',
+    },
   },
   {
     path: '/category/:slug',
     name: 'Category',
     component: () => import('@/views/CategoryPage.vue'),
     meta: {
-      title: 'Category - SG Prime Enterprises'
-    }
+      title: 'Category - SG Prime Enterprises',
+    },
   },
   {
     path: '/contact',
@@ -42,22 +42,22 @@ const routes = [
     component: () => import('@/views/ContactPage.vue'),
     meta: {
       title: 'Contact Us - SG Prime Enterprises',
-      description: 'Get in touch with our team'
-    }
+      description: 'Get in touch with our team',
+    },
   },
   {
     path: '/admin/login',
     name: 'AdminLogin',
     component: () => import('@/views/AdminLogin.vue'),
     meta: {
-      title: 'Admin Login'
-    }
+      title: 'Admin Login',
+    },
   },
   {
     path: '/admin',
     component: () => import('@/components/AdminLayout.vue'),
     meta: {
-      requiresAuth: true
+      requiresAuth: true,
     },
     children: [
       {
@@ -65,85 +65,85 @@ const routes = [
         name: 'AdminDashboard',
         component: () => import('@/views/admin/DashboardPage.vue'),
         meta: {
-          title: 'Admin Dashboard'
-        }
+          title: 'Admin Dashboard',
+        },
       },
       {
         path: 'products',
         name: 'AdminProducts',
         component: () => import('@/views/admin/ProductsManagement.vue'),
         meta: {
-          title: 'Manage Products'
-        }
+          title: 'Manage Products',
+        },
       },
       {
         path: 'categories',
         name: 'AdminCategories',
         component: () => import('@/views/admin/CategoriesManagement.vue'),
         meta: {
-          title: 'Manage Categories'
-        }
+          title: 'Manage Categories',
+        },
       },
       {
         path: 'enquiries',
         name: 'AdminEnquiries',
         component: () => import('@/views/admin/EnquiriesManagement.vue'),
         meta: {
-          title: 'Manage Enquiries'
-        }
+          title: 'Manage Enquiries',
+        },
       },
       {
         path: '',
-        redirect: '/admin/dashboard'
-      }
-    ]
+        redirect: '/admin/dashboard',
+      },
+    ],
   },
   {
     path: '/:pathMatch(.*)*',
     name: 'NotFound',
     component: () => import('@/views/NotFoundPage.vue'),
     meta: {
-      title: '404 - Page Not Found'
-    }
-  }
-]
+      title: '404 - Page Not Found',
+    },
+  },
+];
 
 const router = createRouter({
   history: createWebHistory(),
   routes,
   scrollBehavior(to, from, savedPosition) {
     if (savedPosition) {
-      return savedPosition
+      return savedPosition;
     } else {
-      return { top: 0, behavior: 'smooth' }
+      return { top: 0, behavior: 'smooth' };
     }
-  }
-})
+  },
+});
 
 // Navigation guards
 router.beforeEach((to, from, next) => {
   // Update page title
-  document.title = to.meta.title || 'SG Prime Enterprises'
-  
+  document.title = to.meta.title || 'SG Prime Enterprises';
+
   // Update meta description
   if (to.meta.description) {
-    let descriptionTag = document.querySelector('meta[name="description"]')
+    let descriptionTag = document.querySelector('meta[name="description"]');
     if (descriptionTag) {
-      descriptionTag.setAttribute('content', to.meta.description)
+      descriptionTag.setAttribute('content', to.meta.description);
     }
   }
-  
+
   // Check authentication for admin routes
   if (to.meta.requiresAuth) {
-    const authStore = useAuthStore()
+    const authStore = useAuthStore();
     if (!authStore.isAuthenticated) {
-      next({ name: 'AdminLogin', query: { redirect: to.fullPath } })
+      next({ name: 'AdminLogin', query: { redirect: to.fullPath } });
     } else {
-      next()
+      next();
     }
   } else {
-    next()
+    next();
   }
-})
+});
 
-export default router
+export default router;

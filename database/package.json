@@ -4,11 +4,16 @@
   "description": "Database seeders for SG Prime Enterprises",
   "main": "seeders/index.js",
   "scripts": {
+    "setup": "node seeders/setup.js",
     "seed": "node seeders/index.js",
     "seed:reset": "node seeders/reset.js",
     "seed:fresh": "node seeders/reset.js && node seeders/index.js"
   },
-  "keywords": ["database", "seeders", "mysql"],
+  "keywords": [
+    "database",
+    "seeders",
+    "mysql"
+  ],
   "author": "",
   "license": "ISC",
   "dependencies": {

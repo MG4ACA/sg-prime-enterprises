@@ -15,8 +15,10 @@
           <!-- Contact Form -->
           <div class="contact-form-wrapper">
             <h2>Send us a Message</h2>
-            <p class="form-intro">Fill out the form below and we'll get back to you within 24 hours.</p>
-            
+            <p class="form-intro">
+              Fill out the form below and we'll get back to you within 24 hours.
+            </p>
+
             <form @submit.prevent="submitEnquiry" class="contact-form">
               <div class="form-row">
                 <div class="form-field">
@@ -25,7 +27,12 @@
                 </div>
                 <div class="form-field">
                   <label>Email Address *</label>
-                  <InputText v-model="form.email" type="email" placeholder="john@example.com" required />
+                  <InputText
+                    v-model="form.email"
+                    type="email"
+                    placeholder="john@example.com"
+                    required
+                  />
                 </div>
               </div>
 
@@ -42,17 +49,17 @@
 
               <div class="form-field">
                 <label>Message *</label>
-                <Textarea 
-                  v-model="form.message" 
+                <Textarea
+                  v-model="form.message"
                   rows="6"
                   placeholder="Tell us how we can help you..."
                   required
                 />
               </div>
 
-              <Button 
+              <Button
                 type="submit"
-                label="Send Message" 
+                label="Send Message"
                 icon="pi pi-send"
                 class="btn-primary btn-large"
                 :loading="submitting"
@@ -63,7 +70,7 @@
           <!-- Contact Info -->
           <div class="contact-info-wrapper">
             <h2>Contact Information</h2>
-            
+
             <div class="info-blocks">
               <div class="info-block">
                 <div class="info-icon">
@@ -123,58 +130,58 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
-import { useToast } from 'primevue/usetoast'
-import NavBar from '@/components/NavBar.vue'
-import Footer from '@/components/Footer.vue'
-import api from '@/services/api'
+import Footer from '@/components/Footer.vue';
+import NavBar from '@/components/NavBar.vue';
+import api from '@/services/api';
+import { useToast } from 'primevue/usetoast';
+import { ref } from 'vue';
 
-const toast = useToast()
+const toast = useToast();
 
 const form = ref({
   name: '',
   email: '',
   company: '',
   phone: '',
-  message: ''
-})
+  message: '',
+});
 
-const submitting = ref(false)
+const submitting = ref(false);
 
 const submitEnquiry = async () => {
-  submitting.value = true
-  
+  submitting.value = true;
+
   try {
-    const response = await api.post('/enquiry', form.value)
-    
+    const response = await api.post('/enquiry', form.value);
+
     if (response.data.success) {
       toast.add({
         severity: 'success',
         summary: 'Message Sent!',
         detail: 'Thank you for contacting us. We will get back to you soon.',
-        life: 5000
-      })
-      
+        life: 5000,
+      });
+
       // Reset form
       form.value = {
         name: '',
         email: '',
         company: '',
         phone: '',
-        message: ''
-      }
+        message: '',
+      };
     }
   } catch (error) {
     toast.add({
       severity: 'error',
       summary: 'Error',
       detail: error.response?.data?.message || 'Failed to send message. Please try again.',
-      life: 3000
-    })
+      life: 3000,
+    });
   } finally {
-    submitting.value = false
+    submitting.value = false;
   }
-}
+};
 </script>
 
 <style scoped>
