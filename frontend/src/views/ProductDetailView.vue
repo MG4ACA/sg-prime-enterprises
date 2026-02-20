@@ -50,7 +50,12 @@ const fetchProduct = async () => {
 
 const submitEnquiry = async () => {
   if (!enquiryForm.name || !enquiryForm.email) {
-    toast.add({ severity: 'warn', summary: 'Missing Fields', detail: 'Name and email are required.', life: 3000 });
+    toast.add({
+      severity: 'warn',
+      summary: 'Missing Fields',
+      detail: 'Name and email are required.',
+      life: 3000,
+    });
     return;
   }
   submitting.value = true;
@@ -60,11 +65,21 @@ const submitEnquiry = async () => {
       product_id: product.value.id,
       product_name: product.value.name,
     });
-    toast.add({ severity: 'success', summary: 'Quote Requested!', detail: "We'll get back to you shortly.", life: 5000 });
+    toast.add({
+      severity: 'success',
+      summary: 'Quote Requested!',
+      detail: "We'll get back to you shortly.",
+      life: 5000,
+    });
     showEnquiryDialog.value = false;
     Object.keys(enquiryForm).forEach((k) => (enquiryForm[k] = ''));
   } catch {
-    toast.add({ severity: 'error', summary: 'Error', detail: 'Failed to submit. Please try again.', life: 4000 });
+    toast.add({
+      severity: 'error',
+      summary: 'Error',
+      detail: 'Failed to submit. Please try again.',
+      life: 4000,
+    });
   } finally {
     submitting.value = false;
   }
@@ -84,27 +99,17 @@ onMounted(fetchProduct);
   </div>
 
   <div v-else-if="product">
-    <!-- Breadcrumb -->
-    <div class="bg-white border-b border-coir-100">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
-        <nav class="flex items-center gap-2 text-sm text-bark-500">
-          <RouterLink to="/" class="hover:text-earth-600 transition-colors">Home</RouterLink>
-          <i class="pi pi-angle-right text-xs"></i>
-          <RouterLink to="/products" class="hover:text-earth-600 transition-colors">Products</RouterLink>
-          <i class="pi pi-angle-right text-xs"></i>
-          <span class="text-bark-800 font-medium">{{ product.name }}</span>
-        </nav>
-      </div>
-    </div>
-
     <!-- Product Main Section -->
-    <section class="py-12 bg-cream">
+    <section class="py-12 pt-28 bg-cream">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
           <!-- Image -->
           <div class="rounded-2xl overflow-hidden bg-white shadow-md aspect-[4/3]">
             <img
-              :src="product.image_url || 'https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=800&q=80'"
+              :src="
+                product.image_url ||
+                'https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=800&q=80'
+              "
               :alt="product.name"
               class="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
             />
@@ -119,7 +124,10 @@ onMounted(fetchProduct);
             >
               {{ product.category_name }}
             </RouterLink>
-            <span v-else class="badge bg-earth-50 text-earth-600 border border-earth-200 w-fit mb-4">
+            <span
+              v-else
+              class="badge bg-earth-50 text-earth-600 border border-earth-200 w-fit mb-4"
+            >
               {{ product.category_name }}
             </span>
 
@@ -199,7 +207,10 @@ onMounted(fetchProduct);
           >
             <div class="h-44 overflow-hidden">
               <img
-                :src="rp.image_url || 'https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=600&q=80'"
+                :src="
+                  rp.image_url ||
+                  'https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=600&q=80'
+                "
                 :alt="rp.name"
                 class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
               />
@@ -207,7 +218,8 @@ onMounted(fetchProduct);
             <div class="p-4">
               <h3 class="font-display font-semibold text-bark-800 text-base mb-1">{{ rp.name }}</h3>
               <span class="text-earth-600 text-sm font-medium flex items-center gap-1">
-                View Details <i class="pi pi-arrow-right text-xs"></i>
+                View Details
+                <i class="pi pi-arrow-right text-xs"></i>
               </span>
             </div>
           </div>
@@ -235,7 +247,12 @@ onMounted(fetchProduct);
         </div>
         <div class="form-field">
           <label>Email *</label>
-          <InputText v-model="enquiryForm.email" placeholder="john@company.com" required class="w-full" />
+          <InputText
+            v-model="enquiryForm.email"
+            placeholder="john@company.com"
+            required
+            class="w-full"
+          />
         </div>
       </div>
       <div class="grid grid-cols-2 gap-3">
@@ -250,7 +267,12 @@ onMounted(fetchProduct);
       </div>
       <div class="form-field">
         <label>Message</label>
-        <Textarea v-model="enquiryForm.message" rows="4" placeholder="Tell us about your requirements…" class="w-full" />
+        <Textarea
+          v-model="enquiryForm.message"
+          rows="4"
+          placeholder="Tell us about your requirements…"
+          class="w-full"
+        />
       </div>
       <div class="flex justify-end gap-3 pt-1">
         <Button label="Cancel" text type="button" @click="showEnquiryDialog = false" />
