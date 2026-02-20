@@ -77,10 +77,10 @@ const currentYear = computed(() => new Date().getFullYear());
 
 <style scoped>
 .footer {
-  background-color: #1a2e1a;
-  color: #e8e0d8;
+  background-color: var(--color-text);
+  color: var(--color-canvas);
   padding: 4rem 0 2rem;
-  margin-top: 0;
+  margin-top: 6rem;
 }
 
 .footer-content {
@@ -118,7 +118,7 @@ const currentYear = computed(() => new Date().getFullYear());
 }
 
 .footer-desc {
-  color: rgba(232, 224, 216, 0.8);
+  color: rgba(255, 241, 232, 0.8);
   line-height: 1.7;
   font-size: 0.95rem;
 }
@@ -133,7 +133,7 @@ const currentYear = computed(() => new Date().getFullYear());
 }
 
 .footer-links a {
-  color: rgba(232, 224, 216, 0.8);
+  color: rgba(255, 241, 232, 0.8);
   text-decoration: none;
   transition: color var(--transition-fast);
   font-size: 0.95rem;
@@ -152,7 +152,7 @@ const currentYear = computed(() => new Date().getFullYear());
   align-items: center;
   gap: 0.75rem;
   margin-bottom: 0.75rem;
-  color: rgba(232, 224, 216, 0.8);
+  color: rgba(255, 241, 232, 0.8);
   font-size: 0.95rem;
 }
 
@@ -172,9 +172,9 @@ const currentYear = computed(() => new Date().getFullYear());
   justify-content: center;
   width: 40px;
   height: 40px;
-  background-color: rgba(232, 224, 216, 0.1);
+  background-color: rgba(255, 241, 232, 0.1);
   border-radius: 50%;
-  color: var(--color-green-light, #4caf50);
+  color: var(--color-secondary);
   transition: all var(--transition-medium);
 }
 
@@ -186,12 +186,12 @@ const currentYear = computed(() => new Date().getFullYear());
 
 .footer-bottom {
   padding-top: 2rem;
-  border-top: 1px solid rgba(232, 224, 216, 0.1);
+  border-top: 1px solid rgba(255, 241, 232, 0.1);
   text-align: center;
 }
 
 .footer-bottom p {
-  color: rgba(232, 224, 216, 0.6);
+  color: rgba(255, 241, 232, 0.6);
   font-size: 0.875rem;
   margin-bottom: 0.5rem;
 }

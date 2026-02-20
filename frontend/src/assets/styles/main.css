@@ -1,12 +1,9 @@
 :root {
-  /* Color Palette - Nature Green Theme */
-  --color-canvas: #f5f0e8;
-  --color-secondary: #2e7d32;
-  --color-primary: #1b5e20;
-  --color-text: #2c2c2c;
-  --color-green-light: #4caf50;
-  --color-cream: #faf6f0;
-  --color-cream-dark: #ede8e0;
+  /* Color Palette */
+  --color-canvas: #fff1e8;
+  --color-secondary: #d39a6a;
+  --color-primary: #9a5a2e;
+  --color-text: #3e1f0f;
 
   /* Semantic Colors */
   --color-background: var(--color-canvas);
@@ -37,9 +34,9 @@
   --transition-slow: 0.6s ease;
 
   /* Shadows */
-  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.06);
-  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.1);
-  --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.12);
+  --shadow-sm: 0 2px 8px rgba(62, 31, 15, 0.08);
+  --shadow-md: 0 4px 16px rgba(62, 31, 15, 0.12);
+  --shadow-lg: 0 8px 32px rgba(62, 31, 15, 0.16);
 
   /* Border Radius */
   --radius-sm: 4px;
