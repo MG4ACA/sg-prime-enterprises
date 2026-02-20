@@ -5,10 +5,14 @@ import { onUnmounted } from 'vue';
 gsap.registerPlugin(ScrollTrigger);
 
 export function useGSAP() {
-  const fadeIn = (element, options = {}) =>
-    gsap.fromTo(
+  // Fade in animation
+  const fadeIn = (element, options = {}) => {
+    return gsap.fromTo(
       element,
-      { opacity: 0, y: options.y || 30 },
+      {
+        opacity: 0,
+        y: options.y || 30,
+      },
       {
         opacity: 1,
         y: 0,
@@ -17,11 +21,16 @@ export function useGSAP() {
         delay: options.delay || 0,
       },
     );
+  };
 
-  const staggerIn = (elements, options = {}) =>
-    gsap.fromTo(
+  // Stagger animation for multiple elements
+  const staggerIn = (elements, options = {}) => {
+    return gsap.fromTo(
       elements,
-      { opacity: 0, y: options.y || 50 },
+      {
+        opacity: 0,
+        y: options.y || 50,
+      },
       {
         opacity: 1,
         y: 0,
@@ -31,9 +40,11 @@ export function useGSAP() {
         scrollTrigger: options.scrollTrigger || null,
       },
     );
+  };
 
-  const parallax = (element, options = {}) =>
-    gsap.to(element, {
+  // Parallax effect
+  const parallax = (element, options = {}) => {
+    return gsap.to(element, {
       y: options.distance || -50,
       ease: 'none',
       scrollTrigger: {
@@ -44,9 +55,11 @@ export function useGSAP() {
         ...options.scrollTrigger,
       },
     });
+  };
 
-  const scaleOnScroll = (element, options = {}) =>
-    gsap.fromTo(
+  // Scale on scroll
+  const scaleOnScroll = (element, options = {}) => {
+    return gsap.fromTo(
       element,
       { scale: options.from || 0.8 },
       {
@@ -61,7 +74,9 @@ export function useGSAP() {
         },
       },
     );
+  };
 
+  // Background color transition
   const colorTransition = (element, colors = [], options = {}) => {
     const tl = gsap.timeline({
       scrollTrigger: {
@@ -74,17 +89,32 @@ export function useGSAP() {
     });
 
     colors.forEach((color, index) => {
-      tl.to(element, { backgroundColor: color, duration: 1 }, index);
+      tl.to(
+        element,
+        {
+          backgroundColor: color,
+          duration: 1,
+        },
+        index,
+      );
     });
 
     return tl;
   };
 
-  const refreshScrollTrigger = () => ScrollTrigger.refresh();
+  // Refresh ScrollTrigger (useful after DOM changes)
+  const refreshScrollTrigger = () => {
+    ScrollTrigger.refresh();
+  };
 
-  const killScrollTriggers = () => ScrollTrigger.getAll().forEach((t) => t.kill());
+  // Kill all ScrollTriggers
+  const killScrollTriggers = () => {
+    ScrollTrigger.getAll().forEach((trigger) => trigger.kill());
+  };
 
-  onUnmounted(() => killScrollTriggers());
+  onUnmounted(() => {
+    killScrollTriggers();
+  });
 
   return {
     gsap,

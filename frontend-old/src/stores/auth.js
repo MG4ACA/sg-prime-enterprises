@@ -18,10 +18,11 @@ export const useAuthStore = defineStore('auth', () => {
           role: response.data.data.role,
         };
         isAuthenticated.value = true;
+
         localStorage.setItem('admin_token', token.value);
+
         return { success: true };
       }
-      return { success: false, message: response.data.message || 'Login failed' };
     } catch (error) {
       return {
         success: false,
@@ -38,7 +39,10 @@ export const useAuthStore = defineStore('auth', () => {
   };
 
   const verifyToken = async () => {
-    if (!token.value) return false;
+    if (!token.value) {
+      return false;
+    }
+
     try {
       const response = await api.get('/admin/verify');
       if (response.data.success) {
@@ -46,11 +50,18 @@ export const useAuthStore = defineStore('auth', () => {
         isAuthenticated.value = true;
         return true;
       }
-    } catch {
+    } catch (error) {
       logout();
+      return false;
     }
-    return false;
   };
 
-  return { token, user, isAuthenticated, login, logout, verifyToken };
+  return {
+    token,
+    user,
+    isAuthenticated,
+    login,
+    logout,
+    verifyToken,
+  };
 });

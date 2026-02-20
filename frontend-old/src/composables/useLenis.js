@@ -18,11 +18,14 @@ export function useLenis() {
       lenis.raf(time);
       requestAnimationFrame(raf);
     }
+
     requestAnimationFrame(raf);
   };
 
   const scrollTo = (target, options = {}) => {
-    if (lenis) lenis.scrollTo(target, options);
+    if (lenis) {
+      lenis.scrollTo(target, options);
+    }
   };
 
   const destroy = () => {
@@ -32,5 +35,10 @@ export function useLenis() {
     }
   };
 
-  return { lenis, initLenis, scrollTo, destroy };
+  return {
+    lenis,
+    initLenis,
+    scrollTo,
+    destroy,
+  };
 }

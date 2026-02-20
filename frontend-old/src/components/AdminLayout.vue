@@ -1,17 +1,9 @@
 <template>
   <div class="admin-layout">
-    <!-- Sidebar -->
     <aside class="sidebar">
       <div class="sidebar-header">
-        <div class="flex items-center gap-2">
-          <div class="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center">
-            <i class="pi pi-leaf text-white text-sm"></i>
-          </div>
-          <div>
-            <p class="font-bold text-white text-sm leading-none">SG Prime</p>
-            <p class="text-white/60 text-xs">Admin Panel</p>
-          </div>
-        </div>
+        <h2>SG Prime</h2>
+        <p>Admin Panel</p>
       </div>
 
       <nav class="sidebar-nav">
@@ -33,22 +25,15 @@
         </router-link>
       </nav>
 
-      <div class="sidebar-footer">
-        <a href="/" target="_blank" class="nav-item mb-2">
-          <i class="pi pi-external-link"></i>
-          <span>View Site</span>
-        </a>
-        <button @click="handleLogout" class="logout-btn">
-          <i class="pi pi-sign-out"></i>
-          <span>Logout</span>
-        </button>
-      </div>
+      <button @click="handleLogout" class="logout-btn">
+        <i class="pi pi-sign-out"></i>
+        <span>Logout</span>
+      </button>
     </aside>
 
-    <!-- Main content -->
     <div class="main-content">
       <header class="admin-header">
-        <h1 class="text-xl font-semibold text-gray-800">{{ pageTitle }}</h1>
+        <h1>{{ pageTitle }}</h1>
       </header>
 
       <div class="admin-body">
@@ -95,103 +80,134 @@ const handleLogout = () => {
 .admin-layout {
   display: flex;
   min-height: 100vh;
-  width: 100%;
   background-color: #f5f5f5;
 }
 
 .sidebar {
   width: 260px;
-  background: linear-gradient(180deg, #2a452f 0%, #3d6849 100%);
+  background-color: var(--color-brand);
   color: white;
   display: flex;
   flex-direction: column;
   position: fixed;
   height: 100vh;
   overflow-y: auto;
-  z-index: 100;
 }
 
 .sidebar-header {
-  padding: 1.5rem;
+  padding: 2rem 1.5rem;
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.sidebar-header h2 {
+  color: white;
+  margin-bottom: 0.25rem;
+}
+
+.sidebar-header p {
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 0.875rem;
 }
 
 .sidebar-nav {
   flex: 1;
-  padding: 1rem 0.75rem;
-  display: flex;
-  flex-direction: column;
-  gap: 0.25rem;
-}
-
-.sidebar-footer {
-  padding: 1rem 0.75rem;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 1.5rem 0;
 }
 
 .nav-item {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
-  padding: 0.7rem 1rem;
-  border-radius: 8px;
-  color: rgba(255, 255, 255, 0.75);
-  text-decoration: none;
-  font-size: 0.9rem;
-  font-weight: 500;
-  transition: all 0.2s;
+  gap: 1rem;
+  padding: 1rem 1.5rem;
+  color: white;
+  opacity: 0.8;
+  transition: all var(--transition-fast);
+  border-left: 3px solid transparent;
 }
 
 .nav-item:hover {
-  background-color: rgba(255, 255, 255, 0.12);
-  color: white;
+  opacity: 1;
+  background-color: rgba(255, 255, 255, 0.1);
 }
 
 .nav-item.router-link-active {
-  background-color: rgba(255, 255, 255, 0.2);
-  color: white;
+  opacity: 1;
+  background-color: rgba(255, 255, 255, 0.15);
+  border-left-color: var(--color-canvas);
+}
+
+.nav-item i {
+  font-size: 1.25rem;
 }
 
 .logout-btn {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
-  padding: 0.7rem 1rem;
-  border-radius: 8px;
-  color: rgba(255, 255, 255, 0.7);
-  font-size: 0.9rem;
-  font-weight: 500;
+  gap: 1rem;
+  padding: 1rem 1.5rem;
   background: none;
   border: none;
+  color: white;
+  opacity: 0.9;
   cursor: pointer;
-  width: 100%;
-  transition: all 0.2s;
+  transition: all var(--transition-fast);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .logout-btn:hover {
-  background-color: rgba(220, 38, 38, 0.2);
-  color: #fca5a5;
+  opacity: 1;
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.logout-btn i {
+  font-size: 1.25rem;
 }
 
 .main-content {
-  flex: 1;
   margin-left: 260px;
+  flex: 1;
   display: flex;
   flex-direction: column;
-  min-height: 100vh;
 }
 
 .admin-header {
   background-color: white;
-  padding: 1rem 2rem;
-  border-bottom: 1px solid #e5e7eb;
-  position: sticky;
-  top: 0;
-  z-index: 50;
+  padding: 2rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.admin-header h1 {
+  margin: 0;
 }
 
 .admin-body {
-  flex: 1;
   padding: 2rem;
+  flex: 1;
+}
+
+@media (max-width: 968px) {
+  .sidebar {
+    width: 200px;
+  }
+
+  .main-content {
+    margin-left: 200px;
+  }
+}
+
+@media (max-width: 768px) {
+  .sidebar {
+    width: 70px;
+  }
+
+  .sidebar-header p,
+  .nav-item span,
+  .logout-btn span {
+    display: none;
+  }
+
+  .main-content {
+    margin-left: 70px;
+  }
 }
 </style>

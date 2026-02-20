@@ -1,51 +1,44 @@
 <template>
-  <div class="products-management">
-    <div class="page-actions">
-      <Button label="Add New Product" icon="pi pi-plus" class="btn-primary" @click="openDialog()" />
+  <div>
+    <div class="flex justify-end mb-5">
+      <Button label="Add New Product" icon="pi pi-plus" @click="openDialog()" />
     </div>
 
-    <DataTable :value="products" :loading="loading" paginator :rows="10" class="admin-table">
-      <Column field="image_url" header="Image" style="width: 100px">
-        <template #body="{ data }">
-          <img
-            :src="data.image_url || 'https://via.placeholder.com/80'"
-            :alt="data.name"
-            class="product-thumb"
-          />
-        </template>
-      </Column>
-      <Column field="name" header="Product Name" sortable />
-      <Column field="category_name" header="Category" sortable />
-      <Column field="is_featured" header="Featured" style="width: 100px">
-        <template #body="{ data }">
-          <i
-            :class="data.is_featured ? 'pi pi-star-fill' : 'pi pi-star'"
-            :style="{ color: data.is_featured ? '#fbbf24' : '#ccc' }"
-          ></i>
-        </template>
-      </Column>
-      <Column field="status" header="Status" style="width: 120px">
-        <template #body="{ data }">
-          <span :class="['status-badge', data.status]">{{ data.status }}</span>
-        </template>
-      </Column>
-      <Column header="Actions" style="width: 160px">
-        <template #body="{ data }">
-          <div class="action-buttons">
-            <Button
-              icon="pi pi-pencil"
-              class="p-button-sm p-button-text"
-              @click="openDialog(data)"
+    <div class="bg-white rounded-xl shadow-sm overflow-hidden">
+      <DataTable :value="products" :loading="loading" paginator :rows="10">
+        <Column field="image_url" header="Image" style="width: 90px">
+          <template #body="{ data }">
+            <img
+              :src="data.image_url || 'https://via.placeholder.com/80'"
+              :alt="data.name"
+              class="w-16 h-12 object-cover rounded"
             />
-            <Button
-              icon="pi pi-trash"
-              class="p-button-sm p-button-text p-button-danger"
-              @click="confirmDelete(data)"
-            />
-          </div>
-        </template>
-      </Column>
-    </DataTable>
+          </template>
+        </Column>
+        <Column field="name" header="Product Name" sortable />
+        <Column field="category_name" header="Category" sortable />
+        <Column field="is_featured" header="Featured" style="width: 90px">
+          <template #body="{ data }">
+            <i
+              :class="data.is_featured ? 'pi pi-star-fill text-amber-400' : 'pi pi-star text-gray-300'"
+            ></i>
+          </template>
+        </Column>
+        <Column field="status" header="Status" style="width: 110px">
+          <template #body="{ data }">
+            <span :class="['status-badge', data.status]">{{ data.status }}</span>
+          </template>
+        </Column>
+        <Column header="Actions" style="width: 120px">
+          <template #body="{ data }">
+            <div class="flex gap-1">
+              <Button icon="pi pi-pencil" text size="small" @click="openDialog(data)" />
+              <Button icon="pi pi-trash" text size="small" severity="danger" @click="confirmDelete(data)" />
+            </div>
+          </template>
+        </Column>
+      </DataTable>
+    </div>
 
     <!-- Product Dialog -->
     <Dialog
@@ -54,74 +47,63 @@
       :style="{ width: '650px' }"
       modal
     >
-      <form @submit.prevent="saveProduct" class="product-form">
+      <form @submit.prevent="saveProduct" class="flex flex-col gap-4 pt-2">
         <div class="form-field">
           <label>Product Name *</label>
-          <InputText v-model="formData.name" required />
+          <InputText v-model="formData.name" required class="w-full" />
         </div>
 
         <div class="form-field">
           <label>Category *</label>
-          <Dropdown
+          <Select
             v-model="formData.category_id"
             :options="categories"
             optionLabel="name"
             optionValue="id"
             placeholder="Select a category"
-            required
+            class="w-full"
           />
         </div>
 
         <div class="form-field">
           <label>Description *</label>
-          <Textarea v-model="formData.description" rows="4" required />
+          <Textarea v-model="formData.description" rows="4" required class="w-full" />
         </div>
 
         <div class="form-field">
           <label>Specifications (JSON)</label>
           <Textarea
             v-model="formData.specs"
-            rows="6"
+            rows="5"
             placeholder='{"Material": "Natural Coir Fiber", "Size": "2m x 50m"}'
+            class="w-full"
           />
         </div>
 
         <div class="form-field">
           <label>Product Image</label>
-          <input type="file" accept="image/*" @change="handleFileChange" ref="fileInput" />
+          <input type="file" accept="image/*" @change="handleFileChange" ref="fileInput" class="text-sm" />
         </div>
 
-        <div class="form-row">
-          <div class="form-field checkbox-field">
-            <label>
-              <input type="checkbox" v-model="formData.is_featured" />
-              Featured Product
-            </label>
-          </div>
-
-          <div class="form-field">
+        <div class="flex gap-4">
+          <div class="form-field flex-1">
             <label>Status</label>
-            <Dropdown
-              v-model="formData.status"
-              :options="statusOptions"
-              placeholder="Select status"
-            />
+            <Select v-model="formData.status" :options="statusOptions" class="w-full" />
+          </div>
+          <div class="form-field flex-1">
+            <label>Display Order</label>
+            <InputText v-model.number="formData.display_order" type="number" class="w-full" />
           </div>
         </div>
 
-        <div class="form-field">
-          <label>Display Order</label>
-          <InputText v-model.number="formData.display_order" type="number" />
+        <div class="flex items-center gap-2">
+          <input type="checkbox" v-model="formData.is_featured" id="featured" />
+          <label for="featured" class="text-sm font-medium cursor-pointer">Featured Product</label>
         </div>
 
-        <div class="dialog-actions">
-          <Button
-            label="Cancel"
-            class="p-button-text"
-            @click="dialogVisible = false"
-            type="button"
-          />
-          <Button label="Save" class="btn-primary" type="submit" :loading="saving" />
+        <div class="flex justify-end gap-3 pt-2">
+          <Button label="Cancel" text @click="dialogVisible = false" type="button" />
+          <Button label="Save Product" type="submit" :loading="saving" />
         </div>
       </form>
     </Dialog>
@@ -144,6 +126,9 @@ const dialogVisible = ref(false);
 const editingProduct = ref(null);
 const saving = ref(false);
 const fileInput = ref(null);
+const selectedFile = ref(null);
+
+const statusOptions = ['active', 'inactive'];
 
 const formData = ref({
   name: '',
@@ -155,10 +140,6 @@ const formData = ref({
   display_order: 0,
 });
 
-const selectedFile = ref(null);
-
-const statusOptions = ['active', 'inactive'];
-
 const fetchData = async () => {
   loading.value = true;
   try {
@@ -166,10 +147,9 @@ const fetchData = async () => {
       api.get('/admin/products'),
       api.get('/admin/categories'),
     ]);
-
     if (productsRes.data.success) products.value = productsRes.data.data;
     if (categoriesRes.data.success) categories.value = categoriesRes.data.data;
-  } catch (error) {
+  } catch {
     toast.add({ severity: 'error', summary: 'Error', detail: 'Failed to fetch data', life: 3000 });
   } finally {
     loading.value = false;
@@ -183,23 +163,14 @@ const openDialog = (product = null) => {
       name: product.name,
       category_id: product.category_id,
       description: product.description,
-      specs:
-        typeof product.specs === 'object' ? JSON.stringify(product.specs, null, 2) : product.specs,
+      specs: typeof product.specs === 'object' ? JSON.stringify(product.specs, null, 2) : product.specs,
       is_featured: !!product.is_featured,
       status: product.status,
       display_order: product.display_order || 0,
     };
   } else {
     editingProduct.value = null;
-    formData.value = {
-      name: '',
-      category_id: null,
-      description: '',
-      specs: '',
-      is_featured: false,
-      status: 'active',
-      display_order: 0,
-    };
+    formData.value = { name: '', category_id: null, description: '', specs: '', is_featured: false, status: 'active', display_order: 0 };
   }
   selectedFile.value = null;
   dialogVisible.value = true;
@@ -211,49 +182,29 @@ const handleFileChange = (event) => {
 
 const saveProduct = async () => {
   saving.value = true;
-
   try {
-    const formDataToSend = new FormData();
-    formDataToSend.append('name', formData.value.name);
-    formDataToSend.append('category_id', formData.value.category_id);
-    formDataToSend.append('description', formData.value.description);
-    formDataToSend.append('specs', formData.value.specs);
-    formDataToSend.append('is_featured', formData.value.is_featured ? '1' : '0');
-    formDataToSend.append('status', formData.value.status);
-    formDataToSend.append('display_order', formData.value.display_order);
+    const fd = new FormData();
+    fd.append('name', formData.value.name);
+    fd.append('category_id', formData.value.category_id);
+    fd.append('description', formData.value.description);
+    fd.append('specs', formData.value.specs);
+    fd.append('is_featured', formData.value.is_featured ? '1' : '0');
+    fd.append('status', formData.value.status);
+    fd.append('display_order', formData.value.display_order);
+    if (selectedFile.value) fd.append('image', selectedFile.value);
 
-    if (selectedFile.value) {
-      formDataToSend.append('image', selectedFile.value);
-    }
-
-    let response;
-    if (editingProduct.value) {
-      response = await api.put(`/admin/products/${editingProduct.value.id}`, formDataToSend, {
-        headers: { 'Content-Type': 'multipart/form-data' },
-      });
-    } else {
-      response = await api.post('/admin/products', formDataToSend, {
-        headers: { 'Content-Type': 'multipart/form-data' },
-      });
-    }
+    const config = { headers: { 'Content-Type': 'multipart/form-data' } };
+    const response = editingProduct.value
+      ? await api.put(`/admin/products/${editingProduct.value.id}`, fd, config)
+      : await api.post('/admin/products', fd, config);
 
     if (response.data.success) {
-      toast.add({
-        severity: 'success',
-        summary: 'Success',
-        detail: 'Product saved successfully',
-        life: 3000,
-      });
+      toast.add({ severity: 'success', summary: 'Success', detail: 'Product saved', life: 3000 });
       dialogVisible.value = false;
       fetchData();
     }
-  } catch (error) {
-    toast.add({
-      severity: 'error',
-      summary: 'Error',
-      detail: 'Failed to save product',
-      life: 3000,
-    });
+  } catch {
+    toast.add({ severity: 'error', summary: 'Error', detail: 'Failed to save product', life: 3000 });
   } finally {
     saving.value = false;
   }
@@ -264,6 +215,7 @@ const confirmDelete = (product) => {
     message: `Are you sure you want to delete "${product.name}"?`,
     header: 'Confirm Delete',
     icon: 'pi pi-exclamation-triangle',
+    acceptSeverity: 'danger',
     accept: () => deleteProduct(product.id),
   });
 };
@@ -271,104 +223,37 @@ const confirmDelete = (product) => {
 const deleteProduct = async (id) => {
   try {
     const response = await api.delete(`/admin/products/${id}`);
-
     if (response.data.success) {
-      toast.add({ severity: 'success', summary: 'Success', detail: 'Product deleted', life: 3000 });
+      toast.add({ severity: 'success', summary: 'Deleted', detail: 'Product deleted', life: 3000 });
       fetchData();
     }
-  } catch (error) {
-    toast.add({
-      severity: 'error',
-      summary: 'Error',
-      detail: 'Failed to delete product',
-      life: 3000,
-    });
+  } catch {
+    toast.add({ severity: 'error', summary: 'Error', detail: 'Failed to delete product', life: 3000 });
   }
 };
 
-onMounted(() => {
-  fetchData();
-});
+onMounted(fetchData);
 </script>
 
 <style scoped>
-.page-actions {
-  margin-bottom: 1.5rem;
-  display: flex;
-  justify-content: flex-end;
-}
-
-.product-thumb {
-  width: 60px;
-  height: 60px;
-  object-fit: cover;
-  border-radius: var(--radius-sm);
-}
-
-.action-buttons {
-  display: flex;
-  gap: 0.5rem;
-}
-
-.status-badge {
-  display: inline-block;
-  padding: 0.375rem 0.75rem;
-  border-radius: var(--radius-sm);
-  font-size: 0.875rem;
-  font-weight: 600;
-  text-transform: capitalize;
-}
-
-.status-badge.active {
-  background-color: #dcfce7;
-  color: #16a34a;
-}
-
-.status-badge.inactive {
-  background-color: #f3f4f6;
-  color: #6b7280;
-}
-
-.product-form {
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
-}
-
 .form-field {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: 0.375rem;
 }
-
 .form-field label {
+  font-size: 0.875rem;
   font-weight: 600;
-  font-size: 0.95rem;
+  color: #374151;
 }
-
-.form-row {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 1.5rem;
+.status-badge {
+  display: inline-block;
+  padding: 0.2rem 0.6rem;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: capitalize;
 }
-
-.checkbox-field label {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  cursor: pointer;
-}
-
-.checkbox-field input[type='checkbox'] {
-  width: 18px;
-  height: 18px;
-  cursor: pointer;
-}
-
-.dialog-actions {
-  display: flex;
-  justify-content: flex-end;
-  gap: 1rem;
-  margin-top: 1rem;
-}
+.status-badge.active   { background: #dcfce7; color: #16a34a; }
+.status-badge.inactive { background: #f3f4f6; color: #6b7280; }
 </style>

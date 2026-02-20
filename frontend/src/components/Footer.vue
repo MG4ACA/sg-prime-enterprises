@@ -1,214 +1,146 @@
+<script setup>
+import { RouterLink } from 'vue-router';
+
+const currentYear = new Date().getFullYear();
+
+const quickLinks = [
+  { name: 'Home', to: '/' },
+  { name: 'Products', to: '/products' },
+  { name: 'About Us', to: '/about' },
+  { name: 'Contact', to: '/contact' },
+];
+
+const categories = ['Erosion Control', 'Greenhouse Products', 'Gardening Products'];
+
+const socials = [
+  { icon: 'pi pi-facebook', href: '#', label: 'Facebook' },
+  { icon: 'pi pi-instagram', href: '#', label: 'Instagram' },
+  { icon: 'pi pi-twitter', href: '#', label: 'Twitter' },
+  { icon: 'pi pi-linkedin', href: '#', label: 'LinkedIn' },
+];
+</script>
+
 <template>
-  <footer class="footer">
-    <div class="container">
-      <div class="footer-content">
-        <!-- Company Info -->
-        <div class="footer-section">
-          <div class="footer-logo">
-            <span class="logo-text">SG Prime</span>
-            <span class="logo-sub">Enterprises</span>
+  <footer class="bg-bark-800 text-coir-100">
+    <!-- Main Footer Content -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-14 pb-10">
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10">
+        <!-- Brand -->
+        <div class="col-span-1 sm:col-span-2 lg:col-span-1">
+          <div class="flex items-center gap-3 mb-4">
+            <div class="w-10 h-10 rounded-full bg-earth-500 flex items-center justify-center">
+              <i class="pi pi-leaf text-white text-lg"></i>
+            </div>
+            <div class="leading-tight">
+              <div class="font-display font-bold text-white text-sm">SG Prime</div>
+              <div class="font-display font-bold text-earth-400 text-sm">Enterprises</div>
+            </div>
           </div>
-          <p class="footer-desc">
-            Premium industrial coir products manufacturer. Providing sustainable solutions for
-            erosion control, greenhouse, and gardening applications.
+          <p class="text-coir-300 text-sm leading-relaxed mb-5">
+            Premium coir-based products crafted from nature. Sustainable solutions for erosion
+            control, greenhouse growing, and beautiful gardens.
           </p>
+          <!-- Social Links -->
+          <div class="flex gap-3">
+            <a
+              v-for="social in socials"
+              :key="social.label"
+              :href="social.href"
+              :aria-label="social.label"
+              class="w-9 h-9 rounded-full bg-bark-700 hover:bg-earth-500 flex items-center justify-center transition-colors duration-200"
+            >
+              <i :class="social.icon" class="text-sm text-white"></i>
+            </a>
+          </div>
         </div>
 
         <!-- Quick Links -->
-        <div class="footer-section">
-          <h4>Quick Links</h4>
-          <ul class="footer-links">
-            <li><router-link to="/">Home</router-link></li>
-            <li><router-link to="/products">Products</router-link></li>
-            <li><router-link to="/contact">Contact Us</router-link></li>
-            <li><router-link to="/admin/login">Admin Portal</router-link></li>
+        <div>
+          <h3
+            class="font-display font-semibold text-white text-base mb-5 pb-2 border-b border-bark-600"
+          >
+            Quick Links
+          </h3>
+          <ul class="space-y-3">
+            <li v-for="link in quickLinks" :key="link.to">
+              <RouterLink
+                :to="link.to"
+                class="text-coir-300 hover:text-earth-400 text-sm transition-colors flex items-center gap-2"
+              >
+                <i class="pi pi-angle-right text-earth-500 text-xs"></i>
+                {{ link.name }}
+              </RouterLink>
+            </li>
           </ul>
         </div>
 
-        <!-- Categories -->
-        <div class="footer-section">
-          <h4>Product Categories</h4>
-          <ul class="footer-links">
-            <li><router-link to="/category/erosion-control">Erosion Control</router-link></li>
-            <li><router-link to="/category/greenhouse">Greenhouse Products</router-link></li>
-            <li><router-link to="/category/gardening">Gardening Products</router-link></li>
+        <!-- Product Categories -->
+        <div>
+          <h3
+            class="font-display font-semibold text-white text-base mb-5 pb-2 border-b border-bark-600"
+          >
+            Product Categories
+          </h3>
+          <ul class="space-y-3">
+            <li v-for="cat in categories" :key="cat">
+              <RouterLink
+                to="/products"
+                class="text-coir-300 hover:text-earth-400 text-sm transition-colors flex items-center gap-2"
+              >
+                <i class="pi pi-angle-right text-earth-500 text-xs"></i>
+                {{ cat }}
+              </RouterLink>
+            </li>
           </ul>
         </div>
 
         <!-- Contact Info -->
-        <div class="footer-section">
-          <h4>Contact</h4>
-          <div class="contact-info">
-            <p>
-              <i class="pi pi-envelope"></i>
-              contact@sgprimeenterprises.com
-            </p>
-            <p>
-              <i class="pi pi-phone"></i>
-              +1 (555) 123-4567
-            </p>
-            <p>
-              <i class="pi pi-map-marker"></i>
-              Industrial Zone, City, Country
-            </p>
-          </div>
-          <div class="social-links">
-            <a href="#" aria-label="Facebook"><i class="pi pi-facebook"></i></a>
-            <a href="#" aria-label="Instagram"><i class="pi pi-instagram"></i></a>
-            <a href="#" aria-label="LinkedIn"><i class="pi pi-linkedin"></i></a>
-          </div>
+        <div>
+          <h3
+            class="font-display font-semibold text-white text-base mb-5 pb-2 border-b border-bark-600"
+          >
+            Contact Us
+          </h3>
+          <ul class="space-y-4 text-sm text-coir-300">
+            <li class="flex gap-3">
+              <i class="pi pi-map-marker text-earth-400 mt-0.5 shrink-0"></i>
+              <span>42 Coir Industrial Park, Alappuzha, Kerala 688001, India</span>
+            </li>
+            <li class="flex gap-3">
+              <i class="pi pi-phone text-earth-400 mt-0.5 shrink-0"></i>
+              <a href="tel:+914772250000" class="hover:text-earth-400 transition-colors">
+                +91 477 225 0000
+              </a>
+            </li>
+            <li class="flex gap-3">
+              <i class="pi pi-envelope text-earth-400 mt-0.5 shrink-0"></i>
+              <a
+                href="mailto:info@sgprimeenterprises.com"
+                class="hover:text-earth-400 transition-colors break-all"
+              >
+                info@sgprimeenterprises.com
+              </a>
+            </li>
+            <li class="flex gap-3">
+              <i class="pi pi-clock text-earth-400 mt-0.5 shrink-0"></i>
+              <span>Mon – Sat: 9:00 AM – 6:00 PM</span>
+            </li>
+          </ul>
         </div>
       </div>
+    </div>
 
-      <!-- Copyright -->
-      <div class="footer-bottom">
-        <p>&copy; {{ currentYear }} SG Prime Enterprises. All rights reserved.</p>
-        <p class="built-with">Built with excellence for sustainability</p>
+    <!-- Bottom Bar -->
+    <div class="border-t border-bark-700">
+      <div
+        class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5 flex flex-col sm:flex-row items-center justify-between gap-3 text-sm text-coir-400"
+      >
+        <p>© {{ currentYear }} SG Prime Enterprises. All rights reserved.</p>
+        <p class="flex items-center gap-1.5">
+          <i class="pi pi-leaf text-earth-500"></i>
+          Sustainably crafted coir products
+        </p>
       </div>
     </div>
   </footer>
 </template>
-
-<script setup>
-import { computed } from 'vue';
-
-const currentYear = computed(() => new Date().getFullYear());
-</script>
-
-<style scoped>
-.footer {
-  background-color: var(--color-text);
-  color: var(--color-canvas);
-  padding: 4rem 0 2rem;
-  margin-top: 6rem;
-}
-
-.footer-content {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 3rem;
-  margin-bottom: 3rem;
-}
-
-.footer-section h4 {
-  color: var(--color-secondary);
-  font-size: 1.125rem;
-  margin-bottom: 1.25rem;
-  font-family: var(--font-display);
-}
-
-.footer-logo {
-  margin-bottom: 1rem;
-}
-
-.logo-text {
-  display: block;
-  font-family: var(--font-display);
-  font-size: 1.75rem;
-  font-weight: 700;
-  color: var(--color-secondary);
-}
-
-.logo-sub {
-  display: block;
-  font-size: 0.875rem;
-  color: var(--color-accent);
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-}
-
-.footer-desc {
-  color: rgba(255, 241, 232, 0.8);
-  line-height: 1.7;
-  font-size: 0.95rem;
-}
-
-.footer-links {
-  list-style: none;
-  padding: 0;
-}
-
-.footer-links li {
-  margin-bottom: 0.75rem;
-}
-
-.footer-links a {
-  color: rgba(255, 241, 232, 0.8);
-  text-decoration: none;
-  transition: color var(--transition-fast);
-  font-size: 0.95rem;
-}
-
-.footer-links a:hover {
-  color: var(--color-secondary);
-}
-
-.contact-info {
-  margin-bottom: 1.5rem;
-}
-
-.contact-info p {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  margin-bottom: 0.75rem;
-  color: rgba(255, 241, 232, 0.8);
-  font-size: 0.95rem;
-}
-
-.contact-info i {
-  color: var(--color-secondary);
-  font-size: 1.125rem;
-}
-
-.social-links {
-  display: flex;
-  gap: 1rem;
-}
-
-.social-links a {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 40px;
-  height: 40px;
-  background-color: rgba(255, 241, 232, 0.1);
-  border-radius: 50%;
-  color: var(--color-secondary);
-  transition: all var(--transition-medium);
-}
-
-.social-links a:hover {
-  background-color: var(--color-secondary);
-  color: var(--color-text);
-  transform: translateY(-3px);
-}
-
-.footer-bottom {
-  padding-top: 2rem;
-  border-top: 1px solid rgba(255, 241, 232, 0.1);
-  text-align: center;
-}
-
-.footer-bottom p {
-  color: rgba(255, 241, 232, 0.6);
-  font-size: 0.875rem;
-  margin-bottom: 0.5rem;
-}
-
-.built-with {
-  font-style: italic;
-}
-
-@media (max-width: 768px) {
-  .footer {
-    padding: 3rem 0 1.5rem;
-    margin-top: 4rem;
-  }
-
-  .footer-content {
-    grid-template-columns: 1fr;
-    gap: 2rem;
-  }
-}
-</style>

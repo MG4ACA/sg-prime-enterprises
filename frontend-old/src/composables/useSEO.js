@@ -62,7 +62,10 @@ export function useSEO() {
         name: data.name,
         description: data.description,
         image: data.image,
-        brand: { '@type': 'Brand', name: 'SG Prime Enterprises' },
+        brand: {
+          '@type': 'Brand',
+          name: 'SG Prime Enterprises',
+        },
         offers: data.offers,
       },
       breadcrumb: {
@@ -71,6 +74,7 @@ export function useSEO() {
         itemListElement: data.items,
       },
     };
+
     return schemas[type] || null;
   };
 

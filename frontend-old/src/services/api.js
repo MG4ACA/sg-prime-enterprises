@@ -8,7 +8,7 @@ const apiClient = axios.create({
   },
 });
 
-// Request interceptor — attach admin JWT if present
+// Request interceptor
 apiClient.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem('admin_token');
@@ -17,10 +17,12 @@ apiClient.interceptors.request.use(
     }
     return config;
   },
-  (error) => Promise.reject(error),
+  (error) => {
+    return Promise.reject(error);
+  },
 );
 
-// Response interceptor — auto-logout on 401
+// Response interceptor
 apiClient.interceptors.response.use(
   (response) => response,
   (error) => {

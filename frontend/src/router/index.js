@@ -1,96 +1,79 @@
 import { useAuthStore } from '@/stores/auth';
 import { createRouter, createWebHistory } from 'vue-router';
 
+// Public views
+import ContactView from '../views/ContactView.vue';
+import HomeView from '../views/HomeView.vue';
+import ProductsView from '../views/ProductsView.vue';
+
 const routes = [
+  // ── Public ─────────────────────────────────────────────
   {
     path: '/',
     name: 'Home',
-    component: () => import('@/views/HomePage.vue'),
-    meta: {
-      title: 'SG Prime Enterprises - Industrial Coir Products',
-      description: 'Premium industrial coir products manufacturer',
-    },
+    component: HomeView,
+    meta: { title: 'SG Prime Enterprises - Industrial Coir Products' },
   },
   {
     path: '/products',
     name: 'Products',
-    component: () => import('@/views/ProductsPage.vue'),
-    meta: {
-      title: 'Our Products - SG Prime Enterprises',
-      description: 'Browse our complete range of coir products',
-    },
+    component: ProductsView,
+    meta: { title: 'Our Products - SG Prime Enterprises' },
   },
   {
     path: '/products/:id',
     name: 'ProductDetail',
-    component: () => import('@/views/ProductDetailPage.vue'),
-    meta: {
-      title: 'Product Details - SG Prime Enterprises',
-    },
+    component: () => import('../views/ProductDetailView.vue'),
+    meta: { title: 'Product Details - SG Prime Enterprises' },
   },
   {
     path: '/category/:slug',
     name: 'Category',
-    component: () => import('@/views/CategoryPage.vue'),
-    meta: {
-      title: 'Category - SG Prime Enterprises',
-    },
+    component: () => import('../views/CategoryView.vue'),
+    meta: { title: 'Category - SG Prime Enterprises' },
   },
   {
     path: '/contact',
     name: 'Contact',
-    component: () => import('@/views/ContactPage.vue'),
-    meta: {
-      title: 'Contact Us - SG Prime Enterprises',
-      description: 'Get in touch with our team',
-    },
+    component: ContactView,
+    meta: { title: 'Contact Us - SG Prime Enterprises' },
   },
+
+  // ── Admin ───────────────────────────────────────────────
   {
     path: '/admin/login',
     name: 'AdminLogin',
-    component: () => import('@/views/AdminLogin.vue'),
-    meta: {
-      title: 'Admin Login',
-    },
+    component: () => import('../views/AdminLogin.vue'),
+    meta: { title: 'Admin Login' },
   },
   {
     path: '/admin',
-    component: () => import('@/components/AdminLayout.vue'),
-    meta: {
-      requiresAuth: true,
-    },
+    component: () => import('../components/AdminLayout.vue'),
+    meta: { requiresAuth: true },
     children: [
       {
         path: 'dashboard',
         name: 'AdminDashboard',
-        component: () => import('@/views/admin/DashboardPage.vue'),
-        meta: {
-          title: 'Admin Dashboard',
-        },
+        component: () => import('../views/admin/DashboardPage.vue'),
+        meta: { title: 'Dashboard - Admin' },
       },
       {
         path: 'products',
         name: 'AdminProducts',
-        component: () => import('@/views/admin/ProductsManagement.vue'),
-        meta: {
-          title: 'Manage Products',
-        },
+        component: () => import('../views/admin/ProductsManagement.vue'),
+        meta: { title: 'Products - Admin' },
       },
       {
         path: 'categories',
         name: 'AdminCategories',
-        component: () => import('@/views/admin/CategoriesManagement.vue'),
-        meta: {
-          title: 'Manage Categories',
-        },
+        component: () => import('../views/admin/CategoriesManagement.vue'),
+        meta: { title: 'Categories - Admin' },
       },
       {
         path: 'enquiries',
         name: 'AdminEnquiries',
-        component: () => import('@/views/admin/EnquiriesManagement.vue'),
-        meta: {
-          title: 'Manage Enquiries',
-        },
+        component: () => import('../views/admin/EnquiriesManagement.vue'),
+        meta: { title: 'Enquiries - Admin' },
       },
       {
         path: '',
@@ -98,13 +81,13 @@ const routes = [
       },
     ],
   },
+
+  // ── 404 ─────────────────────────────────────────────────
   {
     path: '/:pathMatch(.*)*',
     name: 'NotFound',
-    component: () => import('@/views/NotFoundPage.vue'),
-    meta: {
-      title: '404 - Page Not Found',
-    },
+    component: () => import('../views/NotFoundView.vue'),
+    meta: { title: 'Page Not Found' },
   },
 ];
 
@@ -112,38 +95,25 @@ const router = createRouter({
   history: createWebHistory(),
   routes,
   scrollBehavior(to, from, savedPosition) {
-    if (savedPosition) {
-      return savedPosition;
-    } else {
-      return { top: 0, behavior: 'smooth' };
-    }
+    if (savedPosition) return savedPosition;
+    if (to.hash) return { el: to.hash, behavior: 'smooth' };
+    return { top: 0 };
   },
 });
 
-// Navigation guards
-router.beforeEach((to, from, next) => {
-  // Update page title
-  document.title = to.meta.title || 'SG Prime Enterprises';
+// Navigation guard — protect admin routes
+router.beforeEach(async (to, from, next) => {
+  // Update document title
+  if (to.meta.title) document.title = to.meta.title;
 
-  // Update meta description
-  if (to.meta.description) {
-    let descriptionTag = document.querySelector('meta[name="description"]');
-    if (descriptionTag) {
-      descriptionTag.setAttribute('content', to.meta.description);
-    }
-  }
-
-  // Check authentication for admin routes
   if (to.meta.requiresAuth) {
     const authStore = useAuthStore();
-    if (!authStore.isAuthenticated) {
-      next({ name: 'AdminLogin', query: { redirect: to.fullPath } });
-    } else {
-      next();
+    const verified = await authStore.verifyToken();
+    if (!verified) {
+      return next({ name: 'AdminLogin' });
     }
-  } else {
-    next();
   }
+  next();
 });
 
 export default router;
