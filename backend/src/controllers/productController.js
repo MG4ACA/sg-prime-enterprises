@@ -175,7 +175,9 @@ exports.updateProduct = async (req, res, next) => {
     if (req.file) {
       // Delete old image if exists
       if (existing[0].image_url) {
-        const oldImagePath = path.join(__dirname, '../../', existing[0].image_url);
+        // Remove leading slash if present for proper path.join
+        const imagePath = existing[0].image_url.replace(/^\//, '');
+        const oldImagePath = path.join(__dirname, '../../', imagePath);
         try {
           await fs.unlink(oldImagePath);
         } catch (err) {
@@ -232,9 +234,11 @@ exports.deleteProduct = async (req, res, next) => {
 
     // Delete image file if exists
     if (products[0].image_url) {
-      const imagePath = path.join(__dirname, '../../', products[0].image_url);
+      // Remove leading slash if present for proper path.join
+      const imagePath = products[0].image_url.replace(/^\//, '');
+      const fullImagePath = path.join(__dirname, '../../', imagePath);
       try {
-        await fs.unlink(imagePath);
+        await fs.unlink(fullImagePath);
       } catch (err) {
         console.log('Image file not found or already deleted');
       }
