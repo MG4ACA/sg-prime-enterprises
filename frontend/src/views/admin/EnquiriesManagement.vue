@@ -33,9 +33,16 @@
         <Column field="created_at" header="Date" sortable>
           <template #body="{ data }">{{ formatDate(data.created_at) }}</template>
         </Column>
-        <Column header="" style="width: 70px">
+        <Column header="" style="width: 110px">
           <template #body="{ data }">
             <Button icon="pi pi-eye" text size="small" @click="viewEnquiry(data)" />
+            <Button
+              icon="pi pi-trash"
+              text
+              size="small"
+              severity="danger"
+              @click="confirmDelete(data)"
+            />
           </template>
         </Column>
       </DataTable>
@@ -61,12 +68,26 @@
         </div>
         <div class="flex gap-4 text-sm">
           <span class="text-gray-500 min-w-36 font-medium">Status</span>
-          <span :class="['status-badge', selectedEnquiry.status]">{{ selectedEnquiry.status }}</span>
+          <span :class="['status-badge', selectedEnquiry.status]">
+            {{ selectedEnquiry.status }}
+          </span>
         </div>
       </div>
 
       <template #footer>
         <Button label="Close" text @click="detailsVisible = false" />
+        <Button
+          label="Delete"
+          icon="pi pi-trash"
+          severity="danger"
+          text
+          @click="
+            () => {
+              detailsVisible = false;
+              confirmDelete(selectedEnquiry);
+            }
+          "
+        />
       </template>
     </Dialog>
   </div>
@@ -74,10 +95,12 @@
 
 <script setup>
 import api from '@/services/api';
+import { useConfirm } from 'primevue/useconfirm';
 import { useToast } from 'primevue/usetoast';
 import { computed, onMounted, ref } from 'vue';
 
 const toast = useToast();
+const confirm = useConfirm();
 
 const enquiries = ref([]);
 const loading = ref(false);
@@ -115,7 +138,12 @@ const fetchEnquiries = async () => {
     const response = await api.get(url);
     if (response.data.success) enquiries.value = response.data.data;
   } catch {
-    toast.add({ severity: 'error', summary: 'Error', detail: 'Failed to fetch enquiries', life: 3000 });
+    toast.add({
+      severity: 'error',
+      summary: 'Error',
+      detail: 'Failed to fetch enquiries',
+      life: 3000,
+    });
   } finally {
     loading.value = false;
   }
@@ -128,7 +156,12 @@ const updateStatus = async (enquiry) => {
       toast.add({ severity: 'success', summary: 'Updated', detail: 'Status updated', life: 2000 });
     }
   } catch {
-    toast.add({ severity: 'error', summary: 'Error', detail: 'Failed to update status', life: 3000 });
+    toast.add({
+      severity: 'error',
+      summary: 'Error',
+      detail: 'Failed to update status',
+      life: 3000,
+    });
     fetchEnquiries();
   }
 };
@@ -136,6 +169,38 @@ const updateStatus = async (enquiry) => {
 const viewEnquiry = (enquiry) => {
   selectedEnquiry.value = enquiry;
   detailsVisible.value = true;
+};
+
+const confirmDelete = (enquiry) => {
+  confirm.require({
+    message: `Delete enquiry from ${enquiry.name}? This action cannot be undone.`,
+    header: 'Delete Enquiry',
+    icon: 'pi pi-exclamation-triangle',
+    acceptClass: 'p-button-danger',
+    acceptLabel: 'Delete',
+    rejectLabel: 'Cancel',
+    accept: () => deleteEnquiry(enquiry),
+  });
+};
+
+const deleteEnquiry = async (enquiry) => {
+  try {
+    const response = await api.delete(`/admin/enquiries/${enquiry.id}`);
+    if (response.data.success) {
+      enquiries.value = enquiries.value.filter((e) => e.id !== enquiry.id);
+      toast.add({ severity: 'success', summary: 'Deleted', detail: 'Enquiry removed', life: 2000 });
+      if (detailsVisible.value && selectedEnquiry.value?.id === enquiry.id) {
+        detailsVisible.value = false;
+      }
+    }
+  } catch {
+    toast.add({
+      severity: 'error',
+      summary: 'Error',
+      detail: 'Failed to delete enquiry',
+      life: 3000,
+    });
+  }
 };
 
 const formatDate = (dateString) =>
@@ -159,7 +224,16 @@ onMounted(fetchEnquiries);
   font-weight: 600;
   text-transform: capitalize;
 }
-.status-badge.pending   { background: #fef3c7; color: #d97706; }
-.status-badge.contacted { background: #dbeafe; color: #2563eb; }
-.status-badge.resolved  { background: #dcfce7; color: #16a34a; }
+.status-badge.pending {
+  background: #fef3c7;
+  color: #d97706;
+}
+.status-badge.contacted {
+  background: #dbeafe;
+  color: #2563eb;
+}
+.status-badge.resolved {
+  background: #dcfce7;
+  color: #16a34a;
+}
 </style>

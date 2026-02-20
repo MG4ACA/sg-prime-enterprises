@@ -38,6 +38,12 @@ const routes = [
     component: ContactView,
     meta: { title: 'Contact Us - SG Prime Enterprises' },
   },
+  {
+    path: '/about',
+    name: 'About',
+    component: () => import('../views/AboutView.vue'),
+    meta: { title: 'About Us - SG Prime Enterprises' },
+  },
 
   // ── Admin ───────────────────────────────────────────────
   {

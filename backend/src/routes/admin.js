@@ -7,11 +7,24 @@ const enquiryController = require('../controllers/enquiryController');
 const authMiddleware = require('../middleware/auth');
 const upload = require('../config/upload');
 const { body } = require('express-validator');
+const rateLimit = require('express-rate-limit');
+
+// Rate limiter for login endpoint to prevent brute force attacks
+const loginLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 5, // Limit each IP to 5 login requests per windowMs
+  message: {
+    success: false,
+    message: 'Too many login attempts from this IP, please try again after 15 minutes'
+  },
+  standardHeaders: true,
+  legacyHeaders: false,
+});
 
 // ============================================
 // AUTHENTICATION ROUTES
 // ============================================
-router.post('/login', authController.login);
+router.post('/login', loginLimiter, authController.login);
 router.get('/verify', authMiddleware, authController.verifyToken);
 router.patch('/password', authMiddleware, authController.changePassword);
 

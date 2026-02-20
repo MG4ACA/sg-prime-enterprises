@@ -10,7 +10,6 @@
   },
   "dependencies": {
     "@primevue/themes": "^4.5.4",
-    "@studio-freight/lenis": "^1.0.38",
     "@vueuse/core": "^10.7.2",
     "axios": "^1.6.5",
     "gsap": "^3.12.5",

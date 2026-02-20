@@ -1,4 +1,5 @@
 const db = require('../config/database');
+const { validationResult } = require('express-validator');
 
 // Get all categories
 exports.getAllCategories = async (req, res, next) => {
@@ -39,6 +40,16 @@ exports.getCategoryBySlug = async (req, res, next) => {
 
 // Create new category (Admin only)
 exports.createCategory = async (req, res, next) => {
+  // Check validation errors
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({
+      success: false,
+      message: 'Validation failed',
+      errors: errors.array()
+    });
+  }
+
   try {
     const { name, slug, description } = req.body;
 

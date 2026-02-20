@@ -49,7 +49,6 @@ Access the application at [http://localhost:5173](http://localhost:5173)
 - **Vite** (Build tool)
 - **PrimeVue** (UI Components)
 - **GSAP + ScrollTrigger** (Advanced animations)
-- **Lenis** (Smooth scrolling)
 - **VueUse** (Composition utilities)
 
 ### Backend
@@ -289,7 +288,6 @@ server {
 ## 🎨 Animation Features
 
 - **GSAP ScrollTrigger**: Scroll-based animations
-- **Lenis**: Buttery-smooth scrolling experience
 - **Stagger Effects**: Product cards animate in sequence
 - **Parallax**: Hero section floating effect
 - **Color Transitions**: Background morphs between sections

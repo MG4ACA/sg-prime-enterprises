@@ -1,8 +1,19 @@
 const db = require('../config/database');
 const emailTransporter = require('../config/email');
+const { validationResult } = require('express-validator');
 
 // Submit new enquiry
 exports.createEnquiry = async (req, res, next) => {
+  // Check validation errors
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({
+      success: false,
+      message: 'Validation failed',
+      errors: errors.array()
+    });
+  }
+
   try {
     const { name, email, company, phone, message, product_id } = req.body;
 
@@ -184,7 +195,7 @@ exports.updateEnquiryStatus = async (req, res, next) => {
     const { id } = req.params;
     const { status, notes } = req.body;
 
-    const validStatuses = ['new', 'contacted', 'resolved'];
+    const validStatuses = ['pending', 'contacted', 'resolved'];
     if (!validStatuses.includes(status)) {
       return res.status(400).json({
         success: false,

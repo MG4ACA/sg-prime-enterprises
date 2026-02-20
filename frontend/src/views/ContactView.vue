@@ -1,4 +1,5 @@
 <script setup>
+import api from '@/services/api';
 import { useToast } from 'primevue/usetoast';
 import { reactive, ref } from 'vue';
 
@@ -33,7 +34,7 @@ const categoryOptions = [
   { label: 'Multiple Categories', value: 'Multiple Categories' },
 ];
 
-function handleSubmit() {
+async function handleSubmit() {
   if (!form.name || !form.email || !form.message) {
     toast.add({
       severity: 'warn',
@@ -44,9 +45,22 @@ function handleSubmit() {
     return;
   }
   submitting.value = true;
-  // Simulate API call
-  setTimeout(() => {
-    submitting.value = false;
+  try {
+    // Prepend subject / category context into message if provided
+    let fullMessage = form.message;
+    const context = [];
+    if (form.subject) context.push(`Subject: ${form.subject}`);
+    if (form.category) context.push(`Product Category: ${form.category}`);
+    if (context.length) fullMessage = context.join(' | ') + '\n\n' + form.message;
+
+    await api.post('/enquiry', {
+      name: form.name,
+      email: form.email,
+      company: form.company || undefined,
+      phone: form.phone || undefined,
+      message: fullMessage,
+    });
+
     submitted.value = true;
     toast.add({
       severity: 'success',
@@ -54,12 +68,32 @@ function handleSubmit() {
       detail: "Thank you. We'll get back to you within 1 business day.",
       life: 6000,
     });
-  }, 1500);
+  } catch (error) {
+    toast.add({
+      severity: 'error',
+      summary: 'Submission Failed',
+      detail: error.response?.data?.message || 'Unable to send your message. Please try again.',
+      life: 5000,
+    });
+  } finally {
+    submitting.value = false;
+  }
 }
 
 function resetForm() {
   Object.keys(form).forEach((k) => (form[k] = ''));
   submitted.value = false;
+}
+
+function populateSampleData() {
+  form.name = 'James Anderson';
+  form.company = 'Global Garden Supplies Ltd';
+  form.email = 'james.anderson@ggarden.com';
+  form.phone = '+44 7700 900123';
+  form.subject = 'Bulk / Wholesale Order';
+  form.category = 'Erosion Control';
+  form.message =
+    'Hi, we are interested in placing a bulk order of coir erosion control mats for a large landscaping project in the UK. We need approximately 5,000 sqm of 700gsm coir matting. Please provide pricing, lead times, and shipping options. We have worked with Indian coir manufacturers before and are looking for a long-term supplier.';
 }
 
 const contactInfo = [
@@ -248,13 +282,24 @@ const contactInfo = [
                 />
               </div>
 
-              <PButton
-                type="submit"
-                :loading="submitting"
-                :label="submitting ? 'Sending...' : 'Send Message'"
-                icon="pi pi-send"
-                class="w-full sm:w-auto bg-earth-500 border-earth-500 hover:bg-earth-600 hover:border-earth-600"
-              />
+              <div class="flex flex-wrap items-center gap-3">
+                <PButton
+                  type="submit"
+                  :loading="submitting"
+                  :label="submitting ? 'Sending...' : 'Send Message'"
+                  icon="pi pi-send"
+                  class="bg-earth-500 border-earth-500 hover:bg-earth-600 hover:border-earth-600"
+                />
+                <PButton
+                  type="button"
+                  label="Fill Sample Data"
+                  icon="pi pi-bolt"
+                  severity="secondary"
+                  outlined
+                  @click="populateSampleData"
+                  v-tooltip.top="'Populate form with sample enquiry data'"
+                />
+              </div>
             </form>
           </Transition>
         </div>

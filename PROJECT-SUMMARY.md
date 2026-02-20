@@ -150,7 +150,6 @@ Your complete industrial e-commerce web application for SG Prime Enterprises is 
 - ✅ Scroll-triggered transitions
 - ✅ **Zoom-on-hover with dynamic transform origin**
 - ✅ **Sliding specifications table**
-- ✅ Smooth scrolling (Lenis)
 
 **Design System:**
 
@@ -264,7 +263,6 @@ sg-prime-enterprises/
 │   │   │       ├── CategoriesManagement.vue  # Category CRUD
 │   │   │       └── EnquiriesManagement.vue   # Enquiry management
 │   │   ├── composables/
-│   │   │   ├── useLenis.js    # Smooth scrolling
 │   │   │   ├── useGSAP.js     # Animation utilities
 │   │   │   └── useSEO.js      # SEO helpers
 │   │   ├── stores/

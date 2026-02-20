@@ -1,6 +1,7 @@
 const db = require('../config/database');
 const path = require('path');
 const fs = require('fs').promises;
+const { validationResult } = require('express-validator');
 
 // Get all products with optional filtering
 exports.getAllProducts = async (req, res, next) => {
@@ -87,6 +88,16 @@ exports.getProductById = async (req, res, next) => {
 
 // Create new product (Admin only)
 exports.createProduct = async (req, res, next) => {
+  // Check validation errors
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({
+      success: false,
+      message: 'Validation failed',
+      errors: errors.array()
+    });
+  }
+
   try {
     const {
       category_id,
@@ -104,8 +115,8 @@ exports.createProduct = async (req, res, next) => {
       image_url = '/uploads/products/' + req.file.filename;
     }
 
-    // Parse specs if it's a string
-    const specsJson = typeof specs === 'string' ? JSON.parse(specs) : specs;
+    // Parse specs if it's a string (guard against empty string)
+    const specsJson = specs && typeof specs === 'string' ? JSON.parse(specs) : specs || {};
 
     const [result] = await db.query(
       `INSERT INTO products 
@@ -174,8 +185,8 @@ exports.updateProduct = async (req, res, next) => {
       image_url = '/uploads/products/' + req.file.filename;
     }
 
-    // Parse specs if it's a string
-    const specsJson = typeof specs === 'string' ? JSON.parse(specs) : specs;
+    // Parse specs if it's a string (guard against empty string)
+    const specsJson = specs && typeof specs === 'string' ? JSON.parse(specs) : specs || {};
 
     await db.query(
       `UPDATE products 

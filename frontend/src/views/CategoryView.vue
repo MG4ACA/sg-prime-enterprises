@@ -1,6 +1,6 @@
 <script setup>
-import api from '@/services/api';
 import ProductCard from '@/components/ProductCard.vue';
+import api from '@/services/api';
 import { onMounted, ref, watch } from 'vue';
 import { RouterLink, useRoute, useRouter } from 'vue-router';
 
@@ -60,7 +60,9 @@ onMounted(fetchData);
         <nav class="flex items-center gap-2 text-sm text-white/60 mb-6">
           <RouterLink to="/" class="hover:text-white transition-colors">Home</RouterLink>
           <i class="pi pi-angle-right text-xs"></i>
-          <RouterLink to="/products" class="hover:text-white transition-colors">Products</RouterLink>
+          <RouterLink to="/products" class="hover:text-white transition-colors">
+            Products
+          </RouterLink>
           <i class="pi pi-angle-right text-xs"></i>
           <span class="text-white/90">{{ category.name }}</span>
         </nav>

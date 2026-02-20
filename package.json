@@ -17,6 +17,8 @@
   "author": "SG Prime Enterprises",
   "license": "ISC",
   "devDependencies": {
-    "concurrently": "^8.2.2"
+    "axios": "^1.13.5",
+    "concurrently": "^8.2.2",
+    "form-data": "^4.0.5"
   }
 }

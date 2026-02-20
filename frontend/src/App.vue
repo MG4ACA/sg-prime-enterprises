@@ -1,16 +1,9 @@
 <script setup>
-import { useLenis } from '@/composables/useLenis';
-import { onMounted } from 'vue';
 import { useRoute } from 'vue-router';
 import Footer from './components/Footer.vue';
 import Navbar from './components/Navbar.vue';
 
 const route = useRoute();
-const { initLenis } = useLenis();
-
-onMounted(() => {
-  initLenis();
-});
 
 const isAdminRoute = () => route.path.startsWith('/admin');
 </script>
