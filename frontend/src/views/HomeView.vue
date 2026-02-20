@@ -1,4 +1,5 @@
 <script setup>
+import HeroSlider from '@/components/HeroSlider.vue';
 import ProductCard from '@/components/ProductCard.vue';
 import api from '@/services/api';
 import { onMounted, ref } from 'vue';
@@ -73,67 +74,8 @@ onMounted(async () => {
 </script>
 
 <template>
-  <!-- ── Hero Carousel ─────────────────────────────────────── -->
-  <section class="relative h-screen min-h-[600px] w-screen overflow-hidden">
-    <PCarousel
-      :value="slides"
-      :numVisible="1"
-      :numScroll="1"
-      :autoplayInterval="5000"
-      circular
-      class="w-full h-full overflow-hidden"
-    >
-      <template #item="{ data: slide }">
-        <div class="relative h-screen min-h-[600px] w-screen overflow-hidden">
-          <!-- Background image -->
-          <img
-            :src="slide.image"
-            :alt="slide.title"
-            class="absolute inset-0 w-full h-full object-cover"
-          />
-          <!-- Overlay -->
-          <div
-            class="absolute inset-0 bg-gradient-to-r from-black/70 via-black/40 to-transparent"
-          ></div>
-
-          <!-- Content -->
-          <div class="relative h-full flex items-center">
-            <div class="max-w-7xl mx-auto px-6 sm:px-10 lg:px-16 w-full">
-              <div class="max-w-xl">
-                <span
-                  class="badge text-white mb-5 inline-flex items-center gap-2"
-                  :class="slide.accent + '/90'"
-                >
-                  <i class="pi pi-leaf text-xs"></i>
-                  {{ slide.tag }}
-                </span>
-                <h1
-                  class="text-4xl sm:text-5xl lg:text-6xl font-display font-bold text-white leading-tight mb-5 whitespace-pre-line"
-                >
-                  {{ slide.title }}
-                </h1>
-                <p class="text-white/85 text-lg leading-relaxed mb-8 max-w-md">
-                  {{ slide.description }}
-                </p>
-                <div class="flex flex-wrap gap-4">
-                  <RouterLink :to="slide.cta.to" class="btn-primary">
-                    {{ slide.cta.label }}
-                    <i class="pi pi-arrow-right ml-2 text-xs"></i>
-                  </RouterLink>
-                  <RouterLink
-                    to="/about"
-                    class="inline-flex items-center gap-2 px-6 py-3 border-2 border-white/70 text-white font-semibold rounded-lg hover:bg-white/10 transition-all"
-                  >
-                    Our Story
-                  </RouterLink>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </template>
-    </PCarousel>
-  </section>
+  <!-- ── Hero Slider ──────────────────────────────────────── -->
+  <HeroSlider :slides="slides" />
 
   <!-- ── Featured Products ────────────────────────────────── -->
   <section class="py-20 px-4 sm:px-6 lg:px-8 bg-cream max-w-7xl mx-auto">
