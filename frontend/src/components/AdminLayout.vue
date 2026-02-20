@@ -34,6 +34,10 @@
       </nav>
 
       <div class="sidebar-footer">
+        <router-link to="/admin/change-password" class="nav-item mb-2">
+          <i class="pi pi-lock"></i>
+          <span>Change Password</span>
+        </router-link>
         <a href="/" target="_blank" class="nav-item mb-2">
           <i class="pi pi-external-link"></i>
           <span>View Site</span>
@@ -75,6 +79,7 @@ const pageTitle = computed(() => {
     '/admin/products': 'Manage Products',
     '/admin/categories': 'Manage Categories',
     '/admin/enquiries': 'Manage Enquiries',
+    '/admin/change-password': 'Change Password',
   };
   return titles[route.path] || 'Admin';
 });

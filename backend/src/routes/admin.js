@@ -13,10 +13,13 @@ const { body } = require('express-validator');
 // ============================================
 router.post('/login', authController.login);
 router.get('/verify', authMiddleware, authController.verifyToken);
+router.patch('/password', authMiddleware, authController.changePassword);
 
 // ============================================
 // CATEGORY MANAGEMENT (Protected)
 // ============================================
+router.get('/categories', authMiddleware, categoryController.getAllCategories);
+
 router.post(
   '/categories',
   authMiddleware,
@@ -34,6 +37,12 @@ router.delete('/categories/:id', authMiddleware, categoryController.deleteCatego
 // ============================================
 // PRODUCT MANAGEMENT (Protected)
 // ============================================
+// GET all products (admin — returns all statuses by default)
+router.get('/products', authMiddleware, (req, res, next) => {
+  req.query.status = req.query.status || 'all';
+  return productController.getAllProducts(req, res, next);
+});
+
 router.post(
   '/products',
   authMiddleware,
@@ -61,6 +70,7 @@ router.delete('/products/:id', authMiddleware, productController.deleteProduct);
 router.get('/enquiries', authMiddleware, enquiryController.getAllEnquiries);
 router.get('/enquiries/:id', authMiddleware, enquiryController.getEnquiryById);
 router.put('/enquiries/:id', authMiddleware, enquiryController.updateEnquiryStatus);
+router.patch('/enquiries/:id', authMiddleware, enquiryController.updateEnquiryStatus);
 router.delete('/enquiries/:id', authMiddleware, enquiryController.deleteEnquiry);
 
 module.exports = router;

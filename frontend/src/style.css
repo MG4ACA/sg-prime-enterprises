@@ -1,9 +1,9 @@
-@import "tailwindcss";
-@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;600;700&display=swap");
+@import 'tailwindcss';
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;600;700&display=swap');
 
 @theme {
   /* Coir (tan/brown) palette */
-  --color-coir-50:  #faf6f0;
+  --color-coir-50: #faf6f0;
   --color-coir-100: #f2e8d5;
   --color-coir-200: #e5d0aa;
   --color-coir-300: #d4b27a;
@@ -15,36 +15,36 @@
   --color-coir-900: #53311b;
 
   /* Earth (green) palette */
-  --color-earth-50:  #f5f7f2;
+  --color-earth-50: #f5f7f2;
   --color-earth-100: #e6ede0;
   --color-earth-200: #c9d9be;
   --color-earth-300: #a3be94;
   --color-earth-400: #7ba068;
-  --color-earth-500: #4A7C59;
+  --color-earth-500: #4a7c59;
   --color-earth-600: #3d6849;
   --color-earth-700: #325539;
   --color-earth-800: #2a452f;
   --color-earth-900: #233928;
 
   /* Bark (dark brown) palette */
-  --color-bark-50:  #f9f6f4;
+  --color-bark-50: #f9f6f4;
   --color-bark-100: #f0e8e3;
   --color-bark-200: #e0d0c5;
   --color-bark-300: #ccb09e;
   --color-bark-400: #b58b72;
   --color-bark-500: #9a6e52;
   --color-bark-600: #7e5540;
-  --color-bark-700: #5C4033;
+  --color-bark-700: #5c4033;
   --color-bark-800: #4a3328;
   --color-bark-900: #3d2a21;
 
   /* Flat colors */
-  --color-cream: #FAF7F2;
-  --color-tan:   #E8DCC8;
+  --color-cream: #faf7f2;
+  --color-tan: #e8dcc8;
 
   /* Typography */
-  --font-sans:    Inter, system-ui, sans-serif;
-  --font-display: "Playfair Display", Georgia, serif;
+  --font-sans: Inter, system-ui, sans-serif;
+  --font-display: 'Playfair Display', Georgia, serif;
 }
 
 @layer base {
@@ -53,7 +53,9 @@
     color: var(--color-bark-800);
     font-family: var(--font-sans);
   }
-  h1, h2, h3 {
+  h1,
+  h2,
+  h3 {
     font-family: var(--font-display);
   }
 }
@@ -68,13 +70,15 @@
     color: #ffffff;
     font-weight: 600;
     border-radius: 0.5rem;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
-    transition: background-color 0.2s, box-shadow 0.2s;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    transition:
+      background-color 0.2s,
+      box-shadow 0.2s;
     text-decoration: none;
   }
   .btn-primary:hover {
     background-color: var(--color-earth-600);
-    box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
   }
   .btn-secondary {
     display: inline-flex;
@@ -85,7 +89,9 @@
     color: var(--color-bark-700);
     font-weight: 600;
     border-radius: 0.5rem;
-    transition: background-color 0.2s, color 0.2s;
+    transition:
+      background-color 0.2s,
+      color 0.2s;
     text-decoration: none;
   }
   .btn-secondary:hover {
@@ -100,7 +106,9 @@
     margin-bottom: 0.75rem;
   }
   @media (min-width: 768px) {
-    .section-title { font-size: 2.25rem; }
+    .section-title {
+      font-size: 2.25rem;
+    }
   }
   .section-subtitle {
     font-size: 1.125rem;
@@ -108,11 +116,13 @@
     margin-bottom: 2.5rem;
   }
   .card-hover {
-    transition: transform 0.3s, box-shadow 0.3s;
+    transition:
+      transform 0.3s,
+      box-shadow 0.3s;
   }
   .card-hover:hover {
     transform: translateY(-4px);
-    box-shadow: 0 20px 40px rgba(0,0,0,0.12);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12);
   }
   .badge {
     display: inline-block;
@@ -126,9 +136,34 @@
 }
 
 html {
-  scroll-behavior: smooth;
+  overflow-x: hidden;
+}
+
+body {
+  overflow-x: hidden;
 }
 
 /* Hide scrollbar for filter tabs */
-.no-scrollbar::-webkit-scrollbar { display: none; }
-.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Hero carousel — force all PrimeVue wrapper divs to fill full viewport */
+.p-carousel,
+.p-carousel-content,
+.p-carousel-viewport,
+.p-carousel-item-list,
+.p-carousel-item {
+  width: 100vw !important;
+  max-width: 100vw !important;
+  height: 100% !important;
+}
+
+.p-carousel-content,
+.p-carousel-viewport {
+  overflow: hidden !important;
+}

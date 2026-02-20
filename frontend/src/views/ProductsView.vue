@@ -1,33 +1,64 @@
 <script setup>
-import { computed, ref } from 'vue';
+import api from '@/services/api';
+import { onMounted, ref } from 'vue';
 import ProductCard from '../components/ProductCard.vue';
-import { categories, products } from '../data/products.js';
 
-const activeCategory = ref('All');
+const products = ref([]);
+const allCategories = ref([{ name: 'All', slug: null }]);
+const activeCategory = ref(null); // null = All, otherwise category slug
+const featuredOnly = ref(false);
+const loading = ref(true);
 
-const allCategories = ['All', ...categories];
-
-const filteredProducts = computed(() =>
-  activeCategory.value === 'All'
-    ? products
-    : products.filter((p) => p.category === activeCategory.value),
-);
-
-const categoryIcons = {
-  All: 'pi pi-th-large',
-  'Erosion Control': 'pi pi-chart-line',
-  'Greenhouse Products': 'pi pi-sun',
-  'Gardening Products': 'pi pi-leaf',
+const categoryIcon = (slug) => {
+  const icons = {
+    'erosion-control': 'pi pi-chart-line',
+    'greenhouse-products': 'pi pi-sun',
+    'gardening-products': 'pi pi-leaf',
+  };
+  return icons[slug] || 'pi pi-tag';
 };
 
-const categoryDescriptions = {
-  All: 'Browse our complete range of premium coir products.',
-  'Erosion Control': 'Natural fiber solutions to protect soil, slopes, and waterways from erosion.',
-  'Greenhouse Products':
-    'Biodegradable growing containers and media for professional horticulture.',
-  'Gardening Products':
-    'Sustainable coir growing media, mulch, and accessories for home and commercial gardens.',
+const fetchCategories = async () => {
+  try {
+    const res = await api.get('/categories');
+    if (res.data.success) {
+      allCategories.value = [{ name: 'All', slug: null }, ...res.data.data];
+    }
+  } catch (e) {
+    console.error('Failed to fetch categories:', e);
+  }
 };
+
+const fetchProducts = async () => {
+  loading.value = true;
+  try {
+    const params = new URLSearchParams({ status: 'active' });
+    if (activeCategory.value) params.set('category', activeCategory.value);
+    if (featuredOnly.value) params.set('featured', 'true');
+
+    const res = await api.get(`/products?${params}`);
+    if (res.data.success) products.value = res.data.data;
+  } catch (e) {
+    console.error('Failed to fetch products:', e);
+  } finally {
+    loading.value = false;
+  }
+};
+
+const selectCategory = (slug) => {
+  activeCategory.value = slug;
+  fetchProducts();
+};
+
+const toggleFeatured = () => {
+  featuredOnly.value = !featuredOnly.value;
+  fetchProducts();
+};
+
+onMounted(async () => {
+  await fetchCategories();
+  await fetchProducts();
+});
 </script>
 
 <template>
@@ -56,58 +87,69 @@ const categoryDescriptions = {
       <div class="flex items-center gap-2 py-3 overflow-x-auto no-scrollbar">
         <button
           v-for="cat in allCategories"
-          :key="cat"
-          @click="activeCategory = cat"
+          :key="cat.slug"
+          @click="selectCategory(cat.slug)"
           class="flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all duration-200 shrink-0"
           :class="
-            activeCategory === cat
+            activeCategory === cat.slug
               ? 'bg-earth-500 text-white shadow-md'
               : 'bg-coir-100 text-bark-600 hover:bg-earth-50 hover:text-earth-700'
           "
         >
-          <i :class="categoryIcons[cat]" class="text-xs"></i>
-          {{ cat }}
+          <i :class="cat.slug ? categoryIcon(cat.slug) : 'pi pi-th-large'" class="text-xs"></i>
+          {{ cat.name }}
+        </button>
+
+        <!-- Featured toggle -->
+        <button
+          @click="toggleFeatured"
+          class="flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all duration-200 shrink-0 ml-auto"
+          :class="
+            featuredOnly
+              ? 'bg-coir-500 text-white shadow-md'
+              : 'bg-coir-100 text-bark-600 hover:bg-coir-200 hover:text-bark-800'
+          "
+        >
+          <i class="pi pi-star-fill text-xs"></i>
+          Featured Only
         </button>
       </div>
     </div>
   </section>
 
-  <!-- Category Description -->
-  <section class="py-10 bg-cream">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <Transition name="fade" mode="out-in">
-        <div
-          :key="activeCategory"
-          class="flex items-start gap-4 bg-earth-50 border border-earth-200 rounded-2xl p-5 max-w-2xl"
-        >
-          <i
-            :class="categoryIcons[activeCategory]"
-            class="text-earth-500 text-2xl mt-0.5 shrink-0"
-          ></i>
-          <div>
-            <h2 class="font-display font-semibold text-bark-800 text-lg">{{ activeCategory }}</h2>
-            <p class="text-bark-500 text-sm mt-1">{{ categoryDescriptions[activeCategory] }}</p>
-          </div>
-        </div>
-      </Transition>
-    </div>
-  </section>
-
   <!-- Product Grid -->
-  <section class="pb-24 bg-cream">
+  <section class="pb-24 bg-cream pt-8">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <Transition name="fade" mode="out-in">
-        <div :key="activeCategory">
+      <!-- Loading -->
+      <div
+        v-if="loading"
+        class="flex flex-col items-center justify-center py-24 gap-3 text-bark-400"
+      >
+        <i class="pi pi-spin pi-spinner text-4xl"></i>
+        <p class="text-sm">Loading products…</p>
+      </div>
+
+      <!-- Empty -->
+      <div v-else-if="products.length === 0" class="text-center py-24">
+        <i class="pi pi-inbox text-5xl text-bark-300 mb-4 block"></i>
+        <h3 class="font-display font-semibold text-bark-700 text-xl mb-2">No products found</h3>
+        <p class="text-bark-400 text-sm">Try adjusting your filters.</p>
+      </div>
+
+      <!-- Grid -->
+      <Transition v-else name="fade" mode="out-in">
+        <div :key="`${activeCategory}-${featuredOnly}`">
           <div class="flex items-center justify-between mb-6">
             <p class="text-bark-500 text-sm">
               Showing
-              <span class="font-semibold text-bark-800">{{ filteredProducts.length }}</span>
-              product{{ filteredProducts.length !== 1 ? 's' : '' }}
+              <span class="font-semibold text-bark-800">{{ products.length }}</span>
+              product{{ products.length !== 1 ? 's' : '' }}
+              <span v-if="featuredOnly" class="ml-1 text-coir-500 font-medium">(featured)</span>
             </p>
           </div>
 
           <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-6">
-            <ProductCard v-for="product in filteredProducts" :key="product.id" :product="product" />
+            <ProductCard v-for="product in products" :key="product.id" :product="product" />
           </div>
         </div>
       </Transition>

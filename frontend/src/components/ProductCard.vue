@@ -1,5 +1,9 @@
 <script setup>
-defineProps({
+import { useRouter } from 'vue-router';
+
+const router = useRouter();
+
+const props = defineProps({
   product: {
     type: Object,
     required: true,
@@ -9,17 +13,21 @@ defineProps({
     default: false,
   },
 });
+
+const navigateTo = () => router.push(`/products/${props.product.id}`);
 </script>
 
 <template>
   <div
-    class="bg-white rounded-2xl overflow-hidden shadow-sm border border-coir-100 card-hover group"
-    :class="compact ? '' : ''"
+    class="bg-white rounded-2xl overflow-hidden shadow-sm border border-coir-100 card-hover group cursor-pointer"
+    @click="navigateTo"
   >
     <!-- Image -->
     <div class="relative overflow-hidden" :class="compact ? 'h-44' : 'h-52'">
       <img
-        :src="product.image"
+        :src="
+          product.image_url || 'https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=600'
+        "
         :alt="product.name"
         class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
         loading="lazy"
@@ -29,7 +37,14 @@ defineProps({
       ></div>
       <!-- Category badge -->
       <span class="absolute top-3 left-3 badge bg-earth-500/90 text-white text-xs backdrop-blur-sm">
-        {{ product.category }}
+        {{ product.category_name }}
+      </span>
+      <!-- Featured badge -->
+      <span
+        v-if="product.is_featured"
+        class="absolute top-3 right-3 badge bg-coir-500/90 text-white text-xs backdrop-blur-sm"
+      >
+        ★ Featured
       </span>
     </div>
 
@@ -45,24 +60,11 @@ defineProps({
         {{ product.description }}
       </p>
 
-      <div v-if="!compact" class="mt-4 flex flex-wrap gap-2">
-        <span
-          v-for="tag in product.tags"
-          :key="tag"
-          class="badge bg-earth-50 text-earth-600 border border-earth-200"
-        >
-          {{ tag }}
-        </span>
-      </div>
-
       <div class="mt-5 flex items-center justify-between">
-        <a
-          href="/contact"
-          class="text-earth-600 font-semibold text-sm hover:text-earth-700 flex items-center gap-1.5 transition-colors"
-        >
-          Enquire Now
+        <span class="text-earth-600 font-semibold text-sm flex items-center gap-1.5">
+          View Details
           <i class="pi pi-arrow-right text-xs"></i>
-        </a>
+        </span>
         <span class="text-coir-300 text-xs flex items-center gap-1">
           <i class="pi pi-leaf text-earth-400 text-xs"></i>
           Natural

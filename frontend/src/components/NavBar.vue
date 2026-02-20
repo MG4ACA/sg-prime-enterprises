@@ -59,11 +59,11 @@ onUnmounted(() => window.removeEventListener('scroll', handleScroll));
           v-for="link in navLinks"
           :key="link.to"
           :to="link.to"
-          class="relative px-4 py-2 font-medium text-sm rounded-xl transition-all duration-200"
+          class="relative px-4 py-2 font-bold text-base rounded-xl transition-all duration-200"
           :class="
             route.path === link.to
-              ? 'text-earth-600 bg-white/50 font-semibold'
-              : 'text-bark-700 hover:text-earth-600 hover:bg-white/40'
+              ? 'text-earth-600 bg-white/60 font-bold glow-active'
+              : 'text-bark-700 hover:text-earth-600 hover:bg-white/50 hover:glow'
           "
         >
           {{ link.name }}
@@ -117,9 +117,6 @@ onUnmounted(() => window.removeEventListener('scroll', handleScroll));
       </div>
     </Transition>
   </header>
-
-  <!-- Spacer -->
-  <div class="h-20"></div>
 </template>
 
 <style scoped>
@@ -131,5 +128,17 @@ onUnmounted(() => window.removeEventListener('scroll', handleScroll));
 .slide-down-leave-to {
   transform: translateY(-8px);
   opacity: 0;
+}
+
+.glow {
+  text-shadow:
+    0 0 10px rgba(74, 124, 89, 0.8),
+    0 0 20px rgba(74, 124, 89, 0.4);
+}
+
+.glow-active {
+  text-shadow:
+    0 0 15px rgba(74, 124, 89, 1),
+    0 0 25px rgba(74, 124, 89, 0.6);
 }
 </style>

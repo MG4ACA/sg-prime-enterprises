@@ -1,5 +1,6 @@
 <script setup>
 import api from '@/services/api';
+import ProductCard from '@/components/ProductCard.vue';
 import { onMounted, ref, watch } from 'vue';
 import { RouterLink, useRoute, useRouter } from 'vue-router';
 
@@ -34,8 +35,6 @@ const fetchData = async () => {
     loading.value = false;
   }
 };
-
-const truncate = (text, len) => (text && text.length > len ? text.slice(0, len) + '…' : text || '');
 
 watch(() => route.params.slug, fetchData);
 onMounted(fetchData);
@@ -92,42 +91,7 @@ onMounted(fetchData);
 
         <!-- Grid -->
         <div v-else class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-          <div
-            v-for="product in products"
-            :key="product.id"
-            class="bg-white rounded-2xl overflow-hidden shadow-sm border border-coir-100 card-hover group cursor-pointer"
-            @click="router.push(`/products/${product.id}`)"
-          >
-            <div class="relative h-52 overflow-hidden">
-              <img
-                :src="product.image_url || 'https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=600&q=80'"
-                :alt="product.name"
-                class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-              />
-              <span
-                v-if="product.is_featured"
-                class="absolute top-3 left-3 badge bg-earth-500/90 text-white text-xs backdrop-blur-sm"
-              >
-                Featured
-              </span>
-            </div>
-            <div class="p-5">
-              <h3 class="font-display font-semibold text-bark-800 text-base leading-snug mb-2">
-                {{ product.name }}
-              </h3>
-              <p class="text-bark-500 text-sm leading-relaxed line-clamp-2">
-                {{ truncate(product.description, 110) }}
-              </p>
-              <div class="mt-4 flex items-center justify-between">
-                <span class="text-earth-600 font-semibold text-sm flex items-center gap-1">
-                  View Details <i class="pi pi-arrow-right text-xs"></i>
-                </span>
-                <span class="text-xs text-bark-300 flex items-center gap-1">
-                  <i class="pi pi-leaf text-earth-400 text-xs"></i> Natural
-                </span>
-              </div>
-            </div>
-          </div>
+          <ProductCard v-for="product in products" :key="product.id" :product="product" />
         </div>
       </div>
     </section>

@@ -7,21 +7,27 @@ exports.getAllProducts = async (req, res, next) => {
   try {
     const { category, featured, status = 'active' } = req.query;
 
+    // When status is 'all' (admin), return every product regardless of status
     let query = `
       SELECT p.*, c.name as category_name, c.slug as category_slug 
       FROM products p 
-      JOIN categories c ON p.category_id = c.id 
-      WHERE p.status = ?
+      JOIN categories c ON p.category_id = c.id
     `;
-    const params = [status];
+    const params = [];
 
+    if (status !== 'all') {
+      query += ' WHERE p.status = ?';
+      params.push(status);
+    }
+
+    // Additional filters (only applied if we didn't already get all)
     if (category) {
-      query += ' AND c.slug = ?';
+      query += params.length ? ' AND c.slug = ?' : ' WHERE c.slug = ?';
       params.push(category);
     }
 
     if (featured === 'true') {
-      query += ' AND p.is_featured = TRUE';
+      query += params.length ? ' AND p.is_featured = TRUE' : ' WHERE p.is_featured = TRUE';
     }
 
     query += ' ORDER BY p.display_order ASC, p.created_at DESC';

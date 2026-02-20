@@ -7,6 +7,23 @@
 -- Run: npm run setup (for first-time setup)
 
 -- ============================================
+-- ADMINS TABLE
+-- ============================================
+CREATE TABLE IF NOT EXISTS admins (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    username VARCHAR(50) NOT NULL UNIQUE,
+    password_hash VARCHAR(255) NOT NULL,
+    email VARCHAR(150),
+    role ENUM('admin', 'superadmin') DEFAULT 'admin',
+    is_active BOOLEAN DEFAULT TRUE,
+    last_login TIMESTAMP NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    INDEX idx_username (username),
+    INDEX idx_is_active (is_active)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- ============================================
 -- CATEGORIES TABLE
 -- ============================================
 CREATE TABLE IF NOT EXISTS categories (
@@ -53,7 +70,7 @@ CREATE TABLE IF NOT EXISTS enquiries (
     phone VARCHAR(20),
     message TEXT NOT NULL,
     product_id INT,
-    status ENUM('new', 'contacted', 'resolved') DEFAULT 'new',
+    status ENUM('pending', 'contacted', 'resolved') DEFAULT 'pending',
     notes TEXT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,

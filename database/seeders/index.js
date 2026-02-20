@@ -1,3 +1,4 @@
+const seedAdmin = require('./adminSeeder');
 const seedCategories = require('./categoriesSeeder');
 const seedProducts = require('./productsSeeder');
 const pool = require('../config');
@@ -30,18 +31,21 @@ async function runSeeders() {
     connection.release();
 
     // Run seeders in order
+    await seedAdmin();
     await seedCategories();
     await seedProducts();
 
     console.log('\n🎉 All seeders completed successfully!');
 
     // Display summary
+    const [adminCount] = await pool.execute('SELECT COUNT(*) as count FROM admins');
     const [categoryCount] = await pool.execute('SELECT COUNT(*) as count FROM categories');
     const [productCount] = await pool.execute('SELECT COUNT(*) as count FROM products');
 
     console.log('\n📊 Database Summary:');
+    console.log(`   - Admins:     ${adminCount[0].count}`);
     console.log(`   - Categories: ${categoryCount[0].count}`);
-    console.log(`   - Products: ${productCount[0].count}`);
+    console.log(`   - Products:   ${productCount[0].count}`);
   } catch (error) {
     console.error('\n❌ Seeding failed:', error.message);
     process.exit(1);

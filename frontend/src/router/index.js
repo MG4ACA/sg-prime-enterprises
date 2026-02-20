@@ -76,6 +76,12 @@ const routes = [
         meta: { title: 'Enquiries - Admin' },
       },
       {
+        path: 'change-password',
+        name: 'AdminChangePassword',
+        component: () => import('../views/admin/ChangePassword.vue'),
+        meta: { title: 'Change Password - Admin' },
+      },
+      {
         path: '',
         redirect: '/admin/dashboard',
       },

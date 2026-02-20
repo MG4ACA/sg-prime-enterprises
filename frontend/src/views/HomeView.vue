@@ -1,8 +1,10 @@
 <script setup>
-import { ref } from 'vue';
+import api from '@/services/api';
+import { onMounted, ref } from 'vue';
 import { RouterLink } from 'vue-router';
 import ProductCard from '../components/ProductCard.vue';
-import { featuredProducts } from '../data/products.js';
+
+const featuredProducts = ref([]);
 
 const slides = ref([
   {
@@ -37,13 +39,6 @@ const slides = ref([
   },
 ]);
 
-const stats = ref([
-  { value: '15+', label: 'Years of Experience', icon: 'pi pi-star' },
-  { value: '500+', label: 'Happy Clients Worldwide', icon: 'pi pi-users' },
-  { value: '30+', label: 'Countries Exported To', icon: 'pi pi-globe' },
-  { value: '100%', label: 'Natural & Sustainable', icon: 'pi pi-leaf' },
-]);
-
 const whyUs = ref([
   {
     icon: 'pi pi-leaf',
@@ -66,21 +61,30 @@ const whyUs = ref([
     desc: 'Need a specific size, thickness, or blend? Our team works with you to create bespoke coir products for your project requirements.',
   },
 ]);
+
+onMounted(async () => {
+  try {
+    const res = await api.get('/products?status=active&featured=true');
+    if (res.data.success) featuredProducts.value = res.data.data.slice(0, 6);
+  } catch (e) {
+    console.error('Failed to load featured products:', e);
+  }
+});
 </script>
 
 <template>
   <!-- ── Hero Carousel ─────────────────────────────────────── -->
-  <section class="relative">
+  <section class="relative h-screen min-h-[600px] w-screen overflow-hidden">
     <PCarousel
       :value="slides"
       :numVisible="1"
       :numScroll="1"
       :autoplayInterval="5000"
       circular
-      class="w-full overflow-hidden"
+      class="w-full h-full overflow-hidden"
     >
       <template #item="{ data: slide }">
-        <div class="relative h-screen min-h-[600px] overflow-hidden">
+        <div class="relative h-screen min-h-[600px] w-screen overflow-hidden">
           <!-- Background image -->
           <img
             :src="slide.image"
@@ -129,23 +133,6 @@ const whyUs = ref([
         </div>
       </template>
     </PCarousel>
-  </section>
-
-  <!-- ── Stats Banner ─────────────────────────────────────── -->
-  <section class="bg-earth-500 py-10">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-4 text-center">
-        <div
-          v-for="stat in stats"
-          :key="stat.label"
-          class="flex flex-col items-center gap-2 text-white"
-        >
-          <i :class="stat.icon" class="text-2xl text-earth-200"></i>
-          <span class="text-3xl font-display font-bold">{{ stat.value }}</span>
-          <span class="text-earth-100 text-sm">{{ stat.label }}</span>
-        </div>
-      </div>
-    </div>
   </section>
 
   <!-- ── Featured Products ────────────────────────────────── -->

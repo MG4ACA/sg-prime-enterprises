@@ -52,5 +52,17 @@ export const useAuthStore = defineStore('auth', () => {
     return false;
   };
 
-  return { token, user, isAuthenticated, login, logout, verifyToken };
+  const changePassword = async (currentPassword, newPassword) => {
+    try {
+      const response = await api.patch('/admin/password', { currentPassword, newPassword });
+      return { success: true, message: response.data.message || 'Password changed successfully' };
+    } catch (error) {
+      return {
+        success: false,
+        message: error.response?.data?.message || 'Failed to change password',
+      };
+    }
+  };
+
+  return { token, user, isAuthenticated, login, logout, verifyToken, changePassword };
 });

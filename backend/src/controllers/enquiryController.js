@@ -9,7 +9,7 @@ exports.createEnquiry = async (req, res, next) => {
     // Insert into database
     const [result] = await db.query(
       `INSERT INTO enquiries (name, email, company, phone, message, product_id, status) 
-       VALUES (?, ?, ?, ?, ?, ?, 'new')`,
+       VALUES (?, ?, ?, ?, ?, ?, 'pending')`,
       [name, email, company, phone, message, product_id || null],
     );
 
