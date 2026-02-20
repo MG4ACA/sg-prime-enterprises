@@ -1,8 +1,8 @@
 <script setup>
+import ProductCard from '@/components/ProductCard.vue';
 import api from '@/services/api';
 import { onMounted, ref } from 'vue';
 import { RouterLink } from 'vue-router';
-import ProductCard from '../components/ProductCard.vue';
 
 const featuredProducts = ref([]);
 
