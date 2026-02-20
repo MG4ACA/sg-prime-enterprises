@@ -1,6 +1,6 @@
 <script setup>
 import Footer from '@/components/Footer.vue';
-import Navbar from '@/components/Navbar.vue';
+import NavBar from '@/components/NavBar.vue';
 import { useRoute } from 'vue-router';
 
 const route = useRoute();
@@ -15,7 +15,7 @@ const isAdminRoute = () => route.path.startsWith('/admin');
 
     <!-- Public layout wrapper (Navbar + Footer) -->
     <template v-if="!isAdminRoute()">
-      <Navbar />
+      <NavBar />
       <main class="flex-1">
         <RouterView />
       </main>
