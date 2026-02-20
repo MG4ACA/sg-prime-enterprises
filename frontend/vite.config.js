@@ -29,7 +29,6 @@ export default defineConfig({
       output: {
         manualChunks: {
           vendor: ['vue', 'vue-router', 'pinia'],
-          primevue: ['primevue'],
           animations: ['gsap', '@studio-freight/lenis'],
         },
       },

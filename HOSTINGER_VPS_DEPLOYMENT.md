@@ -1,8 +1,8 @@
 # 🚀 Hostinger VPS Deployment Guide
 
-## Pharmacy POS System (MEVN Stack)
+## SG Prime Enterprises (MEVN Stack)
 
-This guide will walk you through deploying your Pharmacy POS application (Vue.js frontend + Express.js backend) on a Hostinger VPS with the MEVN stack template.
+This guide will walk you through deploying your SG Prime Enterprises application (Coir Products Industrial Catalog - Vue.js frontend + Express.js backend) on a Hostinger VPS with the MEVN stack template.
 
 ---
 
@@ -30,7 +30,7 @@ This guide will walk you through deploying your Pharmacy POS application (Vue.js
 │  │  Vue.js Frontend    │  │  Backend │ │
 │  │  (Static Files)     │  │  API     │ │
 │  │                     │  │  Port    │ │
-│  │                     │  │  3000    │ │
+│  │                     │  │  3001    │ │
 │  └─────────────────────┘  └────┬─────┘ │
 │                                 │       │
 │                          ┌──────▼─────┐ │
@@ -119,13 +119,13 @@ sudo mysql -u root -p
 
 ```sql
 -- Create database
-CREATE DATABASE ape_news;
+CREATE DATABASE sg_prime_db;
 
 -- Create user (replace 'your_password' with a strong password)
-CREATE USER 'ape_news_user'@'localhost' IDENTIFIED BY 'Velou@123';  pw - Velou@123
+CREATE USER 'sg_prime_user'@'localhost' IDENTIFIED BY 'your_secure_password';
 
 -- Grant privileges
-GRANT ALL PRIVILEGES ON ape_news.* TO 'ape_news_user'@'localhost';
+GRANT ALL PRIVILEGES ON sg_prime_db.* TO 'sg_prime_user'@'localhost';
 
 -- Flush privileges
 FLUSH PRIVILEGES;
@@ -142,39 +142,38 @@ EXIT;
 
 ```bash
 # Create directory for your app
-sudo mkdir -p /var/www/ape-news
-cd /var/www/ape-news
+sudo mkdir -p /var/www/sg-prime-enterprises
+cd /var/www/sg-prime-enterprises
 ```
 
 ### 4.2 Clone Your Repository
 
 ```bash
-# If your code is on GitHub
-sudo git clone https://github.com/MG4ACA/ape-news-backend.git
-
+# If your code is on GitHub (replace with your repository URL)
+sudo git clone https://github.com/YOUR_USERNAME/sg-prime-enterprises.git backend
 
 # Or upload your code using SCP from your local machine:
-# scp -r /path/to/pharmacy-standalone-pos root@your_vps_ip:/var/www/ape-news
+# scp -r /path/to/sg-prime-enterprises root@your_vps_ip:/var/www/sg-prime-enterprises
 ```
 
 ### 4.3 Set Correct Permissions
 
 ```bash
 # Change ownership
-sudo chown -R $USER:$USER /var/www/ape-news
+sudo chown -R $USER:$USER /var/www/sg-prime-enterprises
 
 # Set permissions
-sudo chmod -R 755 /var/www/ape-news
+sudo chmod -R 755 /var/www/sg-prime-enterprises
 ```
 
 ---
 
-cd ape-news-backend
+cd backend
 
 git fetch --all
 git branch
 git checkout 'your_branch'
-git pull origin dev
+git pull origin main
 
 if errors occur try below
 git reset --hard
@@ -184,7 +183,7 @@ git reset --hard
 ### 5.1 Navigate to Backend Directory
 
 ```bash
-cd /var/www/ape-news/ape-news-backend
+cd /var/www/sg-prime-enterprises/backend
 ```
 
 ### 5.2 Install Dependencies
@@ -203,26 +202,37 @@ nano .env
 Add the following configuration:
 
 ```env
+# Server Configuration
+PORT=3001
+NODE_ENV=production
+
 # Database Configuration
 DB_HOST=localhost
-DB_PORT=3306
-DB_NAME=ape_news
-DB_USER=ape_news_user
-DB_PASSWORD=Velou@123
+DB_USER=sg_prime_user
+DB_PASSWORD=your_secure_password
+DB_NAME=sg_prime_db
 
-# Application
-NODE_ENV=production
-PORT=3000
-HOST=0.0.0.0
-
-# JWT Secret (generate a secure random string)
-JWT_SECRET=your_super_secret_jwt_key_here_change_this
-
-# JWT Expiration
+# JWT Configuration
+JWT_SECRET=your_super_secret_jwt_key_change_this_in_production_min_32_chars
 JWT_EXPIRES_IN=24h
 
-# CORS Configuration (comma-separated list of allowed origins)
-ALLOWED_ORIGINS=http://your_vps_ip,https://yourdomain.com
+# Admin Credentials (Single Admin)
+ADMIN_USERNAME=admin
+ADMIN_PASSWORD=Admin@2026
+
+# Email Configuration (for enquiry notifications)
+EMAIL_HOST=smtp.gmail.com
+EMAIL_PORT=587
+EMAIL_USER=your_email@gmail.com
+EMAIL_PASSWORD=your_app_password
+EMAIL_TO=contact@sgprimeenterprises.com
+
+# Frontend URL (for CORS)
+FRONTEND_URL=https://sgprimeenterprises.lumicore-labs.com
+
+# Upload Configuration
+MAX_FILE_SIZE=5242880
+ALLOWED_FILE_TYPES=image/jpeg,image/png,image/webp
 ```
 
 **To generate a secure JWT secret:**
@@ -234,12 +244,17 @@ node -e "console.log(require('crypto').randomBytes(64).toString('hex'))"
 ### 5.4 Initialize Database
 
 ```bash
-# Create database tables and seed
-npm run db:create
+# Navigate to database directory
+cd ../database
 
+# Install database dependencies
+npm install
 
-# If you have product CSV data
-npm run db:seed:products
+# Run complete database setup (creates DB, tables, and seeds data)
+npm run setup
+
+# Navigate back to backend
+cd ../backend
 ```
 
 ### 5.5 Test Backend Locally
@@ -249,7 +264,7 @@ npm run db:seed:products
 npm start
 
 # In another terminal, test the API
-curl http://localhost:3000/api/health
+curl http://localhost:3001/api/health
 ```
 
 If successful, you should see a response. Press `Ctrl+C` to stop.
@@ -258,7 +273,7 @@ If successful, you should see a response. Press `Ctrl+C` to stop.
 
 ```bash
 # Start backend with PM2
-pm2 start src/index.js --name pharmacy-pos-backend
+pm2 start src/server.js --name sg-prime-backend
 
 # Save PM2 configuration
 pm2 save
@@ -274,14 +289,13 @@ pm2 status
 
 ```bash
 # View logs
-pm2 logs ape-news-backend
+pm2 logs sg-prime-backend
 
 # Restart app
-pm2 restart ape-news-backend
-pm2 restart pharmacy-pos-backend
+pm2 restart sg-prime-backend
 
 # Stop app
-pm2 stop ape-news-backend
+pm2 stop sg-prime-backend
 
 # Monitor
 pm2 monit
@@ -296,7 +310,7 @@ pm2 monit
 ## clone frotend repo then
 
 ```bash
-cd /var/www/ape-news/ape-news-frontend
+cd /var/www/sg-prime-enterprises/frontend
 ```
 
 ### 6.2 Configure API Endpoint
@@ -308,19 +322,20 @@ nano .env.production
 ```
 
 ```env
-VITE_API_BASE_URL=http://your_vps_ip/api
+VITE_API_BASE_URL=https://sgprimeenterprises.lumicore-labs.com/api
 ```
 
 or Update the frontend to point to your backend API:
 
 ```bash
-nano src/api/client.js
+nano src/services/api.js
 ```
 
 Update the base URL:
 
 ```javascript
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://your_vps_ip/api';
+const API_BASE_URL =
+  import.meta.env.VITE_API_BASE_URL || 'https://sgprimeenterprises.lumicore-labs.com/api';
 ```
 
 ### 6.3 Install Dependencies and Build
@@ -339,14 +354,14 @@ This creates a `dist` folder with optimized static files.
 
 ```bash
 # Create directory for frontend
-sudo mkdir -p /var/www/ape-news/frontend
+sudo mkdir -p /var/www/sg-prime-enterprises/dist
 
 # Copy built files
-sudo cp -r dist/* /var/www/hasal_products/frontend/
+sudo cp -r dist/* /var/www/sg-prime-enterprises/dist/
 
 # Set permissions
-sudo chown -R www-data:www-data /var/www/ape-news/frontend
-sudo chmod -R 755 /var/www/ape-news/frontend
+sudo chown -R www-data:www-data /var/www/sg-prime-enterprises/dist
+sudo chmod -R 755 /var/www/sg-prime-enterprises/dist
 ```
 
 ---
@@ -356,21 +371,21 @@ sudo chmod -R 755 /var/www/ape-news/frontend
 ### 7.1 Create Nginx Configuration
 
 ```bash
-sudo nano /etc/nginx/sites-available/ape-news
+sudo nano /etc/nginx/sites-available/sg-prime-enterprises
 ```
 
 Add this configuration:
 
 ```nginx
 # Upstream backend
-upstream pharmacy_backend {
-    server localhost:3000;
+upstream sgprime_backend {
+    server localhost:3001;
     keepalive 64;
 }
 
 server {
     listen 80;
- server_name apenews.lumicore-labs.com www.apenews.lumicore-labs.com;
+    server_name sgprimeenterprises.lumicore-labs.com www.sgprimeenterprises.lumicore-labs.com;
     # Security headers
     add_header X-Frame-Options "SAMEORIGIN" always;
     add_header X-Content-Type-Options "nosniff" always;
@@ -378,7 +393,7 @@ server {
 
     # Frontend - Serve Vue.js app
     location / {
-        root /var/www/ape-news/frontend;
+        root /var/www/sg-prime-enterprises/dist;
         index index.html;
         try_files $uri $uri/ /index.html;
 
@@ -391,7 +406,7 @@ server {
 
     # Backend API - Proxy to Express.js
     location /api/ {
-        proxy_pass http://pharmacy_backend/api/;
+        proxy_pass http://sgprime_backend/api/;
         proxy_http_version 1.1;
 
         # Headers
@@ -413,13 +428,20 @@ server {
 
     # Health check endpoint
     location /health {
-        proxy_pass http://pharmacy_backend/health;
+        proxy_pass http://sgprime_backend/health;
         access_log off;
     }
 
+    # Serve uploaded product images
+    location /uploads/ {
+        alias /var/www/sg-prime-enterprises/backend/uploads/;
+        expires 1y;
+        add_header Cache-Control "public, immutable";
+    }
+
     # Logs
-    access_log /var/log/nginx/ape-news-access.log;
-    error_log /var/log/nginx/ape-news-error.log;
+    access_log /var/log/nginx/sg-prime-access.log;
+    error_log /var/log/nginx/sg-prime-error.log;
 }
 ```
 
@@ -427,7 +449,7 @@ server {
 
 ```bash
 # Create symbolic link
-sudo ln -s /etc/nginx/sites-available/ape-news /etc/nginx/sites-enabled/
+sudo ln -s /etc/nginx/sites-available/sg-prime-enterprises /etc/nginx/sites-enabled/
 
 # Remove default site (optional)
 sudo rm /etc/nginx/sites-enabled/default
@@ -458,7 +480,7 @@ sudo apt install certbot python3-certbot-nginx -y
 
 ```bash
 # Replace with your domain
-sudo certbot --nginx -d apenews.lumicore-labs.com -d www.apenews.lumicore-labs.com
+sudo certbot --nginx -d sgprimeenterprises.lumicore-labs.com -d www.sgprimeenterprises.lumicore-labs.com
 ```
 
 Certbot will:
@@ -478,21 +500,21 @@ sudo certbot renew --dry-run
 After SSL is set up, update your frontend API URL to use HTTPS:
 
 ```bash
-nano /var/www/ape-news/src/api/client.js
+nano /var/www/sg-prime-enterprises/frontend/src/services/api.js
 ```
 
 Change to:
 
 ```javascript
-const API_BASE_URL = 'https://lumicore.trustyou-go.com/api';
+const API_BASE_URL = 'https://sgprimeenterprises.lumicore-labs.com/api';
 ```
 
 Rebuild and redeploy:
 
 ```bash
-cd /var/www/ape-news
+cd /var/www/sg-prime-enterprises/frontend
 npm run build
-sudo cp -r dist/* /var/www/ape-news/frontend/
+sudo cp -r dist/* /var/www/sg-prime-enterprises/frontend/
 ```
 
 ---
@@ -506,10 +528,10 @@ sudo cp -r dist/* /var/www/ape-news/frontend/
 pm2 status
 
 # Check backend logs
-pm2 logs ape-news-backend
+pm2 logs sg-prime-backend
 
 # Test API directly
-curl http://localhost:3000/api/health
+curl http://localhost:3001/api/health
 ```
 
 ### 9.2 Check Nginx
@@ -519,16 +541,16 @@ curl http://localhost:3000/api/health
 sudo systemctl status nginx
 
 # Check Nginx logs
-sudo tail -f /var/log/nginx/ape-news-error.log
+sudo tail -f /var/log/nginx/sg-prime-error.log
 ```
 
 ### 9.3 Test Application
 
 Open your browser and visit:
 
-- `http://your_vps_ip` (or `https://yourdomain.com`)
+- `http://your_vps_ip` (or `https://sgprimeenterprises.lumicore-labs.com`)
 
-You should see your Pharmacy POS login page!
+You should see your SG Prime Enterprises catalog homepage!
 
 ---
 
@@ -537,7 +559,7 @@ You should see your Pharmacy POS login page!
 Create a deployment script for easy updates:
 
 ```bash
-nano /var/www/ape-news/deploy.sh
+nano /var/www/sg-prime-enterprises/deploy.sh
 ```
 
 ```bash
@@ -546,7 +568,7 @@ nano /var/www/ape-news/deploy.sh
 echo "🚀 Starting deployment..."
 
 # Navigate to project directory
-cd /var/www/ape-news
+cd /var/www/sg-prime-enterprises
 
 # Pull latest changes (if using Git)
 echo "📥 Pulling latest changes..."
@@ -554,16 +576,16 @@ git pull origin main
 
 # Backend deployment
 echo "🔨 Deploying backend..."
-cd backend-project
+cd backend
 npm install --production
-pm2 restart ape-news-backend
+pm2 restart sg-prime-backend
 
 # Frontend deployment
 echo "🎨 Deploying frontend..."
-cd ..
+cd ../frontend
 npm install
 npm run build
-sudo cp -r dist/* /var/www/ape-news/frontend/
+sudo cp -r dist/* /var/www/sg-prime-enterprises/frontend/
 
 # Restart Nginx
 echo "🌐 Restarting Nginx..."
@@ -575,7 +597,7 @@ echo "✅ Deployment complete!"
 Make it executable:
 
 ```bash
-chmod +x /var/www/ape-news/deploy.sh
+chmod +x /var/www/sg-prime-enterprises/deploy.sh
 ```
 
 Run deployment:
@@ -607,13 +629,13 @@ free -m
 
 ```bash
 # Backend logs
-pm2 logs ape-news-backend
+pm2 logs sg-prime-backend
 
 # Nginx access logs
-sudo tail -f /var/log/nginx/ape-news-access.log
+sudo tail -f /var/log/nginx/sg-prime-access.log
 
 # Nginx error logs
-sudo tail -f /var/log/nginx/ape-news-error.log
+sudo tail -f /var/log/nginx/sg-prime-error.log
 
 # MySQL logs
 sudo tail -f /var/log/mysql/error.log
@@ -626,7 +648,7 @@ sudo tail -f /var/log/mysql/error.log
 mkdir -p ~/backups
 
 # Backup database
-mysqldump -u ape_news_user -p ape_news > ~/backups/ape_news_$(date +%Y%m%d_%H%M%S).sql
+mysqldump -u sg_prime_user -p sg_prime_db > ~/backups/sg_prime_db_$(date +%Y%m%d_%H%M%S).sql
 
 # Create automated backup script
 nano ~/backup-db.sh
@@ -636,10 +658,10 @@ nano ~/backup-db.sh
 #!/bin/bash
 BACKUP_DIR=~/backups
 mkdir -p $BACKUP_DIR
-mysqldump -u ape_news_user -p'your_password' ape_news > $BACKUP_DIR/ape_news_$(date +%Y%m%d_%H%M%S).sql
+mysqldump -u sg_prime_user -p'your_secure_password' sg_prime_db > $BACKUP_DIR/sg_prime_db_$(date +%Y%m%d_%H%M%S).sql
 
 # Keep only last 7 days of backups
-find $BACKUP_DIR -name "ape_news_*.sql" -mtime +7 -delete
+find $BACKUP_DIR -name "sg_prime_db_*.sql" -mtime +7 -delete
 ```
 
 ```bash
@@ -658,26 +680,26 @@ crontab -e
 
 ```bash
 # Check logs
-pm2 logs ape-news-backend
+pm2 logs sg-prime-backend
 
 # Common issues:
-# 1. Port 3000 already in use
-sudo lsof -i :3000
+# 1. Port 3001 already in use
+sudo lsof -i :3001
 sudo kill -9 <PID>
 
 # 2. Database connection failed
 # Check .env file and MySQL credentials
-mysql -u ape_news_user -p ape_news
+mysql -u sg_prime_user -p sg_prime_db
 ```
 
 ### Frontend Not Loading
 
 ```bash
 # Check Nginx error logs
-sudo tail -f /var/log/nginx/ape-news-error.log
+sudo tail -f /var/log/nginx/sg-prime-error.log
 
 # Verify files exist
-ls -la /var/www/ape-news/frontend
+ls -la /var/www/sg-prime-enterprises/frontend
 
 # Test Nginx configuration
 sudo nginx -t
@@ -691,17 +713,17 @@ sudo systemctl restart nginx
 ```bash
 # Backend is not running
 pm2 status
-pm2 restart ape-news-backend
+pm2 restart sg-prime-backend
 
-# Check backend is listening on port 3000
-sudo netstat -tlnp | grep 3000
+# Check backend is listening on port 3001
+sudo netstat -tlnp | grep 3001
 ```
 
 ### Database Connection Issues
 
 ```bash
 # Test MySQL connection
-mysql -u ape_news_user -p ape_news
+mysql -u sg_prime_user -p sg_prime_db
 
 # Check MySQL is running
 sudo systemctl status mysql
@@ -710,7 +732,7 @@ sudo systemctl status mysql
 sudo systemctl restart mysql
 
 # Check backend .env file
-cat backend-project/.env
+cat backend/.env
 ```
 
 ---
@@ -763,7 +785,7 @@ gzip_types text/plain text/css text/xml text/javascript application/json applica
 In PM2 configuration:
 
 ```bash
-pm2 start src/index.js --name ape-news-backend -i max --node-args="--max-old-space-size=1024"
+pm2 start src/server.js --name sg-prime-backend -i max --node-args="--max-old-space-size=1024"
 ```
 
 ---
@@ -791,17 +813,17 @@ If you encounter issues:
 
 ## 🎉 Congratulations!
 
-Your Pharmacy POS System is now live on Hostinger VPS!
+Your SG Prime Enterprises Coir Products Catalog is now live on Hostinger VPS!
 
 **Access your application at:**
 
-- 🌐 Frontend: `http://your_vps_ip` or `https://yourdomain.com`
-- 🔌 Backend API: `http://your_vps_ip/api` or `https://yourdomain.com/api`
+- 🌐 Frontend: `https://sgprimeenterprises.lumicore-labs.com`
+- 🔌 Backend API: `https://sgprimeenterprises.lumicore-labs.com/api`
 
-**Default Login (if using seed data):**
+**Default Admin Login:**
 
 - Username: `admin`
-- Password: Check your seed file
+- Password: `Admin@2026` (change this in production .env file)
 
 ---
 
@@ -820,5 +842,6 @@ Your Pharmacy POS System is now live on Hostinger VPS!
 
 ---
 
-**Last Updated:** December 2024  
-**Version:** 1.0.0
+**Last Updated:** February 2026  
+**Version:** 1.0.0  
+**Project:** SG Prime Enterprises - Coir Products Industrial Catalog

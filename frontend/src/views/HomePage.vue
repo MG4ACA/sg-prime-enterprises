@@ -2,57 +2,127 @@
   <div class="home-page">
     <NavBar />
 
-    <!-- Hero Section -->
-    <section class="hero">
-      <div class="hero-background" ref="heroBg"></div>
-      <div class="container">
-        <div class="hero-content">
-          <!-- Left Side - Text -->
-          <div class="hero-left" ref="heroLeft">
-            <h1 class="hero-title">
-              Nature Distilled
-              <br />
-              <span class="accent">Into Excellence</span>
-            </h1>
-            <p class="hero-subtitle">
-              Industrial coir products engineered for sustainability. From erosion control to
-              greenhouse solutions, we bring nature's strength to modern applications.
-            </p>
-            <div class="hero-buttons">
-              <Button
-                label="Explore Products"
-                class="btn-primary btn-large"
-                @click="$router.push('/products')"
-              />
-              <Button
-                label="Get in Touch"
-                class="btn-secondary btn-large"
-                @click="$router.push('/contact')"
-              />
-            </div>
-          </div>
+    <!-- Hero Section - Bento Grid -->
+    <section class="hero" ref="heroSection">
+      <!-- Animated gradient background -->
+      <div class="hero-gradient"></div>
+      <div class="hero-grain"></div>
 
-          <!-- Right Side - Product Image with Parallax -->
-          <div class="hero-right" ref="heroRight">
-            <div class="hero-image-wrapper" ref="heroImage">
-              <img
-                src="https://images.unsplash.com/photo-1464226184884-fa280b87c399?w=800"
-                alt="Premium Coir Products"
-                class="hero-img"
-              />
-              <div class="hero-badge">
-                <span class="badge-text">100%</span>
-                <span class="badge-sub">Natural</span>
+      <div class="hero-container">
+        <div class="bento-grid">
+          <!-- Main Title Card -->
+          <div class="bento-main" ref="bentoMain">
+            <div class="bento-main-inner">
+              <span class="hero-badge-tag">🌿 Sustainable Coir Solutions</span>
+              <h1 class="hero-title">
+                Nature
+                <br />
+                Distilled Into
+                <br />
+                <span class="title-accent">Excellence.</span>
+              </h1>
+              <p class="hero-subtitle">
+                Industrial coir products engineered for a greener tomorrow. From erosion control to
+                greenhouse innovation.
+              </p>
+              <div class="hero-cta-group">
+                <button class="cta-btn cta-primary" @click="$router.push('/products')">
+                  Explore Products
+                  <i class="pi pi-arrow-right"></i>
+                </button>
+                <button class="cta-btn cta-ghost" @click="$router.push('/contact')">
+                  Get in Touch
+                </button>
               </div>
             </div>
           </div>
-        </div>
-      </div>
 
-      <!-- Scroll Indicator -->
-      <div class="scroll-indicator" ref="scrollIndicator">
-        <span>Scroll to explore</span>
-        <i class="pi pi-arrow-down"></i>
+          <!-- Product Showcase Carousel -->
+          <div class="bento-showcase" ref="bentoShowcase">
+            <div class="showcase-inner">
+              <div class="showcase-header">
+                <span class="showcase-label">Featured Product</span>
+                <div class="carousel-nav">
+                  <button
+                    class="nav-dot"
+                    :class="{ active: currentSlide === i }"
+                    v-for="(p, i) in carouselProducts"
+                    :key="i"
+                    @click="goToSlide(i)"
+                  ></button>
+                </div>
+              </div>
+              <div class="carousel-viewport">
+                <transition name="slide-fade" mode="out-in">
+                  <div class="carousel-slide" :key="currentSlide">
+                    <img
+                      :src="
+                        carouselProducts[currentSlide]?.image_url ||
+                        'https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=600'
+                      "
+                      :alt="carouselProducts[currentSlide]?.name || 'Product'"
+                      class="carousel-img"
+                    />
+                    <div class="carousel-info">
+                      <h3>{{ carouselProducts[currentSlide]?.name || 'Loading...' }}</h3>
+                      <p>
+                        {{ truncateText(carouselProducts[currentSlide]?.description || '', 60) }}
+                      </p>
+                    </div>
+                  </div>
+                </transition>
+              </div>
+            </div>
+          </div>
+
+          <!-- Stat Card 1 -->
+          <div class="bento-stat" ref="bentoStat1">
+            <div class="stat-inner">
+              <span class="stat-number" ref="statCounter1">100%</span>
+              <span class="stat-label">
+                Natural &
+                <br />
+                Sustainable
+              </span>
+            </div>
+          </div>
+
+          <!-- Stat Card 2 -->
+          <div class="bento-stat bento-stat-2" ref="bentoStat2">
+            <div class="stat-inner">
+              <span class="stat-number">50+</span>
+              <span class="stat-label">
+                Global
+                <br />
+                Partners
+              </span>
+            </div>
+          </div>
+
+          <!-- Category Quick Links -->
+          <div class="bento-categories" ref="bentoCategories">
+            <div class="bento-cat-inner">
+              <span class="bento-cat-title">Quick Browse</span>
+              <div class="bento-cat-list">
+                <button
+                  v-for="cat in categories"
+                  :key="cat.id"
+                  class="bento-cat-chip"
+                  @click="$router.push(`/category/${cat.slug}`)"
+                >
+                  {{ cat.name }}
+                  <i class="pi pi-chevron-right"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Scroll Prompt -->
+          <div class="bento-scroll" ref="scrollIndicator">
+            <div class="scroll-line"></div>
+            <span>Scroll</span>
+          </div>
+        </div>
       </div>
     </section>
 
@@ -197,16 +267,18 @@ import Footer from '@/components/Footer.vue';
 import NavBar from '@/components/NavBar.vue';
 import { useGSAP } from '@/composables/useGSAP';
 import api from '@/services/api';
-import { onMounted, ref } from 'vue';
+import { computed, onMounted, onUnmounted, ref } from 'vue';
 import { useRouter } from 'vue-router';
 
 const router = useRouter();
 
 // Refs for GSAP animations
-const heroBg = ref(null);
-const heroLeft = ref(null);
-const heroRight = ref(null);
-const heroImage = ref(null);
+const heroSection = ref(null);
+const bentoMain = ref(null);
+const bentoShowcase = ref(null);
+const bentoStat1 = ref(null);
+const bentoStat2 = ref(null);
+const bentoCategories = ref(null);
 const scrollIndicator = ref(null);
 const categoriesSection = ref(null);
 const sectionHeader = ref(null);
@@ -217,9 +289,33 @@ const whyUsSection = ref(null);
 const featuresGrid = ref(null);
 const ctaSection = ref(null);
 
+// Carousel state
+const currentSlide = ref(0);
+let carouselInterval = null;
+
 // Data
 const categories = ref([]);
 const featuredProducts = ref([]);
+
+const carouselProducts = computed(() => {
+  return featuredProducts.value.length > 0
+    ? featuredProducts.value.slice(0, 5)
+    : [{ name: 'Loading...', description: '', image_url: '' }];
+});
+
+const goToSlide = (index) => {
+  currentSlide.value = index;
+  resetCarouselTimer();
+};
+
+const nextSlide = () => {
+  currentSlide.value = (currentSlide.value + 1) % carouselProducts.value.length;
+};
+
+const resetCarouselTimer = () => {
+  if (carouselInterval) clearInterval(carouselInterval);
+  carouselInterval = setInterval(nextSlide, 4000);
+};
 
 // GSAP instance
 const { fadeIn, staggerIn, parallax, gsap, ScrollTrigger } = useGSAP();
@@ -261,93 +357,124 @@ const truncateText = (text, length) => {
 
 // Initialize animations
 const initAnimations = () => {
-  // Hero animations
-  gsap.from(heroLeft.value, {
+  // Bento grid items stagger in
+  const bentoItems = [
+    bentoMain.value,
+    bentoShowcase.value,
+    bentoStat1.value,
+    bentoStat2.value,
+    bentoCategories.value,
+  ].filter(Boolean);
+
+  gsap.from(bentoItems, {
     opacity: 0,
-    x: -50,
-    duration: 1,
+    y: 40,
+    scale: 0.96,
+    duration: 0.8,
+    stagger: 0.12,
     ease: 'power3.out',
   });
 
-  gsap.from(heroRight.value, {
-    opacity: 0,
-    x: 50,
-    duration: 1,
-    delay: 0.3,
-    ease: 'power3.out',
-  });
+  // Floating animation on stat cards
+  if (bentoStat1.value) {
+    gsap.to(bentoStat1.value, {
+      y: -6,
+      repeat: -1,
+      yoyo: true,
+      duration: 3,
+      ease: 'sine.inOut',
+    });
+  }
+  if (bentoStat2.value) {
+    gsap.to(bentoStat2.value, {
+      y: 6,
+      repeat: -1,
+      yoyo: true,
+      duration: 3.5,
+      ease: 'sine.inOut',
+      delay: 0.5,
+    });
+  }
 
-  // Parallax effect on hero image
-  parallax(heroImage.value, {
-    distance: -30,
-    trigger: heroImage.value,
-  });
-
-  // Scroll indicator animation
-  gsap.to(scrollIndicator.value, {
-    y: 10,
-    repeat: -1,
-    yoyo: true,
-    duration: 1,
-    ease: 'power1.inOut',
-  });
+  // Scroll prompt animation
+  if (scrollIndicator.value) {
+    gsap.to(scrollIndicator.value.querySelector('.scroll-line'), {
+      scaleY: 1,
+      repeat: -1,
+      yoyo: true,
+      duration: 1.2,
+      ease: 'power1.inOut',
+    });
+  }
 
   // Categories section - background transition
-  gsap.to(categoriesSection.value, {
-    backgroundColor: '#FFFFFF',
-    scrollTrigger: {
-      trigger: categoriesSection.value,
-      start: 'top 80%',
-      end: 'top 20%',
-      scrub: 1,
-    },
-  });
+  if (categoriesSection.value) {
+    gsap.to(categoriesSection.value, {
+      backgroundColor: '#FFFFFF',
+      scrollTrigger: {
+        trigger: categoriesSection.value,
+        start: 'top 80%',
+        end: 'top 20%',
+        scrub: 1,
+      },
+    });
 
-  // Stagger animation for category cards
-  staggerIn('.category-card', {
-    scrollTrigger: {
-      trigger: categoriesGrid.value,
-      start: 'top 80%',
-    },
-    stagger: 0.15,
-  });
+    // Stagger animation for category cards
+    staggerIn('.category-card', {
+      scrollTrigger: {
+        trigger: categoriesGrid.value,
+        start: 'top 80%',
+      },
+      stagger: 0.15,
+    });
+  }
 
   // Featured products animation
-  staggerIn('.product-card', {
-    scrollTrigger: {
-      trigger: productsGrid.value,
-      start: 'top 80%',
-    },
-    stagger: 0.12,
-    y: 60,
-  });
+  if (productsGrid.value) {
+    staggerIn('.product-card', {
+      scrollTrigger: {
+        trigger: productsGrid.value,
+        start: 'top 80%',
+      },
+      stagger: 0.12,
+      y: 60,
+    });
+  }
 
   // Features grid animation
-  staggerIn('.feature-item', {
-    scrollTrigger: {
-      trigger: featuresGrid.value,
-      start: 'top 80%',
-    },
-    stagger: 0.1,
-  });
+  if (featuresGrid.value) {
+    staggerIn('.feature-item', {
+      scrollTrigger: {
+        trigger: featuresGrid.value,
+        start: 'top 80%',
+      },
+      stagger: 0.1,
+    });
+  }
 
   // CTA section fade in
-  fadeIn(ctaSection.value.querySelector('.cta-content'), {
-    scrollTrigger: {
-      trigger: ctaSection.value,
-      start: 'top 70%',
-    },
-    y: 40,
-    duration: 0.8,
-  });
+  if (ctaSection.value) {
+    fadeIn(ctaSection.value.querySelector('.cta-content'), {
+      scrollTrigger: {
+        trigger: ctaSection.value,
+        start: 'top 70%',
+      },
+      y: 40,
+      duration: 0.8,
+    });
+  }
 };
 
 onMounted(async () => {
   await fetchData();
-  // Wait for DOM to be fully ready
+  resetCarouselTimer();
   setTimeout(() => {
     initAnimations();
   }, 100);
+});
+
+onUnmounted(() => {
+  if (carouselInterval) clearInterval(carouselInterval);
 });
 </script>
 
@@ -356,119 +483,416 @@ onMounted(async () => {
   overflow-x: hidden;
 }
 
-/* Hero Section */
+/* ===== HERO - BENTO GRID ===== */
 .hero {
   position: relative;
   min-height: 100vh;
   display: flex;
   align-items: center;
-  padding-top: 80px;
+  padding: 100px 0 40px;
   overflow: hidden;
 }
 
-.hero-background {
+.hero-gradient {
   position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(135deg, var(--color-canvas) 0%, #fae5d3 100%);
-  z-index: -1;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 80% 60% at 20% 30%, rgba(27, 94, 32, 0.18) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 50% at 80% 70%, rgba(0, 150, 136, 0.14) 0%, transparent 55%),
+    linear-gradient(160deg, #0d2b1a 0%, #122e1e 30%, #0a3d2a 60%, #0e4434 100%);
+  z-index: 0;
 }
 
-.hero-content {
+.hero-grain {
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+  z-index: 1;
+  pointer-events: none;
+}
+
+.hero-container {
+  width: 100%;
+  max-width: 1320px;
+  margin: 0 auto;
+  padding: 0 2rem;
+  position: relative;
+  z-index: 2;
+}
+
+/* Bento Grid Layout */
+.bento-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 4rem;
+  grid-template-columns: 1fr 0.85fr 0.45fr;
+  grid-template-rows: auto auto auto;
+  gap: 1rem;
+  grid-template-areas:
+    'main    showcase stat1'
+    'main    showcase stat2'
+    'cats    cats     scroll';
+}
+
+/* Glass card base */
+.bento-main,
+.bento-showcase,
+.bento-stat,
+.bento-categories {
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.04);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+}
+
+/* === Main Title Card === */
+.bento-main {
+  grid-area: main;
+  padding: 3rem 2.5rem;
+  display: flex;
   align-items: center;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.02) 100%);
+}
+
+.hero-badge-tag {
+  display: inline-block;
+  background: rgba(76, 175, 80, 0.15);
+  color: #81c784;
+  padding: 0.4rem 1rem;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  margin-bottom: 1.5rem;
+  border: 1px solid rgba(76, 175, 80, 0.2);
 }
 
 .hero-title {
-  font-size: clamp(2.5rem, 5vw, 4.5rem);
+  font-family: var(--font-display, 'Playfair Display', serif);
+  font-size: clamp(2.2rem, 4.2vw, 3.8rem);
+  font-weight: 700;
   line-height: 1.1;
-  margin-bottom: 1.5rem;
+  color: #ffffff;
+  margin-bottom: 1.25rem;
+  letter-spacing: -0.02em;
 }
 
-.hero-title .accent {
-  color: var(--color-secondary);
-  display: block;
+.title-accent {
+  background: linear-gradient(135deg, #4caf50, #00bfa5);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 .hero-subtitle {
-  font-size: 1.125rem;
-  line-height: 1.8;
-  color: var(--color-text);
-  opacity: 0.85;
+  font-size: 1rem;
+  line-height: 1.7;
+  color: rgba(255, 255, 255, 0.6);
   margin-bottom: 2rem;
-  max-width: 540px;
+  max-width: 460px;
 }
 
-.hero-buttons {
+.hero-cta-group {
   display: flex;
-  gap: 1rem;
+  gap: 0.75rem;
   flex-wrap: wrap;
 }
 
-.btn-large {
-  padding: 1rem 2.5rem;
-  font-size: 1.05rem;
+.cta-btn {
+  padding: 0.85rem 1.8rem;
+  border-radius: 14px;
+  font-size: 0.88rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  border: none;
 }
 
-.hero-image-wrapper {
-  position: relative;
-  border-radius: var(--radius-xl);
-  overflow: hidden;
-  box-shadow: var(--shadow-lg);
-}
-
-.hero-img {
-  width: 100%;
-  height: auto;
-  display: block;
-  transition: transform 0.6s ease;
-}
-
-.hero-image-wrapper:hover .hero-img {
-  transform: scale(1.05);
-}
-
-.hero-badge {
-  position: absolute;
-  top: 2rem;
-  right: 2rem;
-  background-color: var(--color-brand);
+.cta-primary {
+  background: linear-gradient(135deg, #2e7d32, #00897b);
   color: white;
+  box-shadow: 0 8px 28px rgba(46, 125, 50, 0.35);
+}
+
+.cta-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 36px rgba(46, 125, 50, 0.45);
+}
+
+.cta-ghost {
+  background: rgba(255, 255, 255, 0.06);
+  color: rgba(255, 255, 255, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.cta-ghost:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+}
+
+/* === Product Showcase Carousel === */
+.bento-showcase {
+  grid-area: showcase;
   padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  background: linear-gradient(160deg, rgba(255, 255, 255, 0.07) 0%, rgba(0, 150, 136, 0.06) 100%);
+}
+
+.showcase-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.showcase-label {
+  font-size: 0.72rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: rgba(255, 255, 255, 0.45);
+}
+
+.carousel-nav {
+  display: flex;
+  gap: 6px;
+}
+
+.nav-dot {
+  width: 8px;
+  height: 8px;
   border-radius: 50%;
+  background: rgba(255, 255, 255, 0.15);
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  padding: 0;
+}
+
+.nav-dot.active {
+  background: #4caf50;
+  box-shadow: 0 0 10px rgba(76, 175, 80, 0.5);
+  width: 20px;
+  border-radius: 4px;
+}
+
+.carousel-viewport {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  min-height: 280px;
+}
+
+.carousel-slide {
   text-align: center;
-  box-shadow: var(--shadow-md);
+  width: 100%;
 }
 
-.badge-text {
+.carousel-img {
+  width: 100%;
+  max-height: 200px;
+  object-fit: contain;
+  border-radius: 12px;
+  margin-bottom: 1rem;
+  filter: drop-shadow(0 12px 24px rgba(0, 0, 0, 0.3));
+}
+
+.carousel-info h3 {
+  font-family: var(--font-primary, 'Inter', sans-serif);
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: #ffffff;
+  margin-bottom: 0.35rem;
+}
+
+.carousel-info p {
+  font-size: 0.82rem;
+  color: rgba(255, 255, 255, 0.5);
+  line-height: 1.5;
+}
+
+/* Slide transition */
+.slide-fade-enter-active,
+.slide-fade-leave-active {
+  transition: all 0.4s ease;
+}
+.slide-fade-enter-from {
+  opacity: 0;
+  transform: translateX(20px);
+}
+.slide-fade-leave-to {
+  opacity: 0;
+  transform: translateX(-20px);
+}
+
+/* === Stat Cards === */
+.bento-stat {
+  grid-area: stat1;
+  padding: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, rgba(76, 175, 80, 0.12) 0%, rgba(0, 150, 136, 0.08) 100%);
+}
+
+.bento-stat-2 {
+  grid-area: stat2;
+  background: linear-gradient(135deg, rgba(0, 150, 136, 0.12) 0%, rgba(46, 125, 50, 0.08) 100%);
+}
+
+.stat-inner {
+  text-align: center;
+}
+
+.stat-number {
   display: block;
-  font-size: 2rem;
+  font-family: var(--font-display, 'Playfair Display', serif);
+  font-size: 2.2rem;
   font-weight: 700;
+  color: #ffffff;
   line-height: 1;
+  margin-bottom: 0.5rem;
+  background: linear-gradient(135deg, #81c784, #4db6ac);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
-.badge-sub {
-  display: block;
-  font-size: 0.875rem;
-  opacity: 0.9;
+.stat-label {
+  font-size: 0.78rem;
+  color: rgba(255, 255, 255, 0.5);
+  line-height: 1.4;
+  font-weight: 500;
 }
 
-.scroll-indicator {
-  position: absolute;
-  bottom: 2rem;
-  left: 50%;
-  transform: translateX(-50%);
+/* === Category Quick Links === */
+.bento-categories {
+  grid-area: cats;
+  padding: 1.25rem 1.5rem;
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.bento-cat-inner {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+}
+
+.bento-cat-title {
+  font-size: 0.72rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: rgba(255, 255, 255, 0.35);
+  white-space: nowrap;
+}
+
+.bento-cat-list {
+  display: flex;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+}
+
+.bento-cat-chip {
+  padding: 0.45rem 1rem;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.78rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.bento-cat-chip i {
+  font-size: 0.6rem;
+  opacity: 0.5;
+}
+
+.bento-cat-chip:hover {
+  background: rgba(76, 175, 80, 0.15);
+  border-color: rgba(76, 175, 80, 0.3);
+  color: #81c784;
+}
+
+/* === Scroll Indicator === */
+.bento-scroll {
+  grid-area: scroll;
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
   gap: 0.5rem;
-  color: var(--color-brand);
-  font-size: 0.875rem;
-  opacity: 0.7;
+  padding: 1rem;
+}
+
+.scroll-line {
+  width: 1px;
+  height: 32px;
+  background: linear-gradient(to bottom, rgba(255, 255, 255, 0.3), transparent);
+  transform-origin: top;
+  transform: scaleY(0.5);
+}
+
+.bento-scroll span {
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  color: rgba(255, 255, 255, 0.25);
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 1024px) {
+  .bento-grid {
+    grid-template-columns: 1fr 1fr;
+    grid-template-areas:
+      'main     main'
+      'showcase showcase'
+      'stat1    stat2'
+      'cats     cats'
+      'scroll   scroll';
+  }
+}
+
+@media (max-width: 640px) {
+  .hero {
+    padding: 80px 0 24px;
+    min-height: auto;
+  }
+
+  .bento-grid {
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      'main'
+      'showcase'
+      'stat1'
+      'stat2'
+      'cats'
+      'scroll';
+    gap: 0.75rem;
+  }
+
+  .bento-main {
+    padding: 2rem 1.5rem;
+  }
+
+  .hero-title {
+    font-size: 2rem;
+  }
+
+  .bento-cat-inner {
+    flex-direction: column;
+    align-items: flex-start;
+  }
 }
 
 /* Sections */
@@ -719,29 +1143,6 @@ section {
 
 /* Responsive */
 @media (max-width: 768px) {
-  .hero-content {
-    grid-template-columns: 1fr;
-    gap: 3rem;
-  }
-
-  .hero {
-    min-height: auto;
-    padding: 6rem 0 4rem;
-  }
-
-  .hero-right {
-    order: -1;
-  }
-
-  .hero-buttons {
-    justify-content: center;
-  }
-
-  .btn-large {
-    flex: 1;
-    min-width: 160px;
-  }
-
   .categories-grid,
   .products-grid {
     grid-template-columns: 1fr;
