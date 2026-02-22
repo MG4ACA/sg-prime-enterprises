@@ -13,6 +13,7 @@ const relatedProducts = ref([]);
 const loading = ref(true);
 const showEnquiryDialog = ref(false);
 const submitting = ref(false);
+const activeImageUrl = ref(null);
 
 const enquiryForm = reactive({ name: '', email: '', phone: '', company: '', message: '' });
 
@@ -22,8 +23,26 @@ const specsArray = computed(() => {
   return typeof s === 'object' ? Object.entries(s) : [];
 });
 
+/** All images for this product (from the images array or fallback to image_url) */
+const productImages = computed(() => {
+  if (product.value?.images && product.value.images.length > 0) {
+    return product.value.images;
+  }
+  if (product.value?.image_url) {
+    return [{ id: null, image_url: product.value.image_url, is_primary: true }];
+  }
+  return [];
+});
+
+const fallbackImage = 'https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=800&q=80';
+
+const displayImage = computed(
+  () => activeImageUrl.value || product.value?.image_url || fallbackImage,
+);
+
 const fetchProduct = async () => {
   loading.value = true;
+  activeImageUrl.value = null;
   try {
     const [productRes, relatedRes] = await Promise.all([
       api.get(`/products/${route.params.id}`),
@@ -32,6 +51,14 @@ const fetchProduct = async () => {
 
     if (productRes.data.success) {
       product.value = productRes.data.data;
+      // Set active image to primary (or first available)
+      const imgs = productRes.data.data.images;
+      if (imgs && imgs.length > 0) {
+        const primary = imgs.find((i) => i.is_primary) || imgs[0];
+        activeImageUrl.value = primary.image_url;
+      } else {
+        activeImageUrl.value = productRes.data.data.image_url || null;
+      }
     } else {
       router.push('/products');
     }
@@ -103,16 +130,34 @@ onMounted(fetchProduct);
     <section class="py-12 pt-28 bg-cream">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
-          <!-- Image -->
-          <div class="rounded-2xl overflow-hidden bg-white shadow-md aspect-[4/3]">
-            <img
-              :src="
-                product.image_url ||
-                'https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=800&q=80'
-              "
-              :alt="product.name"
-              class="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
-            />
+          <!-- Image gallery: main image + thumbnail strip -->
+          <div class="flex flex-col gap-3">
+            <!-- Main Image -->
+            <div class="rounded-2xl overflow-hidden bg-white shadow-md aspect-[4/3]">
+              <img
+                :src="displayImage"
+                :alt="product.name"
+                class="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
+              />
+            </div>
+
+            <!-- Thumbnail strip (only visible when there are multiple images) -->
+            <div v-if="productImages.length > 1" class="flex gap-2 overflow-x-auto pb-1">
+              <button
+                v-for="img in productImages"
+                :key="img.id ?? img.image_url"
+                type="button"
+                @click="activeImageUrl = img.image_url"
+                class="shrink-0 w-20 h-16 rounded-lg overflow-hidden border-2 transition-all duration-200 focus:outline-none"
+                :class="
+                  activeImageUrl === img.image_url
+                    ? 'border-earth-500 shadow-sm scale-105'
+                    : 'border-transparent opacity-70 hover:opacity-100 hover:border-coir-300'
+                "
+              >
+                <img :src="img.image_url" :alt="product.name" class="w-full h-full object-cover" />
+              </button>
+            </div>
           </div>
 
           <!-- Info -->

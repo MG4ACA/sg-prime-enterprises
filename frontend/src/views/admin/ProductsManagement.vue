@@ -148,30 +148,98 @@
         </div>
 
         <div class="form-field">
-          <label>Product Image</label>
+          <label>
+            Product Images
+            <span class="text-gray-400 font-normal text-xs ml-1">(up to 5 · first = primary)</span>
+          </label>
 
-          <!-- Current / preview image -->
-          <div
-            v-if="imagePreview || (editingProduct && editingProduct.image_url)"
-            class="relative mb-2 inline-block"
-          >
-            <img
-              :src="imagePreview || editingProduct.image_url"
-              alt="Product image"
-              class="h-36 w-auto rounded-lg object-cover border border-gray-200 shadow-sm"
-            />
-            <button
-              type="button"
-              @click="removeImage"
-              class="absolute -top-2 -right-2 w-6 h-6 bg-red-500 text-white rounded-full text-xs flex items-center justify-center hover:bg-red-600 transition-colors shadow"
-              title="Remove image"
-            >
-              <i class="pi pi-times"></i>
-            </button>
+          <!-- Existing images (edit mode) -->
+          <div v-if="existingImages.length > 0" class="mb-3">
+            <p class="text-xs text-gray-500 mb-2">
+              Saved images — click ★ to make primary, ✕ to delete
+            </p>
+            <div class="flex flex-wrap gap-2">
+              <div v-for="img in existingImages" :key="img.id" class="relative group">
+                <img
+                  :src="img.image_url"
+                  :alt="'product image'"
+                  class="h-20 w-24 object-cover rounded-lg border-2 transition-colors"
+                  :class="img.is_primary ? 'border-amber-400 shadow-sm' : 'border-gray-200'"
+                />
+                <!-- Primary badge -->
+                <span
+                  v-if="img.is_primary"
+                  class="absolute bottom-1 left-1 bg-amber-400 text-white text-xs px-1 rounded leading-tight"
+                >
+                  Primary
+                </span>
+                <!-- Controls (hover) -->
+                <div
+                  class="absolute inset-0 bg-black/40 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-1"
+                >
+                  <button
+                    v-if="!img.is_primary"
+                    type="button"
+                    @click="setExistingImagePrimary(img)"
+                    class="w-7 h-7 bg-amber-400 text-white rounded-full text-xs flex items-center justify-center hover:bg-amber-500 transition-colors"
+                    title="Set as primary"
+                  >
+                    ★
+                  </button>
+                  <button
+                    type="button"
+                    @click="deleteExistingImage(img)"
+                    class="w-7 h-7 bg-red-500 text-white rounded-full text-xs flex items-center justify-center hover:bg-red-600 transition-colors"
+                    title="Delete image"
+                  >
+                    <i class="pi pi-times"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
           </div>
 
-          <!-- Drop zone -->
+          <!-- New image previews -->
+          <div v-if="newImagePreviews.length > 0" class="mb-3">
+            <p class="text-xs text-gray-500 mb-2">
+              New images to upload
+              <span v-if="existingImages.length === 0" class="text-amber-600">
+                (first will be primary)
+              </span>
+            </p>
+            <div class="flex flex-wrap gap-2">
+              <div v-for="(preview, index) in newImagePreviews" :key="index" class="relative group">
+                <img
+                  :src="preview"
+                  :alt="'new image ' + (index + 1)"
+                  class="h-20 w-24 object-cover rounded-lg border-2 transition-colors"
+                  :class="
+                    index === 0 && existingImages.length === 0
+                      ? 'border-amber-400'
+                      : 'border-gray-200'
+                  "
+                />
+                <span
+                  v-if="index === 0 && existingImages.length === 0"
+                  class="absolute bottom-1 left-1 bg-amber-400 text-white text-xs px-1 rounded leading-tight"
+                >
+                  Primary
+                </span>
+                <button
+                  type="button"
+                  @click="removeNewImage(index)"
+                  class="absolute -top-2 -right-2 w-6 h-6 bg-red-500 text-white rounded-full text-xs flex items-center justify-center hover:bg-red-600 transition-colors shadow opacity-0 group-hover:opacity-100"
+                  title="Remove"
+                >
+                  <i class="pi pi-times"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Drop zone (shown when under limit) -->
           <div
+            v-if="totalImageCount < 5"
             class="upload-zone"
             :class="{ 'drag-over': isDragging }"
             @dragover.prevent="isDragging = true"
@@ -179,22 +247,24 @@
             @drop.prevent="handleDrop"
             @click="fileInput.click()"
           >
-            <i class="pi pi-upload text-2xl text-gray-400 mb-2"></i>
+            <i class="pi pi-images text-2xl text-gray-400 mb-2"></i>
             <p class="text-sm text-gray-500">
-              {{
-                imagePreview || (editingProduct && editingProduct.image_url)
-                  ? 'Replace image — '
-                  : ''
-              }}
-              <span class="text-blue-500 font-medium">click to browse</span>
+              <span class="text-blue-500 font-medium">Click to browse</span>
               or drag &amp; drop
             </p>
-            <p class="text-xs text-gray-400 mt-1">JPEG, PNG, WebP — max 5 MB</p>
+            <p class="text-xs text-gray-400 mt-1">
+              JPEG, PNG, WebP — max 5 MB each · {{ 5 - totalImageCount }} slot(s) remaining
+            </p>
           </div>
+          <div v-else class="text-xs text-amber-600 mt-1">
+            Maximum of 5 images reached. Delete an existing image to add a new one.
+          </div>
+
           <input
             ref="fileInput"
             type="file"
             accept="image/jpeg,image/png,image/webp"
+            multiple
             class="hidden"
             @change="handleFileChange"
           />
@@ -239,7 +309,7 @@
 import api from '@/services/api';
 import { useConfirm } from 'primevue/useconfirm';
 import { useToast } from 'primevue/usetoast';
-import { onBeforeMount, onMounted, onUnmounted, ref } from 'vue';
+import { computed, onBeforeMount, onMounted, onUnmounted, ref } from 'vue';
 
 const toast = useToast();
 const confirm = useConfirm();
@@ -257,13 +327,21 @@ onBeforeMount(() => {
   checkScreenSize();
   window.addEventListener('resize', checkScreenSize);
 });
+
 const dialogVisible = ref(false);
 const editingProduct = ref(null);
 const saving = ref(false);
 const fileInput = ref(null);
-const selectedFile = ref(null);
-const imagePreview = ref(null);
+/** Files queued for upload (not yet saved) */
+const selectedFiles = ref([]);
+/** Object-URL previews matching selectedFiles */
+const newImagePreviews = ref([]);
+/** Images already saved in the DB (edit mode) */
+const existingImages = ref([]);
 const isDragging = ref(false);
+
+/** Total image count across saved + queued */
+const totalImageCount = computed(() => existingImages.value.length + selectedFiles.value.length);
 
 const statusOptions = ['active', 'inactive'];
 
@@ -293,7 +371,11 @@ const fetchData = async () => {
   }
 };
 
-const openDialog = (product = null) => {
+const openDialog = async (product = null) => {
+  selectedFiles.value = [];
+  newImagePreviews.value = [];
+  existingImages.value = [];
+
   if (product) {
     editingProduct.value = product;
     formData.value = {
@@ -306,6 +388,19 @@ const openDialog = (product = null) => {
       status: product.status,
       display_order: product.display_order || 0,
     };
+
+    // Load full images list for the product
+    try {
+      const res = await api.get(`/products/${product.id}`);
+      if (res.data.success && res.data.data.images) {
+        existingImages.value = res.data.data.images;
+      }
+    } catch {
+      // Fallback: show just the primary image_url if available
+      if (product.image_url) {
+        existingImages.value = [{ id: null, image_url: product.image_url, is_primary: true }];
+      }
+    }
   } else {
     editingProduct.value = null;
     formData.value = {
@@ -318,31 +413,90 @@ const openDialog = (product = null) => {
       display_order: 0,
     };
   }
-  selectedFile.value = null;
-  imagePreview.value = null;
+
   dialogVisible.value = true;
 };
 
+/** Add files from file-picker or drop event, respecting the max-5 limit */
+const addFiles = (fileList) => {
+  const remaining = 5 - totalImageCount.value;
+  if (remaining <= 0) {
+    toast.add({
+      severity: 'warn',
+      summary: 'Limit reached',
+      detail: 'Maximum 5 images per product.',
+      life: 3000,
+    });
+    return;
+  }
+
+  const toAdd = Array.from(fileList)
+    .filter((f) => f.type.startsWith('image/'))
+    .slice(0, remaining);
+
+  toAdd.forEach((file) => {
+    selectedFiles.value.push(file);
+    newImagePreviews.value.push(URL.createObjectURL(file));
+  });
+};
+
 const handleFileChange = (event) => {
-  const file = event.target.files[0];
-  if (!file) return;
-  selectedFile.value = file;
-  imagePreview.value = URL.createObjectURL(file);
+  addFiles(event.target.files);
+  // Reset so the same file can be re-selected if needed
+  if (fileInput.value) fileInput.value.value = '';
 };
 
 const handleDrop = (event) => {
   isDragging.value = false;
-  const file = event.dataTransfer.files[0];
-  if (!file || !file.type.startsWith('image/')) return;
-  selectedFile.value = file;
-  imagePreview.value = URL.createObjectURL(file);
+  addFiles(event.dataTransfer.files);
 };
 
-const removeImage = () => {
-  selectedFile.value = null;
-  imagePreview.value = null;
-  if (editingProduct.value) editingProduct.value = { ...editingProduct.value, image_url: null };
-  if (fileInput.value) fileInput.value.value = '';
+/** Remove a queued (not-yet-saved) image by index */
+const removeNewImage = (index) => {
+  URL.revokeObjectURL(newImagePreviews.value[index]);
+  selectedFiles.value.splice(index, 1);
+  newImagePreviews.value.splice(index, 1);
+};
+
+/** Delete a saved image via API */
+const deleteExistingImage = async (img) => {
+  if (!editingProduct.value || !img.id) return;
+  try {
+    await api.delete(`/admin/products/${editingProduct.value.id}/images/${img.id}`);
+    existingImages.value = existingImages.value.filter((i) => i.id !== img.id);
+    // Refresh the list to get updated is_primary flags
+    const res = await api.get(`/products/${editingProduct.value.id}`);
+    if (res.data.success) existingImages.value = res.data.data.images || [];
+    toast.add({ severity: 'success', summary: 'Deleted', detail: 'Image removed', life: 2000 });
+  } catch {
+    toast.add({
+      severity: 'error',
+      summary: 'Error',
+      detail: 'Failed to delete image',
+      life: 3000,
+    });
+  }
+};
+
+/** Set a saved image as the primary via API */
+const setExistingImagePrimary = async (img) => {
+  if (!editingProduct.value || !img.id) return;
+  try {
+    await api.patch(`/admin/products/${editingProduct.value.id}/images/${img.id}/primary`);
+    // Refresh is_primary flags locally
+    existingImages.value = existingImages.value.map((i) => ({
+      ...i,
+      is_primary: i.id === img.id,
+    }));
+    toast.add({ severity: 'success', summary: 'Updated', detail: 'Primary image set', life: 2000 });
+  } catch {
+    toast.add({
+      severity: 'error',
+      summary: 'Error',
+      detail: 'Failed to update primary image',
+      life: 3000,
+    });
+  }
 };
 
 const saveProduct = async () => {
@@ -356,7 +510,9 @@ const saveProduct = async () => {
     fd.append('is_featured', formData.value.is_featured ? '1' : '0');
     fd.append('status', formData.value.status);
     fd.append('display_order', formData.value.display_order);
-    if (selectedFile.value) fd.append('image', selectedFile.value);
+
+    // Append all queued image files under the 'images' field name
+    selectedFiles.value.forEach((file) => fd.append('images', file));
 
     const config = { headers: { 'Content-Type': 'multipart/form-data' } };
     const response = editingProduct.value
@@ -408,54 +564,22 @@ const deleteProduct = async (id) => {
 };
 
 const populateSampleData = () => {
-  const sampleProducts = [
-    {
-      name: 'Premium Coir Fiber Roll',
-      description:
-        'High-quality natural coir fiber ideal for industrial and agricultural applications.',
-      category_id: 1,
-      specs: JSON.stringify({
-        Material: 'Natural Coir Fiber',
-        Size: '2m x 50m',
-        Density: 'High',
-        Origin: 'Sri Lanka',
-      }),
-      is_featured: true,
-      status: 'active',
-      display_order: 1,
-    },
-    {
-      name: 'Coconut Husk Chips',
-      description: 'Processed coconut husk chips suitable for landscaping and soil amendment.',
-      category_id: 1,
-      specs: JSON.stringify({
-        Material: 'Coconut Husk',
-        Size: 'Medium chips',
-        Packaging: '50kg bags',
-        Origin: 'Sri Lanka',
-      }),
-      is_featured: false,
-      status: 'active',
-      display_order: 2,
-    },
-    {
-      name: 'Coir Rope (Premium)',
-      description: 'Strong and durable coir rope for industrial and home use.',
-      category_id: 2,
-      specs: JSON.stringify({
-        Material: 'Natural Coir',
-        Diameter: '12mm',
-        Length: '100m',
-        Strength: 'High tensile',
-      }),
-      is_featured: true,
-      status: 'active',
-      display_order: 3,
-    },
-  ];
+  const sample = {
+    name: 'Premium Coir Fiber Roll',
+    description:
+      'High-quality natural coir fiber ideal for industrial and agricultural applications.',
+    category_id: 1,
+    specs: JSON.stringify({
+      Material: 'Natural Coir Fiber',
+      Size: '2m x 50m',
+      Density: 'High',
+      Origin: 'Sri Lanka',
+    }),
+    is_featured: true,
+    status: 'active',
+    display_order: 1,
+  };
 
-  // Populate the form with the first sample product
-  const sample = sampleProducts[0];
   formData.value = {
     name: sample.name,
     category_id: sample.category_id,

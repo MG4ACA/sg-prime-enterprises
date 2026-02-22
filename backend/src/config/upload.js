@@ -26,7 +26,7 @@ const fileFilter = (req, file, cb) => {
   }
 };
 
-// Upload middleware
+// Upload middleware factory
 const upload = multer({
   storage: storage,
   fileFilter: fileFilter,
@@ -34,5 +34,11 @@ const upload = multer({
     fileSize: parseInt(process.env.MAX_FILE_SIZE) || 5 * 1024 * 1024, // 5MB default
   },
 });
+
+// Single image upload (legacy / avatar use cases)
+upload.single_ = upload.single('image');
+
+// Multiple images upload — up to 5 per product
+upload.multipleProducts = upload.array('images', 5);
 
 module.exports = upload;

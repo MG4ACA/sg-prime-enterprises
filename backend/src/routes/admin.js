@@ -59,7 +59,7 @@ router.get('/products', authMiddleware, (req, res, next) => {
 router.post(
   '/products',
   authMiddleware,
-  upload.single('image'),
+  upload.multipleProducts,
   [
     body('category_id').notEmpty().withMessage('Category is required'),
     body('name').trim().notEmpty().withMessage('Product name is required'),
@@ -71,11 +71,24 @@ router.post(
 router.put(
   '/products/:id',
   authMiddleware,
-  upload.single('image'),
+  upload.multipleProducts,
   productController.updateProduct,
 );
 
 router.delete('/products/:id', authMiddleware, productController.deleteProduct);
+
+// ── Product image management ──────────────────────────────────────────────────
+router.delete(
+  '/products/:id/images/:imageId',
+  authMiddleware,
+  productController.deleteProductImage,
+);
+
+router.patch(
+  '/products/:id/images/:imageId/primary',
+  authMiddleware,
+  productController.setProductImagePrimary,
+);
 
 // ============================================
 // ENQUIRY MANAGEMENT (Protected)
