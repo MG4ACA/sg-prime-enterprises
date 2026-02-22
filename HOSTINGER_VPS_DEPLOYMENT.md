@@ -350,6 +350,10 @@ upstream sgprime_backend {
 server {
     listen 80;
     server_name sgprimeenterprises.lumicore-labs.com www.sgprimeenterprises.lumicore-labs.com;
+
+    # Allow large file uploads (up to 50MB)
+    client_max_body_size 25m;
+
     # Security headers
     add_header X-Frame-Options "SAMEORIGIN" always;
     add_header X-Content-Type-Options "nosniff" always;
