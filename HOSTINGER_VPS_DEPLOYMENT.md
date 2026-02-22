@@ -512,7 +512,7 @@ cd /var/www/sg-prime-enterprises
 
 # Pull latest changes (if using Git)
 echo "📥 Pulling latest changes..."
-git pull origin main
+git pull origin development
 
 # Backend deployment
 echo "🔨 Deploying backend..."
@@ -525,7 +525,9 @@ echo "🎨 Deploying frontend..."
 cd ../frontend
 npm install
 npm run build
-sudo cp -r dist/* /var/www/sg-prime-enterprises/frontend/
+sudo cp -r dist/* /var/www/sg-prime-enterprises/dist/
+sudo chown -R www-data:www-data /var/www/sg-prime-enterprises/dist
+sudo chmod -R 755 /var/www/sg-prime-enterprises/dist
 
 # Restart Nginx
 echo "🌐 Restarting Nginx..."
@@ -629,8 +631,8 @@ jobs:
           key: ${{ secrets.VPS_SSH_KEY }}
           port: ${{ secrets.VPS_PORT }}
           source: 'frontend/dist/'
-          target: '/var/www/sg-prime-enterprises/dist'
-          strip_components: 2
+          target: '/var/www/sg-prime-enterprises'
+          strip_components: 1
 
       - name: Deploy backend & run migrations via SSH
         uses: appleboy/ssh-action@v1.0.3
