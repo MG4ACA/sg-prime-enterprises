@@ -173,9 +173,9 @@
                 >
                   Primary
                 </span>
-                <!-- Controls (hover) -->
+                <!-- Controls (always visible on mobile, hover on desktop) -->
                 <div
-                  class="absolute inset-0 bg-black/40 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-1"
+                  class="absolute inset-0 bg-black/40 rounded-lg opacity-100 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-1"
                 >
                   <button
                     v-if="!img.is_primary"
@@ -228,7 +228,7 @@
                 <button
                   type="button"
                   @click="removeNewImage(index)"
-                  class="absolute -top-2 -right-2 w-6 h-6 bg-red-500 text-white rounded-full text-xs flex items-center justify-center hover:bg-red-600 transition-colors shadow opacity-0 group-hover:opacity-100"
+                  class="absolute -top-2 -right-2 w-6 h-6 bg-red-500 text-white rounded-full text-xs flex items-center justify-center hover:bg-red-600 transition-colors shadow opacity-100"
                   title="Remove"
                 >
                   <i class="pi pi-times"></i>
@@ -417,7 +417,7 @@ const openDialog = async (product = null) => {
   dialogVisible.value = true;
 };
 
-/** Add files from file-picker or drop event, respecting the max-5 limit */
+/** Add files from file-picker or drop event, respecting the max-5 limit and file size */
 const addFiles = (fileList) => {
   const remaining = 5 - totalImageCount.value;
   if (remaining <= 0) {
@@ -430,11 +430,25 @@ const addFiles = (fileList) => {
     return;
   }
 
-  const toAdd = Array.from(fileList)
-    .filter((f) => f.type.startsWith('image/'))
-    .slice(0, remaining);
+  const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
+  const filesToAdd = Array.from(fileList).filter((f) => f.type.startsWith('image/'));
+  const oversizedFiles = filesToAdd.filter((f) => f.size > MAX_FILE_SIZE);
 
-  toAdd.forEach((file) => {
+  // Show warning for oversized files
+  if (oversizedFiles.length > 0) {
+    const filenames = oversizedFiles.map((f) => f.name).join(', ');
+    toast.add({
+      severity: 'error',
+      summary: 'File too large',
+      detail: `${filenames} exceeds 5MB limit. Please use smaller images.`,
+      life: 4000,
+    });
+  }
+
+  // Only add files that are within size limit
+  const validFiles = filesToAdd.filter((f) => f.size <= MAX_FILE_SIZE).slice(0, remaining);
+
+  validFiles.forEach((file) => {
     selectedFiles.value.push(file);
     newImagePreviews.value.push(URL.createObjectURL(file));
   });
@@ -524,12 +538,27 @@ const saveProduct = async () => {
       dialogVisible.value = false;
       fetchData();
     }
-  } catch {
+  } catch (error) {
+    let errorMessage = 'Failed to save product';
+    let errorSummary = 'Error';
+
+    // Handle specific error codes
+    if (error.response?.status === 413) {
+      errorMessage = 'File size exceeds 5MB limit. Please upload smaller images.';
+      errorSummary = 'File Too Large';
+    } else if (error.response?.status === 400) {
+      errorMessage = error.response?.data?.message || 'Invalid product data';
+      errorSummary = 'Invalid Data';
+    } else if (error.response?.status === 401) {
+      errorMessage = 'You are not authorized to perform this action';
+      errorSummary = 'Unauthorized';
+    }
+
     toast.add({
       severity: 'error',
-      summary: 'Error',
-      detail: 'Failed to save product',
-      life: 3000,
+      summary: errorSummary,
+      detail: errorMessage,
+      life: 4000,
     });
   } finally {
     saving.value = false;

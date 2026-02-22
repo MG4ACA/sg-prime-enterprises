@@ -6,15 +6,6 @@ This guide will walk you through deploying your SG Prime Enterprises application
 
 ---
 
-## 📋 Prerequisites
-
-- Hostinger VPS with Ubuntu 22.04 + MEVN Stack template installed
-- SSH access to your VPS
-- Your VPS IP address
-- Domain name (optional, but recommended)
-
----
-
 ## 🎯 Architecture Overview
 
 ```
@@ -39,20 +30,6 @@ This guide will walk you through deploying your SG Prime Enterprises application
 │                          └────────────┘ │
 └─────────────────────────────────────────┘
 ```
-
----
-
-## 📦 Step 1: Connect to Your VPS
-
-```bash
-# Connect via SSH
-ssh root@your_vps_ip
-
-# Or if you have a username
-ssh username@your_vps_ip
-```
-
----
 
 ## 🔧 Step 2: Initial Server Setup
 
@@ -150,7 +127,7 @@ cd /var/www/sg-prime-enterprises
 
 ```bash
 # If your code is on GitHub (replace with your repository URL)
-sudo git clone https://github.com/YOUR_USERNAME/sg-prime-enterprises.git backend
+sudo git clone https://github.com/mg4aca/sg-prime-enterprises.git .
 
 # Or upload your code using SCP from your local machine:
 # scp -r /path/to/sg-prime-enterprises root@your_vps_ip:/var/www/sg-prime-enterprises
@@ -325,19 +302,6 @@ nano .env.production
 VITE_API_BASE_URL=https://sgprimeenterprises.lumicore-labs.com/api
 ```
 
-or Update the frontend to point to your backend API:
-
-```bash
-nano src/services/api.js
-```
-
-Update the base URL:
-
-```javascript
-const API_BASE_URL =
-  import.meta.env.VITE_API_BASE_URL || 'https://sgprimeenterprises.lumicore-labs.com/api';
-```
-
 ### 6.3 Install Dependencies and Build
 
 ```bash
@@ -495,30 +459,6 @@ Certbot will:
 sudo certbot renew --dry-run
 ```
 
-### 8.4 Update Frontend API URL
-
-After SSL is set up, update your frontend API URL to use HTTPS:
-
-```bash
-nano /var/www/sg-prime-enterprises/frontend/src/services/api.js
-```
-
-Change to:
-
-```javascript
-const API_BASE_URL = 'https://sgprimeenterprises.lumicore-labs.com/api';
-```
-
-Rebuild and redeploy:
-
-```bash
-cd /var/www/sg-prime-enterprises/frontend
-npm run build
-sudo cp -r dist/* /var/www/sg-prime-enterprises/frontend/
-```
-
----
-
 ## ✅ Step 9: Verify Deployment
 
 ### 9.1 Check Backend
@@ -605,6 +545,133 @@ Run deployment:
 ```bash
 ./deploy.sh
 ```
+
+---
+
+## ⚙️ Step 11: GitHub Actions CI/CD Pipeline
+
+This workflow is triggered **manually** and performs a full deployment to the VPS:
+
+- SSHes into the VPS and runs `git pull` + installs dependencies
+- Builds the Vue.js frontend locally and copies `dist` via SCP
+- Runs database migrations on the VPS
+- Restarts PM2 backend and Nginx
+
+### 11.1 Configure GitHub Secrets
+
+In your GitHub repository go to **Settings → Secrets and variables → Actions** and add:
+
+| Secret Name   | Value                                              |
+| ------------- | -------------------------------------------------- |
+| `VPS_HOST`    | Your VPS IP address                                |
+| `VPS_USER`    | `root` (or your SSH user)                          |
+| `VPS_SSH_KEY` | Your private SSH key (contents of `~/.ssh/id_rsa`) |
+| `VPS_PORT`    | `22`                                               |
+
+**Generate SSH key pair and authorize it on the VPS (if not already done):**
+
+```bash
+# On your local machine
+ssh-keygen -t rsa -b 4096 -C "github-actions" -f ~/.ssh/github_actions_rsa
+
+# Copy the public key to VPS
+ssh-copy-id -i ~/.ssh/github_actions_rsa.pub root@your_vps_ip
+
+# Copy the private key content (paste this into VPS_SSH_KEY secret)
+cat ~/.ssh/github_actions_rsa
+```
+
+### 11.2 Create Workflow File
+
+Create the file `.github/workflows/deploy.yml` in your repository:
+
+```yaml
+name: Deploy to VPS
+
+on:
+  workflow_dispatch:
+    inputs:
+      reason:
+        description: 'Reason for manual deployment'
+        required: false
+        default: 'Manual deploy'
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install frontend dependencies
+        working-directory: frontend
+        run: npm ci
+
+      - name: Build frontend
+        working-directory: frontend
+        run: npm run build
+        env:
+          VITE_API_BASE_URL: https://sgprimeenterprises.lumicore-labs.com/api
+
+      - name: Copy frontend dist to VPS via SCP
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          port: ${{ secrets.VPS_PORT }}
+          source: 'frontend/dist/'
+          target: '/var/www/sg-prime-enterprises/dist'
+          strip_components: 2
+
+      - name: Deploy backend & run migrations via SSH
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          port: ${{ secrets.VPS_PORT }}
+          script: |
+            set -e
+            cd /var/www/sg-prime-enterprises
+
+            echo "📥 Pulling latest changes..."
+            git fetch --all
+            git reset --hard origin/main
+
+            echo "📦 Installing backend dependencies..."
+            cd backend
+            npm install --production
+
+            echo "🗄️ Running database migrations..."
+            cd ../database
+            npm install
+            npm run migrate
+
+            echo "🔄 Restarting PM2 backend..."
+            pm2 restart sg-prime-backend
+
+            echo "🌐 Restarting Nginx..."
+            sudo systemctl restart nginx
+
+            echo "✅ Deployment complete!"
+```
+
+### 11.3 Trigger Deployment
+
+1. Go to your GitHub repository
+2. Click the **Actions** tab
+3. Select **Deploy to VPS** workflow
+4. Click **Run workflow** → enter an optional reason → **Run workflow**
+5. Monitor the workflow run logs for any errors
 
 ---
 
@@ -839,6 +906,9 @@ Your SG Prime Enterprises Coir Products Catalog is now live on Hostinger VPS!
 - [ ] Backups are automated
 - [ ] Monitoring is set up
 - [ ] Deployment script is ready
+- [ ] GitHub Actions secrets configured (`VPS_HOST`, `VPS_USER`, `VPS_SSH_KEY`, `VPS_PORT`)
+- [ ] `.github/workflows/deploy.yml` committed and pushed
+- [ ] CI/CD manual workflow tested successfully
 
 ---
 
