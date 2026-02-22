@@ -12,6 +12,17 @@ const props = defineProps({
 const currentSlide = ref(0);
 let autoplayInterval = null;
 
+const accentColorMap = {
+  'bg-earth-500': '#4a7c59',
+  'bg-earth-600': '#3d6849',
+  'bg-coir-600': '#9a6029',
+  'bg-bark-700': '#5c4033',
+};
+
+const getAccentColor = (accentClass) => {
+  return accentColorMap[accentClass] || '#4a7c59';
+};
+
 const goToSlide = (index) => {
   currentSlide.value = index;
   resetAutoplay();
@@ -63,32 +74,36 @@ onUnmounted(() => {
         ></div>
 
         <!-- Content -->
-        <div class="relative h-full flex items-center">
+        <div class="relative h-full flex items-end sm:items-center pb-24 sm:pb-0">
           <div class="max-w-7xl mx-auto px-6 sm:px-10 lg:px-16 w-full">
             <div class="max-w-xl">
               <span
                 class="badge text-white mb-5 inline-flex items-center gap-2"
-                :class="slide.accent + '/90'"
+                :style="{
+                  backgroundColor: getAccentColor(slide.accent),
+                }"
               >
                 <i class="pi pi-leaf text-xs"></i>
                 {{ slide.tag }}
               </span>
               <h1
-                class="text-4xl sm:text-5xl lg:text-6xl font-display font-bold text-white leading-tight mb-5 whitespace-pre-line"
+                class="text-2xl sm:text-4xl lg:text-5xl lg:text-6xl font-display font-bold text-white leading-tight mb-5 whitespace-pre-line"
               >
                 {{ slide.title }}
               </h1>
-              <p class="text-white/85 text-lg leading-relaxed mb-8 max-w-md">
+              <p
+                class="text-white/85 text-sm sm:text-base md:text-lg leading-relaxed mb-8 max-w-md"
+              >
                 {{ slide.description }}
               </p>
-              <div class="flex flex-wrap gap-4">
-                <RouterLink :to="slide.cta.to" class="btn-primary">
+              <div class="flex flex-col sm:flex-row flex-wrap gap-4">
+                <RouterLink :to="slide.cta.to" class="btn-primary w-full sm:w-auto justify-center">
                   {{ slide.cta.label }}
                   <i class="pi pi-arrow-right ml-2 text-xs"></i>
                 </RouterLink>
                 <RouterLink
                   to="/about"
-                  class="inline-flex items-center gap-2 px-6 py-3 border-2 border-white/70 text-white font-semibold rounded-lg hover:bg-white/10 transition-all"
+                  class="inline-flex items-center justify-center gap-2 px-6 py-3 border-2 border-white/70 text-white font-semibold rounded-lg hover:bg-white/10 transition-all w-full sm:w-auto"
                 >
                   Our Story
                 </RouterLink>

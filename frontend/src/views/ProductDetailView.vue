@@ -266,11 +266,12 @@ onMounted(fetchProduct);
         </div>
       </div>
       <div class="form-field">
-        <label>Message</label>
+        <label>Message *</label>
         <Textarea
           v-model="enquiryForm.message"
           rows="4"
           placeholder="Tell us about your requirements…"
+          required
           class="w-full"
         />
       </div>

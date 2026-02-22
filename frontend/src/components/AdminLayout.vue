@@ -1,7 +1,7 @@
 <template>
   <div class="admin-layout">
     <!-- Sidebar -->
-    <aside class="sidebar">
+    <aside class="sidebar" :class="{ 'sidebar-open': sidebarOpen }">
       <div class="sidebar-header">
         <div class="flex items-center gap-2">
           <div class="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center">
@@ -12,29 +12,33 @@
             <p class="text-white/60 text-xs">Admin Panel</p>
           </div>
         </div>
+        <!-- Close button for mobile -->
+        <button @click="sidebarOpen = false" class="close-sidebar-btn lg:hidden">
+          <i class="pi pi-times"></i>
+        </button>
       </div>
 
       <nav class="sidebar-nav">
-        <router-link to="/admin/dashboard" class="nav-item">
+        <router-link to="/admin/dashboard" class="nav-item" @click="sidebarOpen = false">
           <i class="pi pi-chart-line"></i>
           <span>Dashboard</span>
         </router-link>
-        <router-link to="/admin/products" class="nav-item">
+        <router-link to="/admin/products" class="nav-item" @click="sidebarOpen = false">
           <i class="pi pi-box"></i>
           <span>Products</span>
         </router-link>
-        <router-link to="/admin/categories" class="nav-item">
+        <router-link to="/admin/categories" class="nav-item" @click="sidebarOpen = false">
           <i class="pi pi-tags"></i>
           <span>Categories</span>
         </router-link>
-        <router-link to="/admin/enquiries" class="nav-item">
+        <router-link to="/admin/enquiries" class="nav-item" @click="sidebarOpen = false">
           <i class="pi pi-envelope"></i>
           <span>Enquiries</span>
         </router-link>
       </nav>
 
       <div class="sidebar-footer">
-        <router-link to="/admin/change-password" class="nav-item mb-2">
+        <router-link to="/admin/change-password" class="nav-item mb-2" @click="sidebarOpen = false">
           <i class="pi pi-lock"></i>
           <span>Change Password</span>
         </router-link>
@@ -49,10 +53,18 @@
       </div>
     </aside>
 
+    <!-- Sidebar backdrop for mobile -->
+    <div v-if="sidebarOpen" class="sidebar-backdrop lg:hidden" @click="sidebarOpen = false"></div>
+
     <!-- Main content -->
     <div class="main-content">
       <header class="admin-header">
-        <h1 class="text-xl font-semibold text-gray-800">{{ pageTitle }}</h1>
+        <div class="flex items-center gap-4">
+          <button @click="sidebarOpen = !sidebarOpen" class="toggle-sidebar-btn lg:hidden">
+            <i :class="sidebarOpen ? 'pi pi-times' : 'pi pi-bars'"></i>
+          </button>
+          <h1 class="text-lg sm:text-xl font-semibold text-gray-800">{{ pageTitle }}</h1>
+        </div>
       </header>
 
       <div class="admin-body">
@@ -65,13 +77,14 @@
 <script setup>
 import { useAuthStore } from '@/stores/auth';
 import { useToast } from 'primevue/usetoast';
-import { computed } from 'vue';
+import { computed, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 
 const router = useRouter();
 const route = useRoute();
 const authStore = useAuthStore();
 const toast = useToast();
+const sidebarOpen = ref(false);
 
 const pageTitle = computed(() => {
   const titles = {
@@ -114,11 +127,57 @@ const handleLogout = () => {
   height: 100vh;
   overflow-y: auto;
   z-index: 100;
+  transition: transform 0.3s ease;
+}
+
+/* Mobile sidebar styles */
+@media (max-width: 1023px) {
+  .sidebar {
+    width: 250px;
+    transform: translateX(-100%);
+  }
+
+  .sidebar.sidebar-open {
+    transform: translateX(0);
+  }
+}
+
+.sidebar-backdrop {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 50;
+  display: none;
+}
+
+@media (max-width: 1023px) {
+  .sidebar-backdrop {
+    display: block;
+  }
 }
 
 .sidebar-header {
   padding: 1.5rem;
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.close-sidebar-btn {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 1.5rem;
+  cursor: pointer;
+  padding: 0.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.close-sidebar-btn:hover {
+  opacity: 0.8;
 }
 
 .sidebar-nav {
@@ -184,19 +243,60 @@ const handleLogout = () => {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
+  transition: margin-left 0.3s ease;
+}
+
+@media (max-width: 1023px) {
+  .main-content {
+    margin-left: 0;
+  }
 }
 
 .admin-header {
   background-color: white;
-  padding: 1rem 2rem;
+  padding: 1rem;
   border-bottom: 1px solid #e5e7eb;
   position: sticky;
   top: 0;
   z-index: 50;
 }
 
+@media (min-width: 640px) {
+  .admin-header {
+    padding: 1rem 2rem;
+  }
+}
+
+.toggle-sidebar-btn {
+  background: none;
+  border: none;
+  color: #1f2937;
+  font-size: 1.5rem;
+  cursor: pointer;
+  padding: 0.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.toggle-sidebar-btn:hover {
+  opacity: 0.7;
+}
+
 .admin-body {
   flex: 1;
-  padding: 2rem;
+  padding: 1rem;
+}
+
+@media (min-width: 640px) {
+  .admin-body {
+    padding: 1.5rem;
+  }
+}
+
+@media (min-width: 768px) {
+  .admin-body {
+    padding: 2rem;
+  }
 }
 </style>

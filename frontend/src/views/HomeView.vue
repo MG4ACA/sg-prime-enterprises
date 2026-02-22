@@ -11,7 +11,7 @@ const slides = ref([
   {
     id: 1,
     tag: 'Erosion Control',
-    title: 'Protect the Earth,\nNaturally.',
+    title: 'Protect the Earth, Naturally.',
     description:
       'Our premium coir erosion blankets and wattles safeguard slopes, riverbanks, and embankments — biodegrading gently once vegetation takes hold.',
     image: 'https://images.unsplash.com/photo-1501854140801-50d01698950b?w=1200&q=80',
@@ -21,7 +21,7 @@ const slides = ref([
   {
     id: 2,
     tag: 'Greenhouse Products',
-    title: 'Grow Greener\nWith Coir.',
+    title: 'Grow Greener With Coir.',
     description:
       'From biodegradable pots to high-performance grow bags, our greenhouse range gives your plants the best natural start — without the plastic.',
     image: 'https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=1200&q=80',
@@ -31,7 +31,7 @@ const slides = ref([
   {
     id: 3,
     tag: 'Gardening Products',
-    title: "Your Garden's\nNatural Ally.",
+    title: "Your Garden's Natural Ally.",
     description:
       'Coir peat, mulch discs, and handcrafted mats — everything you need for a thriving, sustainable garden crafted from 100% natural coconut fiber.',
     image: 'https://images.unsplash.com/photo-1466692476868-aef1dfb1e735?w=1200&q=80',
@@ -147,14 +147,14 @@ onMounted(async () => {
       <p class="text-coir-200 text-lg mb-10">
         Get in touch with our team for product samples, bulk pricing, and custom manufacturing.
       </p>
-      <div class="flex flex-wrap gap-4 justify-center">
-        <RouterLink to="/contact" class="btn-primary">
+      <div class="flex flex-col sm:flex-row flex-wrap gap-4 justify-center">
+        <RouterLink to="/contact" class="btn-primary w-full sm:w-auto justify-center">
           Request a Quote
           <i class="pi pi-envelope ml-2 text-xs"></i>
         </RouterLink>
         <RouterLink
           to="/products"
-          class="inline-flex items-center gap-2 px-6 py-3 border-2 border-white/60 text-white font-semibold rounded-lg hover:bg-white/10 transition-all"
+          class="inline-flex items-center justify-center gap-2 px-6 py-3 border-2 border-white/60 text-white font-semibold rounded-lg hover:bg-white/10 transition-all w-full sm:w-auto"
         >
           Browse Catalogue
         </RouterLink>

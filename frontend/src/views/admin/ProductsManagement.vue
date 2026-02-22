@@ -1,7 +1,7 @@
 <template>
   <div>
     <!-- Main Content Header -->
-    <div class="flex justify-end items-center mb-5">
+    <div class="flex flex-row justify-between items-center gap-3 mb-5">
       <div class="flex gap-2">
         <Button
           icon="pi pi-refresh"
@@ -15,56 +15,104 @@
     </div>
 
     <div class="bg-white rounded-xl shadow-sm overflow-hidden">
-      <DataTable :value="products" :loading="loading" paginator :rows="10">
-        <Column field="image_url" header="Image" style="width: 90px">
-          <template #body="{ data }">
-            <img
-              :src="data.image_url || 'https://via.placeholder.com/80'"
-              :alt="data.name"
-              class="w-16 h-12 object-cover rounded"
-            />
-          </template>
-        </Column>
-        <Column field="name" header="Product Name" sortable />
-        <Column field="category_name" header="Category" sortable />
-        <Column field="is_featured" header="Featured" style="width: 90px">
-          <template #body="{ data }">
-            <i
-              :class="
-                data.is_featured ? 'pi pi-star-fill text-amber-400' : 'pi pi-star text-gray-300'
-              "
-            ></i>
-          </template>
-        </Column>
-        <Column field="status" header="Status" style="width: 110px">
-          <template #body="{ data }">
-            <span :class="['status-badge', data.status]">{{ data.status }}</span>
-          </template>
-        </Column>
-        <Column header="Actions" style="width: 120px">
-          <template #body="{ data }">
-            <div class="flex gap-1">
-              <Button icon="pi pi-pencil" text size="small" @click="openDialog(data)" />
+      <!-- Desktop Table -->
+      <div class="hidden sm:block overflow-x-auto">
+        <DataTable :value="products" :loading="loading" paginator :rows="10">
+          <Column field="image_url" header="Image" style="width: 90px">
+            <template #body="{ data }">
+              <img
+                :src="data.image_url || 'https://via.placeholder.com/80'"
+                :alt="data.name"
+                class="w-16 h-12 object-cover rounded"
+              />
+            </template>
+          </Column>
+          <Column field="name" header="Product Name" sortable />
+          <Column field="category_name" header="Category" sortable />
+          <Column field="is_featured" header="Featured" style="width: 90px">
+            <template #body="{ data }">
+              <i
+                :class="
+                  data.is_featured ? 'pi pi-star-fill text-amber-400' : 'pi pi-star text-gray-300'
+                "
+              ></i>
+            </template>
+          </Column>
+          <Column field="status" header="Status" style="width: 110px">
+            <template #body="{ data }">
+              <span :class="['status-badge', data.status]">{{ data.status }}</span>
+            </template>
+          </Column>
+          <Column header="Actions" style="width: 120px">
+            <template #body="{ data }">
+              <div class="flex gap-1">
+                <Button icon="pi pi-pencil" text size="small" @click="openDialog(data)" />
+                <Button
+                  icon="pi pi-trash"
+                  text
+                  size="small"
+                  severity="danger"
+                  @click="confirmDelete(data)"
+                />
+              </div>
+            </template>
+          </Column>
+        </DataTable>
+      </div>
+
+      <!-- Mobile Card View -->
+      <div class="sm:hidden">
+        <div v-if="loading" class="p-4">
+          <p class="text-center text-gray-500">Loading...</p>
+        </div>
+        <div v-else-if="products.length === 0" class="p-4">
+          <p class="text-center text-gray-500">No products found</p>
+        </div>
+        <div v-else class="divide-y divide-gray-200">
+          <div
+            v-for="product in products"
+            :key="product.id"
+            class="p-4 border-b border-gray-100 last:border-b-0"
+          >
+            <div class="flex gap-3 mb-2">
+              <img
+                :src="product.image_url || 'https://via.placeholder.com/80'"
+                :alt="product.name"
+                class="w-16 h-12 object-cover rounded"
+              />
+              <div class="flex-1 min-w-0">
+                <h3 class="font-semibold text-gray-800 text-sm truncate">{{ product.name }}</h3>
+                <p class="text-xs text-gray-500">{{ product.category_name }}</p>
+                <div class="flex gap-2 mt-1">
+                  <span :class="['status-badge text-xs', product.status]">
+                    {{ product.status }}
+                  </span>
+                  <i v-if="product.is_featured" class="pi pi-star-fill text-amber-400 text-sm"></i>
+                </div>
+              </div>
+            </div>
+            <div class="flex gap-2 justify-end">
+              <Button icon="pi pi-pencil" text size="small" @click="openDialog(product)" />
               <Button
                 icon="pi pi-trash"
                 text
                 size="small"
                 severity="danger"
-                @click="confirmDelete(data)"
+                @click="confirmDelete(product)"
               />
             </div>
-          </template>
-        </Column>
-      </DataTable>
+          </div>
+        </div>
+      </div>
     </div>
 
     <!-- Product Dialog -->
     <Dialog
       v-model:visible="dialogVisible"
       :header="editingProduct ? 'Edit Product' : 'Add Product'"
-      :style="{ width: '650px' }"
+      :style="{ width: isMobile ? '90vw' : '650px', maxWidth: '650px' }"
       modal
-      :contentStyle="{ overflowY: 'auto', overflowX: 'hidden', maxHeight: '70vh' }"
+      :contentStyle="{ overflowY: 'auto', overflowX: 'hidden', maxHeight: '85vh' }"
     >
       <form @submit.prevent="saveProduct" class="flex flex-col gap-4 pt-2">
         <div class="form-field">
@@ -191,7 +239,7 @@
 import api from '@/services/api';
 import { useConfirm } from 'primevue/useconfirm';
 import { useToast } from 'primevue/usetoast';
-import { onMounted, ref } from 'vue';
+import { onBeforeMount, onMounted, onUnmounted, ref } from 'vue';
 
 const toast = useToast();
 const confirm = useConfirm();
@@ -199,6 +247,16 @@ const confirm = useConfirm();
 const products = ref([]);
 const categories = ref([]);
 const loading = ref(false);
+const isMobile = ref(false);
+
+const checkScreenSize = () => {
+  isMobile.value = window.innerWidth < 640;
+};
+
+onBeforeMount(() => {
+  checkScreenSize();
+  window.addEventListener('resize', checkScreenSize);
+});
 const dialogVisible = ref(false);
 const editingProduct = ref(null);
 const saving = ref(false);
@@ -417,6 +475,10 @@ const populateSampleData = () => {
 };
 
 onMounted(fetchData);
+
+onUnmounted(() => {
+  window.removeEventListener('resize', checkScreenSize);
+});
 </script>
 
 <style scoped>

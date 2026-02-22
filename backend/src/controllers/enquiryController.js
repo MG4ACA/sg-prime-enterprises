@@ -32,6 +32,7 @@ exports.createEnquiry = async (req, res, next) => {
     }
 
     // Send email notification
+    /*
     try {
       const mailOptions = {
         from: process.env.EMAIL_USER,
@@ -116,6 +117,7 @@ exports.createEnquiry = async (req, res, next) => {
       console.error('Email sending failed:', emailError);
       // Don't fail the request if email fails
     }
+    */
 
     res.status(201).json({
       success: true,
