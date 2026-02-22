@@ -11,6 +11,7 @@ export default defineConfig({
     },
   },
   build: {
+    cssCodeSplit: false,
     rollupOptions: {
       output: {
         chunkFileNames: 'assets/[name]-[hash].js',
