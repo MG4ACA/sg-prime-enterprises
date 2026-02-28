@@ -32,12 +32,12 @@ exports.createEnquiry = async (req, res, next) => {
     }
 
     // Send email notification
-    /*
+    // 1. Notify admin of new enquiry (always attempt)
     try {
-      const mailOptions = {
-        from: process.env.EMAIL_USER,
+      const adminMailOptions = {
+        from: `"SG Prime Enterprises" <${process.env.EMAIL_USER}>`,
         to: process.env.EMAIL_TO,
-        subject: `New Enquiry from ${name} - SG Prime Enterprises`,
+        subject: `New Enquiry #${result.insertId} from ${name} - SG Prime Enterprises`,
         html: `
           <!DOCTYPE html>
           <html>
@@ -60,6 +60,10 @@ exports.createEnquiry = async (req, res, next) => {
               </div>
               <div class="content">
                 <div class="field">
+                  <div class="label">Enquiry ID:</div>
+                  <div class="value">#${result.insertId}</div>
+                </div>
+                <div class="field">
                   <div class="label">Name:</div>
                   <div class="value">${name}</div>
                 </div>
@@ -67,36 +71,9 @@ exports.createEnquiry = async (req, res, next) => {
                   <div class="label">Email:</div>
                   <div class="value">${email}</div>
                 </div>
-                ${
-                  company
-                    ? `
-                <div class="field">
-                  <div class="label">Company:</div>
-                  <div class="value">${company}</div>
-                </div>
-                `
-                    : ''
-                }
-                ${
-                  phone
-                    ? `
-                <div class="field">
-                  <div class="label">Phone:</div>
-                  <div class="value">${phone}</div>
-                </div>
-                `
-                    : ''
-                }
-                ${
-                  productName
-                    ? `
-                <div class="field">
-                  <div class="label">Product of Interest:</div>
-                  <div class="value">${productName}</div>
-                </div>
-                `
-                    : ''
-                }
+                ${company ? `<div class="field"><div class="label">Company:</div><div class="value">${company}</div></div>` : ''}
+                ${phone ? `<div class="field"><div class="label">Phone:</div><div class="value">${phone}</div></div>` : ''}
+                ${productName ? `<div class="field"><div class="label">Product of Interest:</div><div class="value">${productName}</div></div>` : ''}
                 <div class="field">
                   <div class="label">Message:</div>
                   <div class="value">${message}</div>
@@ -104,20 +81,73 @@ exports.createEnquiry = async (req, res, next) => {
               </div>
               <div class="footer">
                 <p>SG Prime Enterprises - Industrial Coir Products</p>
-                <p>Enquiry ID: #${result.insertId}</p>
+                <p>This is an automated notification. Please log in to the admin panel to manage this enquiry.</p>
               </div>
             </div>
           </body>
           </html>
         `,
       };
-
-      await emailTransporter.sendMail(mailOptions);
-    } catch (emailError) {
-      console.error('Email sending failed:', emailError);
-      // Don't fail the request if email fails
+      await emailTransporter.sendMail(adminMailOptions);
+    } catch (adminEmailError) {
+      console.error('Admin notification email failed:', adminEmailError.message);
+      // Don't fail the request if admin email fails
     }
-    */
+
+    // 2. Send auto-reply confirmation to the customer (independent — failure here won't affect admin notification)
+    try {
+      const customerMailOptions = {
+        from: `"SG Prime Enterprises" <${process.env.EMAIL_USER}>`,
+        to: email,
+        subject: `We've received your enquiry - SG Prime Enterprises`,
+        html: `
+          <!DOCTYPE html>
+          <html>
+          <head>
+            <style>
+              body { font-family: Arial, sans-serif; background-color: #FFF1E8; padding: 20px; }
+              .container { background-color: white; max-width: 600px; margin: 0 auto; padding: 30px; border-radius: 8px; }
+              .header { background-color: #9A5A2E; color: white; padding: 20px; text-align: center; border-radius: 5px 5px 0 0; }
+              .content { padding: 20px; color: #333; line-height: 1.6; }
+              .highlight { background-color: #FFF1E8; border-left: 4px solid #9A5A2E; padding: 12px 16px; margin: 16px 0; }
+              .footer { background-color: #FFF1E8; padding: 15px; text-align: center; font-size: 12px; color: #666; }
+            </style>
+          </head>
+          <body>
+            <div class="container">
+              <div class="header">
+                <h1>Thank You for Your Enquiry!</h1>
+              </div>
+              <div class="content">
+                <p>Dear ${name},</p>
+                <p>Thank you for reaching out to SG Prime Enterprises. We have received your enquiry and our team will get back to you within <strong>1–2 business days</strong>.</p>
+                <div class="highlight">
+                  <strong>Your Enquiry Reference:</strong> #${result.insertId}<br/>
+                  ${productName ? `<strong>Product of Interest:</strong> ${productName}<br/>` : ''}
+                  <strong>Your Message:</strong> ${message}
+                </div>
+                <p>If you have any urgent queries, feel free to contact us directly at <a href="mailto:info@sgprimeenterprises.com">info@sgprimeenterprises.com</a>.</p>
+              </div>
+              <div style="padding: 20px 0 10px 0;">
+                <img src="https://sgprimeenterprises.com/email-signature.png" alt="SG Prime Enterprises" style="max-width: 500px; width: 100%; height: auto; display: block;" />
+              </div>
+              <div class="footer">
+                <p>SG Prime Enterprises - Industrial Coir Products</p>
+                <p><a href="https://sgprimeenterprises.com">sgprimeenterprises.com</a></p>
+              </div>
+            </div>
+          </body>
+          </html>
+        `,
+      };
+      await emailTransporter.sendMail(customerMailOptions);
+    } catch (customerEmailError) {
+      console.error(
+        'Customer auto-reply email failed (recipient may have invalid domain):',
+        customerEmailError.message,
+      );
+      // Don't fail the request — the enquiry is saved and admin was already notified
+    }
 
     res.status(201).json({
       success: true,

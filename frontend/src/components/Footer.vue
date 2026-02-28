@@ -27,10 +27,12 @@ const socials = [
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10">
         <!-- Brand -->
         <div class="col-span-1 sm:col-span-2 lg:col-span-1">
-          <div class="flex items-center gap-3 mb-4">
-            <div class="w-10 h-10 rounded-full bg-earth-500 flex items-center justify-center">
-              <i class="pi pi-leaf text-white text-lg"></i>
-            </div>
+          <div class="mb-4">
+            <img
+              src="/color-logo.png"
+              alt="SG Prime Enterprises"
+              class="h-12 w-auto object-contain"
+            />
             <div class="leading-tight">
               <div class="font-display font-bold text-white text-sm">SG Prime</div>
               <div class="font-display font-bold text-earth-400 text-sm">Enterprises</div>
@@ -104,12 +106,12 @@ const socials = [
           <ul class="space-y-4 text-sm text-coir-300">
             <li class="flex gap-3">
               <i class="pi pi-map-marker text-earth-400 mt-0.5 shrink-0"></i>
-              <span>42 Coir Industrial Park, Alappuzha, Kerala 688001, India</span>
+              <span>Addarawtta, Kuleegoda, Ambalangoda, Sri Lanka</span>
             </li>
             <li class="flex gap-3">
               <i class="pi pi-phone text-earth-400 mt-0.5 shrink-0"></i>
-              <a href="tel:+914772250000" class="hover:text-earth-400 transition-colors">
-                +91 477 225 0000
+              <a href="tel:+61449946069" class="hover:text-earth-400 transition-colors">
+                +61 449 946 069
               </a>
             </li>
             <li class="flex gap-3">

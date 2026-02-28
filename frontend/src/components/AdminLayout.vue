@@ -4,13 +4,8 @@
     <aside class="sidebar" :class="{ 'sidebar-open': sidebarOpen }">
       <div class="sidebar-header">
         <div class="flex items-center gap-2">
-          <div class="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center">
-            <i class="pi pi-leaf text-white text-sm"></i>
-          </div>
-          <div>
-            <p class="font-bold text-white text-sm leading-none">SG Prime</p>
-            <p class="text-white/60 text-xs">Admin Panel</p>
-          </div>
+          <img src="/color-logo.png" alt="SG Prime Enterprises" class="h-8 w-auto object-contain" />
+          <p class="text-white/60 text-xs mt-0.5">Admin Panel</p>
         </div>
         <!-- Close button for mobile -->
         <button @click="sidebarOpen = false" class="close-sidebar-btn lg:hidden">

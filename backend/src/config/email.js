@@ -1,13 +1,19 @@
 const nodemailer = require('nodemailer');
 require('dotenv').config();
 
+const port = parseInt(process.env.EMAIL_PORT) || 465;
+
 const transporter = nodemailer.createTransport({
   host: process.env.EMAIL_HOST,
-  port: process.env.EMAIL_PORT,
-  secure: false,
+  port: port,
+  secure: port === 465, // true for SSL (465), false for TLS (587)
   auth: {
     user: process.env.EMAIL_USER,
     pass: process.env.EMAIL_PASSWORD,
+  },
+  tls: {
+    // Required for Hostinger mail - do not fail on invalid certs
+    rejectUnauthorized: true,
   },
 });
 

@@ -3,11 +3,12 @@
     <div class="login-card">
       <!-- Logo -->
       <div class="text-center mb-8">
-        <div class="mx-auto w-14 h-14 rounded-full bg-earth-600 flex items-center justify-center mb-4">
-          <i class="pi pi-leaf text-white text-2xl"></i>
-        </div>
-        <h1 class="font-display font-bold text-bark-800 text-2xl">SG Prime Enterprises</h1>
-        <p class="text-bark-500 text-sm mt-1">Admin Portal</p>
+        <img
+          src="/color-logo.png"
+          alt="SG Prime Enterprises"
+          class="h-16 w-auto object-contain mx-auto mb-3"
+        />
+        <p class="text-bark-500 text-sm">Admin Portal</p>
       </div>
 
       <!-- Form -->
@@ -43,7 +44,10 @@
           :loading="loading"
         />
 
-        <p v-if="errorMessage" class="text-center text-sm text-red-600 bg-red-50 rounded-lg py-2 px-3">
+        <p
+          v-if="errorMessage"
+          class="text-center text-sm text-red-600 bg-red-50 rounded-lg py-2 px-3"
+        >
           {{ errorMessage }}
         </p>
       </form>
@@ -87,7 +91,7 @@ const handleLogin = async () => {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, #2a452f 0%, #4A7C59 100%);
+  background: linear-gradient(135deg, #2a452f 0%, #4a7c59 100%);
   padding: 2rem;
 }
 

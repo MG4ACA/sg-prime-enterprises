@@ -41,15 +41,11 @@ onUnmounted(() => window.removeEventListener('scroll', handleScroll));
       "
     >
       <!-- Logo -->
-      <RouterLink to="/" class="flex items-center gap-2.5 group shrink-0" @click="closeMobile">
-        <div
-          class="w-9 h-9 rounded-full bg-earth-500 flex items-center justify-center shadow-md group-hover:shadow-lg transition-shadow"
-        >
-          <i class="pi pi-leaf text-white text-base"></i>
-        </div>
+      <RouterLink to="/" class="flex items-center shrink-0" @click="closeMobile">
+        <img src="/color-logo.png" alt="SG Prime Enterprises" class="h-10 w-auto object-contain" />
         <div class="leading-tight">
           <div class="font-display font-bold text-bark-800 text-sm leading-none">SG Prime</div>
-          <div class="font-display font-bold text-earth-500 text-sm leading-none">Enterprises</div>
+          <div class="font-display font-bold text-bark-800 text-sm leading-none">Enterprises</div>
         </div>
       </RouterLink>
 

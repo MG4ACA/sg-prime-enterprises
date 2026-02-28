@@ -198,14 +198,15 @@ ADMIN_USERNAME=admin
 ADMIN_PASSWORD=Admin@2026
 
 # Email Configuration (for enquiry notifications)
-EMAIL_HOST=smtp.gmail.com
-EMAIL_PORT=587
-EMAIL_USER=your_email@gmail.com
-EMAIL_PASSWORD=your_app_password
-EMAIL_TO=contact@sgprimeenterprises.com
+# Hostinger Mail SMTP settings
+EMAIL_HOST=smtp.hostinger.com
+EMAIL_PORT=465
+EMAIL_USER=info@sgprimeenterprises.com
+EMAIL_PASSWORD=your_hostinger_mail_password
+EMAIL_TO=info@sgprimeenterprises.com
 
 # Frontend URL (for CORS)
-FRONTEND_URL=https://sgprimeenterprises.lumicore-labs.com
+FRONTEND_URL=https://sgprimeenterprises.com
 
 # Upload Configuration
 MAX_FILE_SIZE=5242880
@@ -299,7 +300,7 @@ nano .env.production
 ```
 
 ```env
-VITE_API_BASE_URL=https://sgprimeenterprises.lumicore-labs.com/api
+VITE_API_BASE_URL=https://sgprimeenterprises.com/api
 ```
 
 ### 6.3 Install Dependencies and Build
@@ -347,9 +348,21 @@ upstream sgprime_backend {
     keepalive 64;
 }
 
+# Redirect www to non-www
 server {
     listen 80;
-    server_name sgprimeenterprises.lumicore-labs.com www.sgprimeenterprises.lumicore-labs.com;
+    listen 443 ssl;
+    server_name www.sgprimeenterprises.com;
+
+    ssl_certificate /etc/letsencrypt/live/sgprimeenterprises.com/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/sgprimeenterprises.com/privkey.pem;
+
+    return 301 https://sgprimeenterprises.com$request_uri;
+}
+
+server {
+    listen 80;
+    server_name sgprimeenterprises.com;
 
     # Allow large file uploads (up to 50MB)
     client_max_body_size 25m;
@@ -436,6 +449,14 @@ sudo systemctl enable nginx
 
 ## 🔒 Step 8: Set Up SSL (Optional but Recommended)
 
+> ⚠️ **DNS Prerequisite:** Before obtaining an SSL certificate, you must point `sgprimeenterprises.com` and `www.sgprimeenterprises.com` to your VPS IP address at your domain registrar. DNS propagation can take up to 24–48 hours. You can verify propagation with:
+>
+> ```bash
+> dig sgprimeenterprises.com +short
+> # or
+> nslookup sgprimeenterprises.com
+> ```
+
 ### 8.1 Install Certbot
 
 ```bash
@@ -448,7 +469,8 @@ sudo apt install certbot python3-certbot-nginx -y
 
 ```bash
 # Replace with your domain
-sudo certbot --nginx -d sgprimeenterprises.lumicore-labs.com -d www.sgprimeenterprises.lumicore-labs.com
+# ⚠️ DNS must be pointed to your VPS IP before running this!
+sudo certbot --nginx -d sgprimeenterprises.com -d www.sgprimeenterprises.com
 ```
 
 Certbot will:
@@ -492,7 +514,7 @@ sudo tail -f /var/log/nginx/sg-prime-error.log
 
 Open your browser and visit:
 
-- `http://your_vps_ip` (or `https://sgprimeenterprises.lumicore-labs.com`)
+- `http://your_vps_ip` (or `https://sgprimeenterprises.com`)
 
 You should see your SG Prime Enterprises catalog homepage!
 
@@ -625,7 +647,7 @@ jobs:
         working-directory: frontend
         run: npm run build
         env:
-          VITE_API_BASE_URL: https://sgprimeenterprises.lumicore-labs.com/api
+          VITE_API_BASE_URL: https://sgprimeenterprises.com/api
 
       - name: Copy frontend dist to VPS via SCP
         uses: appleboy/scp-action@v0.1.7
@@ -890,8 +912,8 @@ Your SG Prime Enterprises Coir Products Catalog is now live on Hostinger VPS!
 
 **Access your application at:**
 
-- 🌐 Frontend: `https://sgprimeenterprises.lumicore-labs.com`
-- 🔌 Backend API: `https://sgprimeenterprises.lumicore-labs.com/api`
+- 🌐 Frontend: `https://sgprimeenterprises.com`
+- 🔌 Backend API: `https://sgprimeenterprises.com/api`
 
 **Default Admin Login:**
 
