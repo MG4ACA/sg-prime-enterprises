@@ -17,7 +17,11 @@ const isAdminRoute = () => route.path.startsWith('/admin');
     <template v-if="!isAdminRoute()">
       <NavBar />
       <main class="flex-1">
-        <RouterView />
+        <RouterView v-slot="{ Component, route }">
+          <Transition name="page" mode="out-in">
+            <component :is="Component" :key="route.path" />
+          </Transition>
+        </RouterView>
       </main>
       <Footer />
     </template>

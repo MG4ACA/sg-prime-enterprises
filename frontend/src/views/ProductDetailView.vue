@@ -117,215 +117,223 @@ onMounted(fetchProduct);
 </script>
 
 <template>
-  <!-- Loading skeleton -->
-  <div v-if="loading" class="min-h-96 flex items-center justify-center bg-cream">
-    <div class="flex flex-col items-center gap-3 text-bark-400">
-      <i class="pi pi-spin pi-spinner text-4xl"></i>
-      <p class="text-sm">Loading product…</p>
+  <div>
+    <!-- Loading skeleton -->
+    <div v-if="loading" class="min-h-96 flex items-center justify-center bg-cream">
+      <div class="flex flex-col items-center gap-3 text-bark-400">
+        <i class="pi pi-spin pi-spinner text-4xl"></i>
+        <p class="text-sm">Loading product…</p>
+      </div>
     </div>
-  </div>
 
-  <div v-else-if="product">
-    <!-- Product Main Section -->
-    <section class="py-12 pt-28 bg-cream">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
-          <!-- Image gallery: main image + thumbnail strip -->
-          <div class="flex flex-col gap-3">
-            <!-- Main Image -->
-            <div class="rounded-2xl overflow-hidden bg-white shadow-md aspect-[4/3]">
-              <img
-                :src="displayImage"
-                :alt="product.name"
-                class="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
-              />
+    <div v-else-if="product">
+      <!-- Product Main Section -->
+      <section class="py-12 pt-28 bg-cream">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
+            <!-- Image gallery: main image + thumbnail strip -->
+            <div class="flex flex-col gap-3">
+              <!-- Main Image -->
+              <div class="rounded-2xl overflow-hidden bg-white shadow-md aspect-[4/3]">
+                <img
+                  :src="displayImage"
+                  :alt="product.name"
+                  class="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
+                />
+              </div>
+
+              <!-- Thumbnail strip (only visible when there are multiple images) -->
+              <div v-if="productImages.length > 1" class="flex gap-2 overflow-x-auto pb-1">
+                <button
+                  v-for="img in productImages"
+                  :key="img.id ?? img.image_url"
+                  type="button"
+                  @click="activeImageUrl = img.image_url"
+                  class="shrink-0 w-20 h-16 rounded-lg overflow-hidden border-2 transition-all duration-200 focus:outline-none"
+                  :class="
+                    activeImageUrl === img.image_url
+                      ? 'border-earth-500 shadow-sm scale-105'
+                      : 'border-transparent opacity-70 hover:opacity-100 hover:border-coir-300'
+                  "
+                >
+                  <img
+                    :src="img.image_url"
+                    :alt="product.name"
+                    class="w-full h-full object-cover"
+                  />
+                </button>
+              </div>
             </div>
 
-            <!-- Thumbnail strip (only visible when there are multiple images) -->
-            <div v-if="productImages.length > 1" class="flex gap-2 overflow-x-auto pb-1">
-              <button
-                v-for="img in productImages"
-                :key="img.id ?? img.image_url"
-                type="button"
-                @click="activeImageUrl = img.image_url"
-                class="shrink-0 w-20 h-16 rounded-lg overflow-hidden border-2 transition-all duration-200 focus:outline-none"
-                :class="
-                  activeImageUrl === img.image_url
-                    ? 'border-earth-500 shadow-sm scale-105'
-                    : 'border-transparent opacity-70 hover:opacity-100 hover:border-coir-300'
-                "
+            <!-- Info -->
+            <div class="flex flex-col justify-center">
+              <RouterLink
+                v-if="product.category_slug"
+                :to="`/category/${product.category_slug}`"
+                class="badge bg-earth-50 text-earth-600 border border-earth-200 w-fit mb-4 hover:bg-earth-100 transition-colors"
               >
-                <img :src="img.image_url" :alt="product.name" class="w-full h-full object-cover" />
-              </button>
-            </div>
-          </div>
-
-          <!-- Info -->
-          <div class="flex flex-col justify-center">
-            <RouterLink
-              v-if="product.category_slug"
-              :to="`/category/${product.category_slug}`"
-              class="badge bg-earth-50 text-earth-600 border border-earth-200 w-fit mb-4 hover:bg-earth-100 transition-colors"
-            >
-              {{ product.category_name }}
-            </RouterLink>
-            <span
-              v-else
-              class="badge bg-earth-50 text-earth-600 border border-earth-200 w-fit mb-4"
-            >
-              {{ product.category_name }}
-            </span>
-
-            <h1 class="font-display font-bold text-bark-800 text-3xl md:text-4xl mb-5">
-              {{ product.name }}
-            </h1>
-
-            <p class="text-bark-600 leading-relaxed mb-8 text-base">
-              {{ product.description }}
-            </p>
-
-            <div class="flex flex-wrap gap-3">
-              <button @click="showEnquiryDialog = true" class="btn-primary gap-2">
-                <i class="pi pi-send"></i>
-                Request Quote
-              </button>
-              <RouterLink to="/contact" class="btn-secondary gap-2">
-                <i class="pi pi-phone"></i>
-                Contact Us
+                {{ product.category_name }}
               </RouterLink>
-            </div>
-
-            <!-- Trust badges -->
-            <div class="flex flex-wrap gap-4 mt-8 pt-8 border-t border-coir-100">
-              <div class="flex items-center gap-2 text-sm text-bark-500">
-                <i class="pi pi-check-circle text-earth-500"></i>
-                Certified Quality
-              </div>
-              <div class="flex items-center gap-2 text-sm text-bark-500">
-                <i class="pi pi-leaf text-earth-500"></i>
-                100% Natural
-              </div>
-              <div class="flex items-center gap-2 text-sm text-bark-500">
-                <i class="pi pi-globe text-earth-500"></i>
-                Export Ready
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Specifications -->
-    <section v-if="specsArray.length > 0" class="py-12 bg-white">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <h2 class="font-display font-bold text-bark-800 text-2xl md:text-3xl mb-8">
-          Technical Specifications
-        </h2>
-        <div class="max-w-3xl rounded-2xl overflow-hidden border border-coir-100">
-          <div
-            v-for="([key, value], i) in specsArray"
-            :key="key"
-            :class="[
-              'flex divide-x divide-coir-100 text-sm',
-              i % 2 === 0 ? 'bg-cream' : 'bg-white',
-            ]"
-          >
-            <div class="px-6 py-3 w-48 font-semibold text-bark-700 shrink-0">{{ key }}</div>
-            <div class="px-6 py-3 text-bark-600">{{ value }}</div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Related Products -->
-    <section v-if="relatedProducts.length > 0" class="py-14 bg-cream">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <h2 class="font-display font-bold text-bark-800 text-2xl md:text-3xl mb-8">
-          You May Also Like
-        </h2>
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          <div
-            v-for="rp in relatedProducts"
-            :key="rp.id"
-            @click="router.push(`/products/${rp.id}`)"
-            class="bg-white rounded-2xl overflow-hidden shadow-sm border border-coir-100 card-hover group cursor-pointer"
-          >
-            <div class="h-44 overflow-hidden">
-              <img
-                :src="
-                  rp.image_url ||
-                  'https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=600&q=80'
-                "
-                :alt="rp.name"
-                class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-              />
-            </div>
-            <div class="p-4">
-              <h3 class="font-display font-semibold text-bark-800 text-base mb-1">{{ rp.name }}</h3>
-              <span class="text-earth-600 text-sm font-medium flex items-center gap-1">
-                View Details
-                <i class="pi pi-arrow-right text-xs"></i>
+              <span
+                v-else
+                class="badge bg-earth-50 text-earth-600 border border-earth-200 w-fit mb-4"
+              >
+                {{ product.category_name }}
               </span>
+
+              <h1 class="font-display font-bold text-bark-800 text-3xl md:text-4xl mb-5">
+                {{ product.name }}
+              </h1>
+
+              <p class="text-bark-600 leading-relaxed mb-8 text-base">
+                {{ product.description }}
+              </p>
+
+              <div class="flex flex-wrap gap-3">
+                <button @click="showEnquiryDialog = true" class="btn-primary gap-2">
+                  <i class="pi pi-send"></i>
+                  Request Quote
+                </button>
+                <RouterLink to="/contact" class="btn-secondary gap-2">
+                  <i class="pi pi-phone"></i>
+                  Contact Us
+                </RouterLink>
+              </div>
+
+              <!-- Trust badges -->
+              <div class="flex flex-wrap gap-4 mt-8 pt-8 border-t border-coir-100">
+                <div class="flex items-center gap-2 text-sm text-bark-500">
+                  <i class="pi pi-check-circle text-earth-500"></i>
+                  Certified Quality
+                </div>
+                <div class="flex items-center gap-2 text-sm text-bark-500">
+                  <i class="pi pi-leaf text-earth-500"></i>
+                  100% Natural
+                </div>
+                <div class="flex items-center gap-2 text-sm text-bark-500">
+                  <i class="pi pi-globe text-earth-500"></i>
+                  Export Ready
+                </div>
+              </div>
             </div>
           </div>
         </div>
-      </div>
-    </section>
-  </div>
+      </section>
 
-  <!-- Request Quote Dialog -->
-  <Dialog
-    v-model:visible="showEnquiryDialog"
-    header="Request a Quote"
-    :style="{ width: '520px' }"
-    modal
-  >
-    <form @submit.prevent="submitEnquiry" class="flex flex-col gap-4 pt-2">
-      <div class="form-field">
-        <label>Product</label>
-        <InputText :value="product?.name" disabled class="w-full bg-gray-50" />
-      </div>
-      <div class="grid grid-cols-2 gap-3">
+      <!-- Specifications -->
+      <section v-if="specsArray.length > 0" class="py-12 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <h2 class="font-display font-bold text-bark-800 text-2xl md:text-3xl mb-8">
+            Technical Specifications
+          </h2>
+          <div class="max-w-3xl rounded-2xl overflow-hidden border border-coir-100">
+            <div
+              v-for="([key, value], i) in specsArray"
+              :key="key"
+              :class="[
+                'flex divide-x divide-coir-100 text-sm',
+                i % 2 === 0 ? 'bg-cream' : 'bg-white',
+              ]"
+            >
+              <div class="px-6 py-3 w-48 font-semibold text-bark-700 shrink-0">{{ key }}</div>
+              <div class="px-6 py-3 text-bark-600">{{ value }}</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Related Products -->
+      <section v-if="relatedProducts.length > 0" class="py-14 bg-cream">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <h2 class="font-display font-bold text-bark-800 text-2xl md:text-3xl mb-8">
+            You May Also Like
+          </h2>
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div
+              v-for="rp in relatedProducts"
+              :key="rp.id"
+              @click="router.push(`/products/${rp.id}`)"
+              class="bg-white rounded-2xl overflow-hidden shadow-sm border border-coir-100 card-hover group cursor-pointer"
+            >
+              <div class="h-44 overflow-hidden">
+                <img
+                  :src="
+                    rp.image_url ||
+                    'https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=600&q=80'
+                  "
+                  :alt="rp.name"
+                  class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                />
+              </div>
+              <div class="p-4">
+                <h3 class="font-display font-semibold text-bark-800 text-base mb-1">
+                  {{ rp.name }}
+                </h3>
+                <span class="text-earth-600 text-sm font-medium flex items-center gap-1">
+                  View Details
+                  <i class="pi pi-arrow-right text-xs"></i>
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <!-- Request Quote Dialog -->
+    <Dialog
+      v-model:visible="showEnquiryDialog"
+      header="Request a Quote"
+      :style="{ width: '520px' }"
+      modal
+    >
+      <form @submit.prevent="submitEnquiry" class="flex flex-col gap-4 pt-2">
         <div class="form-field">
-          <label>Your Name *</label>
-          <InputText v-model="enquiryForm.name" placeholder="John Doe" required class="w-full" />
+          <label>Product</label>
+          <InputText :value="product?.name" disabled class="w-full bg-gray-50" />
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div class="form-field">
+            <label>Your Name *</label>
+            <InputText v-model="enquiryForm.name" placeholder="John Doe" required class="w-full" />
+          </div>
+          <div class="form-field">
+            <label>Email *</label>
+            <InputText
+              v-model="enquiryForm.email"
+              placeholder="john@company.com"
+              required
+              class="w-full"
+            />
+          </div>
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div class="form-field">
+            <label>Phone</label>
+            <InputText v-model="enquiryForm.phone" placeholder="+1 234 567 8900" class="w-full" />
+          </div>
+          <div class="form-field">
+            <label>Company</label>
+            <InputText v-model="enquiryForm.company" placeholder="Company name" class="w-full" />
+          </div>
         </div>
         <div class="form-field">
-          <label>Email *</label>
-          <InputText
-            v-model="enquiryForm.email"
-            placeholder="john@company.com"
+          <label>Message *</label>
+          <Textarea
+            v-model="enquiryForm.message"
+            rows="4"
+            placeholder="Tell us about your requirements…"
             required
             class="w-full"
           />
         </div>
-      </div>
-      <div class="grid grid-cols-2 gap-3">
-        <div class="form-field">
-          <label>Phone</label>
-          <InputText v-model="enquiryForm.phone" placeholder="+1 234 567 8900" class="w-full" />
+        <div class="flex justify-end gap-3 pt-1">
+          <Button label="Cancel" text type="button" @click="showEnquiryDialog = false" />
+          <Button label="Submit Request" type="submit" :loading="submitting" />
         </div>
-        <div class="form-field">
-          <label>Company</label>
-          <InputText v-model="enquiryForm.company" placeholder="Company name" class="w-full" />
-        </div>
-      </div>
-      <div class="form-field">
-        <label>Message *</label>
-        <Textarea
-          v-model="enquiryForm.message"
-          rows="4"
-          placeholder="Tell us about your requirements…"
-          required
-          class="w-full"
-        />
-      </div>
-      <div class="flex justify-end gap-3 pt-1">
-        <Button label="Cancel" text type="button" @click="showEnquiryDialog = false" />
-        <Button label="Submit Request" type="submit" :loading="submitting" />
-      </div>
-    </form>
-  </Dialog>
+      </form>
+    </Dialog>
+  </div>
 </template>
 
 <style scoped>

@@ -7,6 +7,7 @@ import ToastService from 'primevue/toastservice';
 import Tooltip from 'primevue/tooltip';
 import { createApp } from 'vue';
 import App from './App.vue';
+import { vReveal } from './directives/vReveal.js';
 import router from './router/index.js';
 import './style.css';
 
@@ -46,6 +47,7 @@ app.use(PrimeVue, {
 app.use(ToastService);
 app.use(ConfirmationService);
 app.directive('tooltip', Tooltip);
+app.directive('reveal', vReveal);
 
 // Public components (P-prefixed)
 app.component('PButton', Button);

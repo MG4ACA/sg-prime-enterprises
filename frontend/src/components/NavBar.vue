@@ -1,4 +1,5 @@
 <script setup>
+import gsap from 'gsap';
 import { onMounted, onUnmounted, ref } from 'vue';
 import { RouterLink, useRoute } from 'vue-router';
 
@@ -25,13 +26,18 @@ function handleScroll() {
   scrolled.value = window.scrollY > 20;
 }
 
-onMounted(() => window.addEventListener('scroll', handleScroll));
+const headerRef = ref(null);
+
+onMounted(() => {
+  window.addEventListener('scroll', handleScroll);
+  gsap.from(headerRef.value, { y: -80, opacity: 0, duration: 0.7, ease: 'power3.out', delay: 0.1 });
+});
 onUnmounted(() => window.removeEventListener('scroll', handleScroll));
 </script>
 
 <template>
   <!-- Floating centered glass navbar -->
-  <header class="fixed top-4 left-0 right-0 z-50 flex justify-center px-4">
+  <header ref="headerRef" class="fixed top-4 left-0 right-0 z-50 flex justify-center px-4">
     <div
       class="w-full max-w-5xl flex items-center justify-between gap-4 px-5 py-3 rounded-2xl transition-all duration-300"
       :class="
@@ -71,7 +77,7 @@ onUnmounted(() => window.removeEventListener('scroll', handleScroll));
       </nav>
 
       <!-- CTA + Mobile Hamburger -->
-      <div class="flex items-center gap-2 shrink-0">
+      <div class="flex items-center gap-2 shrink-0 relative z-10">
         <RouterLink to="/contact" class="hidden md:inline-flex btn-primary text-sm py-2 px-5">
           Get a Quote
         </RouterLink>
