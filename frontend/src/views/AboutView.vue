@@ -1,21 +1,21 @@
 <script setup>
 const stats = [
-  { value: '15+', label: 'Years of Experience' },
-  { value: '30+', label: 'Countries Exported To' },
+  { value: '10+', label: 'Years of Experience' },
+  { value: '25+', label: 'Target Markets' },
   { value: '500+', label: 'Products Delivered' },
   { value: '100%', label: 'Natural & Biodegradable' },
 ];
 
 const values = [
   {
-    icon: 'pi pi-leaf',
+    icon: 'pi pi-sync',
     title: 'Sustainability First',
     desc: 'Every decision we make — from sourcing to shipping — is guided by our commitment to protecting the natural environment we depend on.',
   },
   {
     icon: 'pi pi-shield',
     title: 'Uncompromising Quality',
-    desc: 'ISO 9001-certified processes and rigorous testing ensure every product that leaves our facility meets the highest industry standards.',
+    desc: 'Careful production standards and hands-on quality checks help every product meet the expectations of our customers and partners.',
   },
   {
     icon: 'pi pi-users',
@@ -34,20 +34,20 @@ const team = [
     name: 'Suresh G.',
     role: 'Founder & Managing Director',
     image: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?w=400&q=80',
-    bio: 'With over 15 years in the coir industry, Suresh founded SG Prime with a vision to bring premium natural fiber products to global markets.',
+    bio: 'With over 10 years in the coir industry, Suresh founded SG Prime with a vision to bring premium natural fiber products to global markets.',
   },
-  {
-    name: 'Priya M.',
-    role: 'Head of Operations',
-    image: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=400&q=80',
-    bio: 'Priya oversees our manufacturing and logistics, ensuring every order is produced on time and delivered with care.',
-  },
-  {
-    name: 'Arjun K.',
-    role: 'Export & Sales Manager',
-    image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&q=80',
-    bio: 'Arjun manages our international client relationships, coordinating exports across Asia, Europe, and the Americas.',
-  },
+  // {
+  //   name: 'Priya M.',
+  //   role: 'Head of Operations',
+  //   image: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=400&q=80',
+  //   bio: 'Priya oversees our manufacturing and logistics, ensuring every order is produced on time and delivered with care.',
+  // },
+  // {
+  //   name: 'Arjun K.',
+  //   role: 'Export & Sales Manager',
+  //   image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&q=80',
+  //   bio: 'Arjun manages our international client relationships, coordinating exports across Asia, Europe, and the Americas.',
+  // },
 ];
 </script>
 
@@ -69,7 +69,7 @@ const team = [
         </h1>
         <p class="text-coir-300 text-lg max-w-2xl mx-auto leading-relaxed">
           SG Prime Enterprises was founded with a single belief — that nature provides the best
-          solutions. Since 2009, we've been turning coconut husk fiber into world-class industrial
+          solutions. Since 2018, we've been turning coconut husk fiber into world-class industrial
           products.
         </p>
       </div>
@@ -101,7 +101,7 @@ const team = [
             <div
               class="absolute -bottom-5 -right-5 bg-white rounded-2xl shadow-lg border border-coir-100 p-5 hidden md:block"
             >
-              <p class="font-display font-bold text-bark-800 text-2xl">Since 2009</p>
+              <p class="font-display font-bold text-bark-800 text-2xl">Since 2018</p>
               <p class="text-bark-500 text-sm">Crafting natural solutions</p>
             </div>
           </div>
@@ -112,20 +112,20 @@ const team = [
             <h2 class="section-title">From Farm to Global Market</h2>
             <div class="space-y-4 text-bark-600 leading-relaxed">
               <p>
-                SG Prime Enterprises began as a small family-run operation in southern India,
+                SG Prime Enterprises began as a small family-run operation in southern Sri Lanka,
                 working directly with coconut farmers to process and manufacture coir products for
                 the local market. Our founder's vision was simple — create durable, sustainable
                 alternatives to synthetic materials.
               </p>
               <p>
                 Over the years, that vision grew into a vertically integrated manufacturing facility
-                with ISO 9001 certification, serving clients across erosion control, horticulture,
-                landscaping, and construction sectors worldwide.
+                serving clients across erosion control, horticulture, landscaping, and construction
+                sectors worldwide.
               </p>
               <p>
                 Today, our products are trusted by government agencies, landscaping contractors,
-                greenhouse growers, and agricultural businesses across more than 30 countries — all
-                while maintaining the same commitment to quality and sustainability we started with.
+                greenhouse growers, and agricultural businesses across the country — all while
+                maintaining the same commitment to quality and sustainability we started with.
               </p>
             </div>
             <RouterLink to="/contact" class="btn-primary mt-8 inline-flex">
@@ -187,7 +187,7 @@ const team = [
               {
                 icon: 'pi pi-home',
                 title: 'Sourcing',
-                desc: 'Coconut husks are responsibly sourced from certified farms in southern India.',
+                desc: 'Coconut husks are responsibly sourced from trusted farms in southern Sri Lanka.',
               },
               {
                 icon: 'pi pi-wrench',
@@ -197,7 +197,7 @@ const team = [
               {
                 icon: 'pi pi-star',
                 title: 'Manufacturing',
-                desc: 'Fibers are woven, pressed, or bonded into finished products using ISO-certified processes.',
+                desc: 'Fibers are woven, pressed, or bonded into finished products using skilled craftsmanship and quality checks.',
               },
               {
                 icon: 'pi pi-send',
@@ -222,7 +222,7 @@ const team = [
     </section>
 
     <!-- Team -->
-    <section class="py-20 bg-cream">
+    <!-- <section class="py-20 bg-cream">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="text-center mb-14">
           <span class="badge bg-earth-100 text-earth-600 mb-4 inline-block">
@@ -256,7 +256,7 @@ const team = [
           </div>
         </div>
       </div>
-    </section>
+    </section> -->
 
     <!-- CTA -->
     <section class="bg-earth-500 py-16">

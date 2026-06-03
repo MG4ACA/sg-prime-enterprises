@@ -13,9 +13,16 @@ const quickLinks = [
 const categories = ['Erosion Control', 'Greenhouse Products', 'Gardening Products'];
 
 const socials = [
-  { icon: 'pi pi-facebook', href: '#', label: 'Facebook' },
-  { icon: 'pi pi-instagram', href: '#', label: 'Instagram' },
-  { icon: 'pi pi-twitter', href: '#', label: 'Twitter' },
+  {
+    icon: 'pi pi-facebook',
+    href: 'https://www.facebook.com/share/1c1qK5iky2/?mibextid=wwXIfr',
+    label: 'Facebook',
+  },
+  {
+    icon: 'pi pi-instagram',
+    href: 'https://www.instagram.com/sgprimeenterprises?igsh=MTZwMWtsN2ZnN2dvdg%3D%3D&utm_source=qr',
+    label: 'Instagram',
+  },
   { icon: 'pi pi-linkedin', href: '#', label: 'LinkedIn' },
 ];
 </script>
@@ -48,6 +55,7 @@ const socials = [
               v-for="social in socials"
               :key="social.label"
               :href="social.href"
+              target="_blank"
               :aria-label="social.label"
               class="w-9 h-9 rounded-full bg-bark-700 hover:bg-earth-500 flex items-center justify-center transition-colors duration-200"
             >

@@ -212,7 +212,7 @@ onMounted(fetchProduct);
                 </div>
                 <div class="flex items-center gap-2 text-sm text-bark-500">
                   <i class="pi pi-globe text-earth-500"></i>
-                  Export Ready
+                  Global Market Focus
                 </div>
               </div>
             </div>

@@ -73,19 +73,19 @@ const slides = ref([
 
 const whyUs = ref([
   {
-    icon: 'pi pi-leaf',
+    icon: 'pi pi-sync',
     title: '100% Natural',
-    desc: 'Every product is made from natural coconut husk fiber — renewable, biodegradable, and sustainably sourced from certified farms.',
+    desc: 'Every product is made from natural coconut husk fiber — renewable, biodegradable, and sustainably sourced from trusted farms.',
   },
   {
     icon: 'pi pi-shield',
-    title: 'Certified Quality',
-    desc: 'ISO 9001-certified manufacturing processes ensure consistent quality, durability, and performance across our entire product range.',
+    title: 'Quality Focus',
+    desc: 'Careful sourcing, grading, and finishing help us deliver durable, dependable products across our full range.',
   },
   {
     icon: 'pi pi-globe',
-    title: 'Global Reach',
-    desc: 'We export premium coir products to over 30 countries, with reliable logistics and dedicated customer service worldwide.',
+    title: 'Global Focus',
+    desc: 'Our premium coir products are designed for international markets, with dependable logistics and support as we grow our global presence.',
   },
   {
     icon: 'pi pi-cog',
@@ -164,7 +164,7 @@ onMounted(async () => {
             Nature-First Manufacturing
           </h2>
           <p class="text-coir-300 text-lg max-w-2xl mx-auto">
-            A commitment to quality, sustainability, and innovation since 2009.
+            A commitment to quality, sustainability, and innovation since 2018.
           </p>
         </div>
 

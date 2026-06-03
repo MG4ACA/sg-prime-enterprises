@@ -330,9 +330,11 @@ const contactInfo = [
                 >
                   <i class="pi pi-map-marker text-white text-xl"></i>
                 </div>
-                <p class="text-white font-semibold text-sm">Alappuzha, Kerala</p>
+                <p class="text-white font-semibold text-sm">
+                  Addarawtta, Kuleegoda, Ambalangoda, Sri Lanka
+                </p>
                 <a
-                  href="https://www.google.com/maps?q=Alappuzha,Kerala,India"
+                  href="https://www.google.com/maps?q=Addarawtta,Kuleegoda,Ambalangoda,Sri+Lanka"
                   target="_blank"
                   rel="noopener"
                   class="btn-primary text-xs px-4 py-2 mt-1"
