@@ -356,6 +356,7 @@ const contactInfo = [
                       label: 'Facebook',
                       handle: '@sgprimeenterprises',
                       color: 'text-blue-600',
+                      href: 'https://www.facebook.com/share/1c1qK5iky2/?mibextid=wwXIfr',
                       bg: 'bg-blue-50',
                     },
                     {
@@ -363,6 +364,7 @@ const contactInfo = [
                       label: 'Instagram',
                       handle: '@sgprime_coir',
                       color: 'text-pink-600',
+                      href: 'https://www.instagram.com/sgprimeenterprises?igsh=MTZwMWtsN2ZnN2dvdg%3D%3D&utm_source=qr',
                       bg: 'bg-pink-50',
                     },
                     {
@@ -374,7 +376,8 @@ const contactInfo = [
                     },
                   ]"
                   :key="s.label"
-                  href="#"
+                  :href="s.href"
+                  target="_blank"
                   class="flex items-center gap-3 p-3 rounded-xl hover:bg-coir-50 transition-colors group"
                 >
                   <div
